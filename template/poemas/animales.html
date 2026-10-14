@@ -1,0 +1,2280 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>De todos los animales - El Reino de los Poemas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            font-family: var(--font-body, 'Lexend', Arial, sans-serif);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-image:
+                var(--bg-dots-pattern, radial-gradient(rgba(0, 0, 0, 0.15) 1.5px, transparent 1.5px)),
+                var(--bg-reino, radial-gradient(circle at center, #d6f5ff, #d6fff0));
+            background-size: var(--bg-dots-size, 20px 20px), 100% 100%;
+            overflow-x: hidden;
+            user-select: none;
+            -webkit-user-select: none;
+        }
+
+        .header-poema {
+            text-align: center;
+            max-width: 820px;
+            margin-bottom: 20px;
+        }
+        .header-poema h1 {
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            color: #1b5e20;
+            font-size: 2.3rem;
+            margin-bottom: 5px;
+        }
+        .header-poema p { color: #555; font-size: 1.05rem; }
+
+        .img-banner {
+            width: 100%;
+            max-width: 620px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 18px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            margin-bottom: 18px;
+        }
+
+        /* Tabs de navegación */
+        .tabs-etapas {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
+        }
+        .tab-btn {
+            background: white;
+            border: 2px solid #81c784;
+            color: #2e7d32;
+            padding: 10px 22px;
+            border-radius: 20px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            transition: 0.3s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+        .tab-btn.activo {
+            background: #2e7d32;
+            color: white;
+            box-shadow: 0 4px 14px rgba(46, 125, 50, 0.35);
+            transform: translateY(-2px);
+        }
+
+        /* Secciones */
+        .seccion-etapa {
+            background: white;
+            border-radius: 24px;
+            padding: 28px 22px;
+            max-width: 840px;
+            width: 100%;
+            box-shadow: 0 12px 35px rgba(0,0,0,0.1);
+            display: none;
+            border: 3px solid #c8e6c9;
+            text-align: center;
+            box-sizing: border-box;
+        }
+        .seccion-etapa.activo { display: block; animation: fadeIn 0.4s ease; }
+
+        .seccion-etapa h2 {
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            color: #1b5e20;
+            font-size: 1.65rem;
+            margin-bottom: 8px;
+        }
+        .seccion-etapa .instruccion-texto {
+            color: #555;
+            font-size: 1rem;
+            margin-bottom: 20px;
+            line-height: 1.5;
+        }
+
+        /* OVERLAYS / APARTADOS DE INICIO PARA CADA JUEGO */
+        .overlay-inicio-juego {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.96);
+            backdrop-filter: blur(6px);
+            border-radius: 18px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 24px 20px;
+            z-index: 40;
+            text-align: center;
+            box-sizing: border-box;
+            animation: fadeIn 0.3s ease;
+        }
+
+        .overlay-icono {
+            font-size: 55px;
+            margin-bottom: 8px;
+            animation: bounceAnim 1.5s infinite alternate;
+        }
+
+        .overlay-titulo {
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            font-size: 1.65rem;
+            color: #1b5e20;
+            margin-bottom: 8px;
+        }
+
+        .overlay-desc {
+            font-size: 0.98rem;
+            color: #444;
+            max-width: 480px;
+            line-height: 1.5;
+            margin-bottom: 18px;
+        }
+
+        .btn-empezar-verde {
+            background: linear-gradient(135deg, #43a047, #2e7d32);
+            color: white;
+            border: none;
+            padding: 13px 32px;
+            font-size: 1.2rem;
+            font-weight: 900;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            border-radius: 18px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #1b5e20, 0 8px 18px rgba(46, 125, 50, 0.35);
+            transition: all 0.15s ease;
+        }
+        .btn-empezar-verde:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #4caf50, #388e3c);
+        }
+        .btn-empezar-verde:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #1b5e20;
+        }
+
+        /* PANTALLAS DE FIN DE ACTIVIDAD (END SCREENS) */
+        .pantalla-fin-juego {
+            position: absolute;
+            inset: 0;
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(8px);
+            border-radius: 18px;
+            display: none;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            padding: 20px;
+            z-index: 45;
+            text-align: center;
+            box-sizing: border-box;
+            animation: zoomInFin 0.35s ease;
+            box-shadow: inset 0 0 50px rgba(46, 125, 50, 0.12);
+        }
+
+        @keyframes zoomInFin {
+            from { opacity: 0; transform: scale(0.92); }
+            to { opacity: 1; transform: scale(1); }
+        }
+
+        .fin-icono {
+            font-size: 52px;
+            margin-bottom: 6px;
+            animation: bounceAnim 1.2s infinite alternate;
+        }
+
+        .fin-titulo {
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            font-size: 1.55rem;
+            color: #1b5e20;
+            margin-bottom: 4px;
+        }
+
+        .fin-subtitulo {
+            color: #555;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+            max-width: 480px;
+        }
+
+        .resumen-puntos-card {
+            background: #ffffff;
+            border: 2px solid #81c784;
+            border-radius: 16px;
+            padding: 12px 18px;
+            width: 100%;
+            max-width: 440px;
+            margin: 8px auto 14px auto;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.06);
+            text-align: left;
+        }
+
+        .resumen-fila {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 6px 0;
+            border-bottom: 1px dashed #e0e0e0;
+            font-size: 0.92rem;
+            color: #37474f;
+        }
+
+        .resumen-fila:last-child {
+            border-bottom: none;
+        }
+
+        .resumen-fila.destaque {
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: #e65100;
+            border-top: 1px solid #ffd54f;
+            border-bottom: 1px solid #ffd54f;
+            padding: 8px 0;
+            margin: 4px 0;
+        }
+
+        .resumen-fila.total {
+            font-weight: 800;
+            font-size: 1.05rem;
+            color: #4a148c;
+            padding-top: 6px;
+        }
+
+        .btn-avanzar-siguiente {
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            color: white;
+            border: none;
+            padding: 13px 26px;
+            font-size: 1.08rem;
+            font-weight: 800;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            border-radius: 16px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #0d3810, 0 8px 18px rgba(46, 125, 50, 0.35);
+            transition: all 0.15s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-avanzar-siguiente:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #388e3c, #2e7d32);
+        }
+
+        .btn-avanzar-siguiente:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #0d3810;
+        }
+
+        .btn-reiniciar-actividad {
+            background: #fff;
+            color: #455a64;
+            border: 2px solid #b0bec5;
+            padding: 10px 18px;
+            font-size: 0.92rem;
+            font-weight: 700;
+            border-radius: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-reiniciar-actividad:hover {
+            background: #eceff1;
+            color: #263238;
+        }
+
+        /* Marcador de Béisbol */
+        .marcador-beisbol-top {
+            display: flex;
+            justify-content: space-around;
+            align-items: center;
+            background: rgba(10, 25, 47, 0.92);
+            border: 2px solid #fbc02d;
+            border-radius: 14px;
+            padding: 8px 14px;
+            margin-bottom: 12px;
+            color: white;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+            max-width: 680px;
+            margin-left: auto;
+            margin-right: auto;
+        }
+        .marcador-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+        }
+        .marcador-lbl {
+            font-size: 0.75rem;
+            color: #90caf9;
+            letter-spacing: 1px;
+            text-transform: uppercase;
+        }
+        .marcador-val {
+            font-size: 1.25rem;
+            font-weight: 900;
+            color: #ffeb3b;
+        }
+
+        /* POEMA AUTÉNTICO EN ESTRUCTURACIÓN (PDF 2) */
+        .texto-poema-oficial {
+            background: linear-gradient(135deg, #e8f5e9, #f1f8e9);
+            padding: 22px;
+            border-radius: 18px;
+            border-left: 6px solid #2e7d32;
+            font-style: italic;
+            line-height: 1.8;
+            font-size: 1.15rem;
+            color: #1b5e20;
+            margin: 18px auto 25px auto;
+            max-width: 580px;
+            box-shadow: 0 6px 15px rgba(46, 125, 50, 0.1);
+            text-align: center;
+        }
+
+        /* --- 1. JUEGO DE CAZAR PATOS (DUCK HUNT) --- */
+        .duckhunt-contenedor {
+            position: relative;
+            width: 100%;
+            max-width: 720px;
+            height: 350px;
+            background: linear-gradient(180deg, #81d4fa 0%, #b2ebf2 60%, #80cbc4 80%, #4db6ac 100%);
+            border: 4px solid #00796b;
+            border-radius: 20px;
+            margin: 0 auto;
+            overflow: hidden;
+            cursor: crosshair;
+            box-shadow: inset 0 6px 15px rgba(0,0,0,0.15), 0 10px 25px rgba(0, 121, 107, 0.25);
+            user-select: none;
+        }
+
+        .duckhunt-pasto {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            height: 55px;
+            background: repeating-linear-gradient(45deg, #2e7d32, #2e7d32 10px, #388e3c 10px, #388e3c 20px);
+            border-top: 4px solid #1b5e20;
+            z-index: 10;
+            pointer-events: none;
+        }
+
+        .duckhunt-nube {
+            position: absolute;
+            background: rgba(255, 255, 255, 0.85);
+            border-radius: 20px;
+            height: 30px;
+            pointer-events: none;
+        }
+
+        .pato-volador {
+            position: absolute;
+            font-size: 45px;
+            cursor: pointer;
+            z-index: 5;
+            transition: transform 0.1s linear;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.25));
+        }
+
+        .pato-derribado {
+            transform: rotate(180deg) translateY(90px) !important;
+            opacity: 0.5;
+            transition: transform 0.4s ease-in, opacity 0.4s !important;
+            pointer-events: none;
+        }
+
+        .mirilla-arma {
+            position: absolute;
+            width: 44px;
+            height: 44px;
+            border: 3px solid #d32f2f;
+            border-radius: 50%;
+            pointer-events: none;
+            transform: translate(-50%, -50%);
+            z-index: 20;
+            display: none;
+        }
+        .mirilla-arma::before {
+            content: ""; position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: #d32f2f; transform: translateY(-50%);
+        }
+        .mirilla-arma::after {
+            content: ""; position: absolute; left: 50%; top: 0; height: 100%; width: 2px; background: #d32f2f; transform: translateX(-50%);
+        }
+
+        .hud-juegos {
+            display: flex;
+            justify-content: space-around;
+            background: #e8f5e9;
+            border: 2px solid #a5d6a7;
+            border-radius: 16px;
+            padding: 10px 15px;
+            margin-bottom: 15px;
+            font-weight: 800;
+            color: #1b5e20;
+            font-size: 1.05rem;
+        }
+
+        /* Modal de rima al cazar pato */
+        .modal-rima-pato {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.75);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100000;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .card-rima-pato {
+            background: white;
+            border-radius: 24px;
+            max-width: 520px;
+            width: 100%;
+            padding: 24px;
+            text-align: center;
+            border: 4px solid #00897b;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+            animation: popIn 0.3s ease;
+        }
+        .img-animal-rima {
+            font-size: 65px;
+            margin-bottom: 6px;
+            display: inline-block;
+            animation: bounceAnim 0.6s ease;
+        }
+        .opciones-rima-grid {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin: 16px 0;
+        }
+        .btn-opcion-rima {
+            background: #e0f2f1;
+            border: 2px solid #00897b;
+            color: #004d40;
+            padding: 12px 18px;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.15s;
+            text-align: left;
+        }
+        .btn-opcion-rima:hover { background: #b2dfdb; transform: scale(1.02); }
+        .btn-opcion-rima.correcta { background: #c8e6c9 !important; border-color: #2e7d32 !important; color: #1b5e20 !important; }
+        .btn-opcion-rima.incorrecta { background: #ffcdd2 !important; border-color: #c62828 !important; color: #b71c1c !important; }
+
+        /* --- 2. JUEGO TIPO PAC-MAN --- */
+        .pacman-arena {
+            background: #111122;
+            border: 4px solid #ffd700;
+            border-radius: 20px;
+            padding: 15px;
+            margin: 0 auto;
+            max-width: 620px;
+            position: relative;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.4);
+            min-height: 370px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+        }
+        #canvasPacman {
+            background: #0a0a16;
+            display: block;
+            margin: 0 auto;
+            border-radius: 12px;
+            max-width: 100%;
+        }
+        .pacman-controles-touch {
+            display: grid;
+            grid-template-columns: repeat(3, 60px);
+            gap: 8px;
+            justify-content: center;
+            margin-top: 14px;
+        }
+        .btn-ctrl-pac {
+            background: #302b82;
+            color: #ffd700;
+            border: 2px solid #ffd700;
+            border-radius: 12px;
+            font-size: 1.4rem;
+            padding: 10px;
+            cursor: pointer;
+            font-weight: 900;
+            transition: 0.1s;
+        }
+        .btn-ctrl-pac:active { transform: scale(0.92); background: #5d3fd3; }
+
+        /* Modal Identifica Animal del Pac-Man */
+        .modal-identifica-animal {
+            position: fixed;
+            inset: 0;
+            background: rgba(10, 5, 30, 0.85);
+            backdrop-filter: blur(8px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100000;
+            padding: 15px;
+            box-sizing: border-box;
+        }
+        .card-identifica {
+            background: white;
+            border-radius: 25px;
+            max-width: 550px;
+            width: 100%;
+            padding: 25px;
+            text-align: center;
+            border: 4px solid #ffd700;
+            box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+            animation: popIn 0.3s ease;
+        }
+
+        /* --- 3. TRANSFERENCIA: BÉISBOL + FRASES CORTAS --- */
+        .estadio-beisbol {
+            background: linear-gradient(180deg, #64b5f6 0%, #a5d6a7 50%, #81c784 100%);
+            border: 4px solid #2e7d32;
+            border-radius: 20px;
+            padding: 20px 15px;
+            margin: 15px auto 25px auto;
+            max-width: 720px;
+            text-align: center;
+            position: relative;
+            overflow: hidden;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            min-height: 330px;
+        }
+        #canvasBeisbol {
+            width: 100%;
+            max-width: 640px;
+            height: 260px;
+            background: radial-gradient(circle at center, #8d6e63 0%, #5d4037 45%, #388e3c 55%);
+            border-radius: 16px;
+            border: 3px solid #ffffff;
+            display: block;
+            margin: 0 auto;
+        }
+        .btn-batear {
+            background: linear-gradient(135deg, #d32f2f, #b71c1c);
+            color: white;
+            border: none;
+            padding: 14px 34px;
+            font-size: 1.25rem;
+            font-weight: 900;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            border-radius: 20px;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #7f0000, 0 10px 20px rgba(211, 47, 47, 0.4);
+            margin-top: 14px;
+            transition: 0.15s;
+        }
+        .btn-batear:active { transform: translateY(4px); box-shadow: 0 2px 0 #7f0000; }
+
+        /* Bloque Completa Frases */
+        .bloque-completa-frases {
+            background: #fff8e1;
+            border: 3px dashed #ffb300;
+            border-radius: 22px;
+            padding: 24px 20px;
+            margin-top: 25px;
+            text-align: left;
+        }
+        .bloque-completa-frases h3 {
+            color: #e65100;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            font-size: 1.35rem;
+            margin-bottom: 8px;
+            text-align: center;
+        }
+        .frase-item {
+            background: white;
+            border: 2px solid #ffe082;
+            border-radius: 16px;
+            padding: 14px 18px;
+            margin-bottom: 12px;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            color: #3e2723;
+            box-shadow: 0 3px 8px rgba(0,0,0,0.04);
+        }
+        .frase-item input {
+            padding: 6px 12px;
+            border-radius: 10px;
+            border: 2px solid #ffa726;
+            font-family: inherit;
+            font-size: 1rem;
+            font-weight: bold;
+            color: #1b5e20;
+            outline: none;
+            min-width: 180px;
+        }
+        .frase-item input:focus { border-color: #2e7d32; box-shadow: 0 0 8px rgba(46, 125, 50, 0.3); }
+
+        .banner-siguiente {
+            background: linear-gradient(135deg, #f57f17, #fbc02d);
+            color: #2b1055;
+            padding: 24px;
+            border-radius: 20px;
+            margin-top: 25px;
+            display: none;
+            box-shadow: 0 10px 25px rgba(245, 127, 23, 0.35);
+            text-align: center;
+        }
+        .btn-proximo-poema {
+            display: inline-block;
+            background: #6a1b9a;
+            color: white;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 1.15rem;
+            padding: 14px 28px;
+            border-radius: 16px;
+            margin-top: 14px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+            transition: transform 0.2s;
+        }
+        .btn-proximo-poema:hover { transform: scale(1.05); }
+
+        @keyframes popIn {
+            0% { transform: scale(0.7); opacity: 0; }
+            100% { transform: scale(1); opacity: 1; }
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        @keyframes bounceAnim {
+            0%, 100% { transform: translateY(0); }
+            50% { transform: translateY(-10px); }
+        }
+    </style>
+</head>
+<body>
+    <header class="header-poema">
+        <img src="/assets/img/poemas/de-todos-los-animales.jpeg" alt="De todos los animales" class="img-banner">
+        <h1>🐾 De todos los animales</h1>
+        <p><strong>Autor:</strong> Conrado Nalé Roxlo (1923) | Grado Tercero</p>
+
+        <!-- VIDEO DE POESÍA INFANTIL -->
+        <div class="video-container-yt">
+            <iframe src="/assets/video/_De todos los animales_ Poema de Conrado Nalé Roxlo(360P).mp4" title="De todos los animales - Conrado Nalé Roxlo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </header>
+
+    <!-- NAVEGACIÓN ENTRE LAS 3 ETAPAS CURRICULARES -->
+    <nav class="tabs-etapas">
+        <button type="button" class="tab-btn activo" data-etapa="exploracion">1. Exploración (Caza de Patos y Rimas)</button>
+        <button type="button" class="tab-btn" data-etapa="estructuracion">2. Estructuración (Pac-Man Poético)</button>
+        <button type="button" class="tab-btn" data-etapa="transferencia">3. Transferencia (Béisbol y Frases)</button>
+    </nav>
+
+    <!-- ========================================================= -->
+    <!-- 1. ETAPA: EXPLORACIÓN - CAZA DE PATOS CON RIMAS          -->
+    <!-- ========================================================= -->
+    <section id="etapa-exploracion" class="seccion-etapa activo">
+        <h2>🦆 1. Exploración: ¡Caza de Patos y Rimas del Jardín!</h2>
+        <p class="instruccion-texto">
+            ¡Apunta y dispara a los patos que vuelan en el estanque! Al derribar a un pato, descubrirás a uno de los animales del poema. 
+            Responde <strong>con qué palabra rima</strong> para ganar <strong>+25 puntos</strong>.
+        </p>
+
+        <!-- HUD CAZA -->
+        <div class="hud-juegos">
+            <span>🎯 Patos Cazados: <strong id="hudPatosCazados">0 / 4</strong></span>
+            <span>⭐ Puntos: <strong id="hudPuntosCaza">0</strong> pts</span>
+        </div>
+
+        <!-- ESCENARIO CAZA DE PATOS -->
+        <div class="duckhunt-contenedor" id="escenarioCaza">
+            <!-- APARTADO DE INICIO: CAZA DE PATOS -->
+            <div class="overlay-inicio-juego" id="overlayInicioCaza">
+                <div class="overlay-icono">🦆🎯</div>
+                <h3 class="overlay-titulo">¡Caza de Patos y Rimas!</h3>
+                <p class="overlay-desc">
+                    Los patos vuelan por el estanque del jardín. Apunta y haz clic sobre ellos para derribarlos. 
+                    ¡Cada pato derribado te revelará un animal del poema para responder su rima poética!
+                </p>
+                <button type="button" class="btn-empezar-verde" id="btnIniciarCaza">
+                    🚀 ¡Comenzar la Caza de Patos!
+                </button>
+            </div>
+
+            <!-- PANTALLA DE FIN: CAZA DE PATOS -->
+            <div class="pantalla-fin-juego" id="pantallaFinCaza">
+                <div class="fin-icono">🦆🏆🎯</div>
+                <h3 class="fin-titulo" style="color: #2e7d32;">¡CACERÍA DE RIMAS COMPLETADA!</h3>
+                <p class="fin-subtitulo">
+                    ¡Gran puntería poética! Has derribado a los patos y descubierto las rimas de los animales.
+                </p>
+                <div class="resumen-puntos-card">
+                    <div class="resumen-fila">
+                        <span>🎯 Patos derribados:</span>
+                        <strong id="finPatosCount">5 / 5</strong>
+                    </div>
+                    <div class="resumen-fila">
+                        <span>🎵 Rimas poéticas descubiertas:</span>
+                        <strong id="finRimasCount">5 / 5</strong>
+                    </div>
+                    <div class="resumen-fila destaque">
+                        <span>⭐ Puntos ganados en esta actividad:</span>
+                        <strong id="finPtsCaza">+25 pts</strong>
+                    </div>
+                    <div class="resumen-fila total">
+                        <span>🪙 Puntuación Total en el Reino:</span>
+                        <strong id="finTotalCaza">0 pts</strong>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; justify-content: center;">
+                    <button type="button" class="btn-avanzar-siguiente" onclick="activarPestana('estructuracion')">
+                        ➔ Ir a Estructuración: Pac-Man Poético 🕹️
+                    </button>
+                    <button type="button" class="btn-reiniciar-actividad" onclick="reiniciarCaza()">
+                        🔄 Jugar de Nuevo
+                    </button>
+                </div>
+            </div>
+
+            <div class="mirilla-arma" id="mirillaArma"></div>
+            <div class="duckhunt-nube" style="top: 25px; left: 60px; width: 90px;"></div>
+            <div class="duckhunt-nube" style="top: 50px; right: 100px; width: 120px;"></div>
+            <div class="duckhunt-pasto"></div>
+
+            <!-- Patos interactivos que vuelan -->
+            <div class="pato-volador" id="pato0" style="left: 60px; top: 110px;">🦆</div>
+            <div class="pato-volador" id="pato1" style="left: 260px; top: 70px;">🦆</div>
+            <div class="pato-volador" id="pato2" style="left: 480px; top: 130px;">🦆</div>
+        </div>
+
+        <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+            👆 Haz clic o toca directamente sobre los patos que vuelan para dispararles.
+        </p>
+
+        <!-- AVISO DE COMPLETADO ETAPA 1 -->
+        <div id="avisoExitoCaza" style="display: none; background: #e8f5e9; border: 2px solid #4caf50; padding: 16px; border-radius: 16px; margin-top: 20px;">
+            <h3 style="color: #2e7d32;">🎉 ¡EXCELENTE PUNTERÍA Y RIMA!</h3>
+            <p>Has derribado los patos y descubierto las rimas del jardín (+25 pts). ¡Pasa a la Estructuración!</p>
+            <button type="button" class="btn-3d btn-3d-morado" onclick="activarPestana('estructuracion')" style="margin-top: 10px;">
+                ➔ Ir a Estructuración: Pac-Man Poético 🕹️
+            </button>
+        </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 2. ETAPA: ESTRUCTURACIÓN - PAC-MAN IDENTIFICA ANIMALES    -->
+    <!-- ========================================================= -->
+    <section id="etapa-estructuracion" class="seccion-etapa">
+        <h2>🕹️ 2. Estructuración: Poema y Pac-Man de los Animales</h2>
+        <p class="instruccion-texto">
+            Lee el poema oficial de Conrado Nalé Roxlo y luego guía a Pac-Man para que recolecte a los animales en el laberinto. 
+            ¡Cada vez que coma a un animal, identifícalo según el poema para ganar <strong>+30 puntos</strong>!
+        </p>
+
+        <!-- TEXTO DEL POEMA AUTÉNTICO DE CONRADO NALÉ ROXLO (PDF 2, PÁG. 15) -->
+        <div class="texto-poema-oficial">
+            <h3 style="color: #1b5e20; margin-bottom: 10px;">📜 De todos los animales</h3>
+            <p style="font-size: 0.95rem; margin-bottom: 12px; color: #388e3c;"><strong>Conrado Nalé Roxlo (1923)</strong></p>
+            Hay miles de animalitos<br>
+            en el mundo del jardín.<br>
+            ¿Quién adivina cuál es<br>
+            el que más me gustó a mí?<br><br>
+
+            Hay orugas que parecen<br>
+            trencitos verdes con patas.<br>
+            Hay arañitas que tejen<br>
+            estrellas de seda y plata.<br><br>
+
+            Hay una abeja dorada,<br>
+            es la reina del panal<br>
+            y una mariposa blanca,<br>
+            princesita del rosal.<br><br>
+
+            De todos yo elijo uno,<br>
+            el que más me gusta a mí<br>
+            es un grillo pequeñito<br>
+            que toca y toca el violín.
+        </div>
+
+        <!-- HUD PAC-MAN -->
+        <div class="hud-juegos">
+            <span>🐾 Animales Identificados: <strong id="hudPacAnimales">0 / 5</strong></span>
+            <span>⭐ Puntos: <strong id="hudPuntosPac">0</strong> pts</span>
+        </div>
+
+        <!-- LABERINTO PAC-MAN -->
+        <div class="pacman-arena">
+            <!-- APARTADO DE INICIO: PAC-MAN -->
+            <div class="overlay-inicio-juego" id="overlayInicioPacman">
+                <div class="overlay-icono">🕹️🟡</div>
+                <h3 class="overlay-titulo">¡Pac-Man de los Animales!</h3>
+                <p class="overlay-desc">
+                    Mueve a Pac-Man por el laberinto para recolectar las bolitas de estrellas. 
+                    ¡Cuando comas a la oruga, la arañita, la abeja, la mariposa o el grillo, deberás identificarlos según el poema!
+                </p>
+                <button type="button" class="btn-empezar-verde" id="btnIniciarPacman">
+                    🚀 ¡Comenzar Pac-Man Poético!
+                </button>
+            </div>
+
+            <!-- PANTALLA DE FIN: PAC-MAN -->
+            <div class="pantalla-fin-juego" id="pantallaFinPacman">
+                <div class="fin-icono">🟡🏆✨</div>
+                <h3 class="fin-titulo" style="color: #f57f17;">¡PAC-MAN POÉTICO COMPLETADO!</h3>
+                <p class="fin-subtitulo">
+                    ¡Pac-Man se comió a todos los animales del poema y tú los identificaste a la perfección!
+                </p>
+                <div class="resumen-puntos-card">
+                    <div class="resumen-fila">
+                        <span>🐾 Animales Identificados:</span>
+                        <strong id="finAnimalesPac">5 de 5 (Grillo, Oruga, Araña, Abeja, Mariposa)</strong>
+                    </div>
+                    <div class="resumen-fila">
+                        <span>✨ Bolitas de néctar recogidas:</span>
+                        <strong id="finBolitasPac">0</strong>
+                    </div>
+                    <div class="resumen-fila destaque">
+                        <span>⭐ Puntos ganados en Pac-Man:</span>
+                        <strong id="finPtsPac">+30 pts</strong>
+                    </div>
+                    <div class="resumen-fila total">
+                        <span>🪙 Puntuación Total en el Reino:</span>
+                        <strong id="finTotalPac">0 pts</strong>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 14px; flex-wrap: wrap; justify-content: center;">
+                    <button type="button" class="btn-avanzar-siguiente" onclick="activarPestana('transferencia')" style="box-shadow: 0 6px 18px rgba(46,125,50,0.4); font-size: 1.1rem; padding: 14px 28px;">
+                        ➔ Ir al siguiente juego: Transferencia (Béisbol y Frases) ⚾
+                    </button>
+                    <button type="button" class="btn-reiniciar-actividad" onclick="reiniciarPacman()">
+                        🔄 Repetir Pac-Man
+                    </button>
+                </div>
+            </div>
+
+            <canvas id="canvasPacman" width="560" height="340"></canvas>
+            
+            <!-- Botones táctiles para jugar en tabletas y celulares -->
+            <div class="pacman-controles-touch">
+                <div></div>
+                <button type="button" class="btn-ctrl-pac" onclick="moverPacman('arriba')">⬆️</button>
+                <div></div>
+                <button type="button" class="btn-ctrl-pac" onclick="moverPacman('izquierda')">⬅️</button>
+                <button type="button" class="btn-ctrl-pac" onclick="moverPacman('abajo')">⬇️</button>
+                <button type="button" class="btn-ctrl-pac" onclick="moverPacman('derecha')">➡️</button>
+            </div>
+        </div>
+
+        <p style="font-size: 0.9rem; color: #666; margin-top: 10px;">
+            🕹️ Usa las <strong>flechas del teclado</strong> o los botones en pantalla para mover a Pac-Man hacia los animalitos.
+        </p>
+
+        <!-- AVISO DE COMPLETADO ETAPA 2 -->
+        <div id="avisoExitoPacman" style="display: none; background: #fff8e1; border: 2px solid #ffb300; padding: 16px; border-radius: 16px; margin-top: 20px;">
+            <h3 style="color: #e65100;">🏆 ¡PAC-MAN COMPLETADO CON ÉXITO!</h3>
+            <p>Has identificado todos los animales del poema en el laberinto (+30 pts). ¡Pasa a la Transferencia!</p>
+            <button type="button" class="btn-3d btn-3d-verde" onclick="activarPestana('transferencia')" style="margin-top: 10px;">
+                ➔ Ir a Transferencia: Béisbol y Frases ⚾
+            </button>
+        </div>
+    </section>
+
+    <!-- ========================================================= -->
+    <!-- 3. ETAPA: TRANSFERENCIA - BÉISBOL + COMPLETA FRASES      -->
+    <!-- ========================================================= -->
+    <section id="etapa-transferencia" class="seccion-etapa">
+        <h2>⚾ 3. Transferencia: Béisbol Poético y Completa Frases</h2>
+        <p class="instruccion-texto">
+            ¡Doble reto final! <strong>Juego 1:</strong> Batea y si fallas el tiro responde preguntas de comprensión lectora. 
+            <strong>Juego 2:</strong> Completa las frases poéticas para ganar <strong>+35 puntos</strong> y desbloquear el siguiente poema.
+        </p>
+
+        <!-- JUEGO 1: BÉISBOL POÉTICO -->
+        <div class="estadio-beisbol">
+            <!-- APARTADO DE INICIO: BÉISBOL -->
+            <div class="overlay-inicio-juego" id="overlayInicioBeisbol">
+                <div class="overlay-icono">⚾🏏</div>
+                <h3 class="overlay-titulo">¡Béisbol Poético de los Animales!</h3>
+                <p class="overlay-desc">
+                    ¡Entra al estadio y batea las pelotas del lanzador! Conecta <strong>3 Homeruns Poéticos</strong> para ganar el campeonato del jardín. 
+                    Si fallas el tiro, responde una pregunta de comprensión lectora para salvar tu turno.
+                </p>
+                <button type="button" class="btn-empezar-verde" id="btnIniciarBeisbol">
+                    🚀 ¡Comenzar el Béisbol!
+                </button>
+            </div>
+
+            <!-- PANTALLA DE FIN: BÉISBOL -->
+            <div class="pantalla-fin-juego" id="pantallaFinBeisbol">
+                <div class="fin-icono">⚾💥🏆</div>
+                <h3 class="fin-titulo" style="color: #b71c1c;">¡CAMPEÓN DEL BÉISBOL POÉTICO!</h3>
+                <p class="fin-subtitulo">
+                    ¡Conectaste 3 imparables poéticos y superaste los retos del estadio!
+                </p>
+                <div class="resumen-puntos-card">
+                    <div class="resumen-fila">
+                        <span>💥 Homeruns Poéticos conectados:</span>
+                        <strong id="finHomeruns">3 de 3</strong>
+                    </div>
+                    <div class="resumen-fila">
+                        <span>📖 Preguntas de comprensión superadas:</span>
+                        <strong id="finPreguntasBeisbol">0</strong>
+                    </div>
+                    <div class="resumen-fila destaque">
+                        <span>⭐ Puntos ganados en Béisbol:</span>
+                        <strong id="finPtsBeisbol">+25 pts</strong>
+                    </div>
+                    <div class="resumen-fila total">
+                        <span>🪙 Puntuación Total en el Reino:</span>
+                        <strong id="finTotalBeisbol">0 pts</strong>
+                    </div>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 12px; flex-wrap: wrap; justify-content: center;">
+                    <button type="button" class="btn-avanzar-siguiente" onclick="irACompletaFrases()">
+                        ✍️ Pasar al Reto 2: Completa Frases ➔
+                    </button>
+                    <button type="button" class="btn-reiniciar-actividad" onclick="reiniciarBeisbol()">
+                        🔄 Jugar Béisbol de Nuevo
+                    </button>
+                </div>
+            </div>
+
+            <!-- MARCADOR DE ESTADIO -->
+            <div class="marcador-beisbol-top">
+                <div class="marcador-col">
+                    <span class="marcador-lbl">Homeruns (Meta: 3)</span>
+                    <span class="marcador-val" id="hudHomeruns">0 / 3</span>
+                </div>
+                <div class="marcador-col">
+                    <span class="marcador-lbl">Strikes</span>
+                    <span class="marcador-val" id="hudStrikes" style="color: #ff5252;">0</span>
+                </div>
+                <div class="marcador-col">
+                    <span class="marcador-lbl">Puntos Béisbol</span>
+                    <span class="marcador-val" id="hudPtsBeisbol" style="color: #69f0ae;">0</span>
+                </div>
+            </div>
+
+            <canvas id="canvasBeisbol" width="680" height="340"></canvas>
+
+            <div style="margin-top: 14px;">
+                <button type="button" class="btn-batear" id="btnBatear">🏏 ¡BATEAR AHORA!</button>
+            </div>
+            <p id="msgBeisbol" style="font-weight: 800; font-size: 1.05rem; color: #1b5e20; background: rgba(255,255,255,0.92); padding: 8px 16px; border-radius: 14px; margin-top: 10px; display: inline-block; box-shadow: 0 3px 10px rgba(0,0,0,0.15);">
+                ¡Haz clic en BATEAR cuando la pelota cruce el plato de bateo!
+            </p>
+        </div>
+
+        <!-- JUEGO 2: COMPLETA FRASES CORTAS DE ACUERDO AL POEMA -->
+        <div class="bloque-completa-frases">
+            <h3>✍️ Completa las frases poéticas según el poema:</h3>
+            <p style="color: #666; margin-bottom: 16px; font-size: 0.95rem; text-align: center;">
+                Escribe la frase que falta en cada verso de Conrado Nalé Roxlo:
+            </p>
+
+            <!-- FRASE 1 -->
+            <div class="frase-item">
+                1. 🐛 <strong>Hay orugas que parecen:</strong> 
+                <input type="text" id="frase1" placeholder="ej: trencitos verdes con patas">
+                <span id="checkFrase1"></span>
+            </div>
+
+            <!-- FRASE 2 -->
+            <div class="frase-item">
+                2. 🕷️ <strong>Hay arañitas que tejen:</strong> 
+                <input type="text" id="frase2" placeholder="ej: estrellas de seda y plata">
+                <span id="checkFrase2"></span>
+            </div>
+
+            <!-- FRASE 3 -->
+            <div class="frase-item">
+                3. 🐝 <strong>Hay una abeja dorada, es la reina del:</strong> 
+                <input type="text" id="frase3" placeholder="ej: panal">
+                <span id="checkFrase3"></span>
+            </div>
+
+            <!-- FRASE 4 -->
+            <div class="frase-item">
+                4. 🦋 <strong>Y una mariposa blanca, princesita del:</strong> 
+                <input type="text" id="frase4" placeholder="ej: rosal">
+                <span id="checkFrase4"></span>
+            </div>
+
+            <!-- FRASE 5 -->
+            <div class="frase-item">
+                5. 🦗 <strong>El que más me gusta a mí es un grillo que toca el:</strong> 
+                <input type="text" id="frase5" placeholder="ej: violín">
+                <span id="checkFrase5"></span>
+            </div>
+
+            <div style="text-align: center; margin-top: 18px;">
+                <button type="button" class="btn-3d btn-3d-amarillo" id="btnComprobarFrases" style="font-size: 1.1rem; padding: 14px 28px;">
+                    ✨ ¡Comprobar mis Versos y Guardar Puntos (+35 pts)!
+                </button>
+            </div>
+            <p id="msgFrasesFeedback" style="font-weight: 800; font-size: 1.15rem; text-align: center; margin-top: 12px;"></p>
+        </div>
+
+        <!-- BANNER DE PASO AL SIGUIENTE POEMA (CALDERO) -->
+        <div id="bannerSiguienteAnimales" class="banner-siguiente">
+            <span style="font-size: 45px;">🎉🦗🍯</span>
+            <h3 style="color: #4a148c; font-size: 1.6rem; margin-top: 6px;">¡DE TODOS LOS ANIMALES COMPLETADO!</h3>
+            <p style="font-size: 1.1rem; margin-top: 8px;">
+                ¡Felicidades! Has superado la Caza de Patos, el Pac-Man y el Béisbol Poético.<br>
+                Has desbloqueado el siguiente poema de tu viaje en el Reino: <strong>Había un caldero lleno...</strong>
+            </p>
+            <a href="/template/poemas/caldero.html" class="btn-proximo-poema">
+                ➔ Pasar al siguiente poema: Había un caldero lleno... 🔮
+            </a>
+        </div>
+    </section>
+
+    <!-- NAVEGACIÓN INFERIOR -->
+    <div style="margin-top: 30px;">
+        <a href="/index.html" class="tab-btn" style="text-decoration: none; background: #fff; color: #2e7d32;">🏰 Volver al Reino</a>
+    </div>
+
+    <!-- ========================================================= -->
+    <!-- MODALES INTERACTIVOS FLOTANTES                            -->
+    <!-- ========================================================= -->
+
+    <!-- MODAL 1: PREGUNTA AL DERRIBAR UN PATO EN EXPLORACIÓN -->
+    <div class="modal-rima-pato" id="modalRimaPato" style="display: none;">
+        <div class="card-rima-pato">
+            <span class="img-animal-rima" id="patoAnimalEmoji">🦗</span>
+            <h3 id="patoAnimalTitulo" style="color: #00796b; font-size: 1.4rem; margin-bottom: 6px;">¡Animal Descubierto!</h3>
+            <p id="patoPreguntaTexto" style="font-size: 1.15rem; font-weight: 700; color: #37474f;">
+                ¿Con qué palabra rima este animal?
+            </p>
+
+            <div class="opciones-rima-grid" id="patoOpcionesGrid"></div>
+            <div id="patoFeedback" style="display: none; padding: 10px; border-radius: 12px; font-weight: 700; margin-top: 10px;"></div>
+
+            <button type="button" class="btn-3d btn-3d-verde" id="btnCerrarModalPato" style="display: none; margin-top: 14px;">
+                ¡Seguir cazando patos! 🦆➔
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 2: IDENTIFICA ANIMAL AL COMER EN PAC-MAN -->
+    <div class="modal-identifica-animal" id="modalIdentificaPac" style="display: none;">
+        <div class="card-identifica">
+            <span style="font-size: 65px;" id="pacAnimalEmoji">🐛</span>
+            <h3 id="pacAnimalTitulo" style="color: #ff8f00; font-size: 1.45rem; margin-bottom: 6px;">¡Animal del Poema Encontrado!</h3>
+            <p id="pacPreguntaTexto" style="font-size: 1.15rem; font-weight: 700; color: #263238; margin-bottom: 14px;"></p>
+
+            <div class="opciones-rima-grid" id="pacOpcionesGrid"></div>
+            <div id="pacFeedback" style="display: none; padding: 12px; border-radius: 12px; font-weight: 700; margin-top: 10px;"></div>
+
+            <button type="button" class="btn-3d btn-3d-amarillo" id="btnContinuarPacman" style="display: none; margin-top: 14px;">
+                ¡Continuar en el Laberinto! 🕹️➔
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 3: PREGUNTA AL FALLAR EL TIRO EN BÉISBOL -->
+    <div class="modal-rima-pato" id="modalBeisbolPregunta" style="display: none;">
+        <div class="card-rima-pato" style="border-color: #d32f2f;">
+            <span style="font-size: 60px;">⚾❌</span>
+            <h3 style="color: #c62828; font-size: 1.35rem; margin-bottom: 6px;">¡Strike! Pregunta de Comprensión</h3>
+            <p style="color: #555; font-size: 0.95rem; margin-bottom: 10px;">
+                ¡Has fallado el bateo! Responde correctamente esta pregunta sobre el poema para recuperarte y conectar un imparable:
+            </p>
+            <p id="beisbolPreguntaTexto" style="font-size: 1.15rem; font-weight: 700; color: #1b5e20; background: #e8f5e9; padding: 10px; border-radius: 12px;"></p>
+
+            <div class="opciones-rima-grid" id="beisbolOpcionesGrid"></div>
+            <div id="beisbolFeedback" style="display: none; padding: 10px; border-radius: 12px; font-weight: 700; margin-top: 10px;"></div>
+
+            <button type="button" class="btn-3d btn-3d-azul" id="btnCerrarModalBeisbol" style="display: none; margin-top: 14px;">
+                ¡Volver a Batear! 🏏➔
+            </button>
+        </div>
+    </div>
+
+    <!-- MODAL 4: GRAN PANTALLA DE FIN TOTAL DEL POEMA (DE TODOS LOS ANIMALES) -->
+    <div class="modal-rima-pato" id="modalFinTotalPoema" style="display: none;">
+        <div class="card-rima-pato" style="border-color: #fbc02d; max-width: 540px; padding: 26px 20px;">
+            <span style="font-size: 60px;">👑🎉🦗</span>
+            <h3 style="color: #4a148c; font-size: 1.6rem; margin-bottom: 6px;">¡DE TODOS LOS ANIMALES SUPERADO!</h3>
+            <p style="color: #555; font-size: 0.95rem; margin-bottom: 12px;">
+                ¡Felicitaciones! Has completado todas las etapas del poema: Exploración, Estructuración y Transferencia.
+            </p>
+
+            <div class="resumen-puntos-card" style="margin-bottom: 16px;">
+                <div class="resumen-fila">
+                    <span>🦆 1. Caza de Patos y Rimas:</span>
+                    <strong>+25 pts</strong>
+                </div>
+                <div class="resumen-fila">
+                    <span>🟡 2. Pac-Man Poético:</span>
+                    <strong>+30 pts</strong>
+                </div>
+                <div class="resumen-fila">
+                    <span>⚾ 3. Béisbol Poético:</span>
+                    <strong>+25 pts</strong>
+                </div>
+                <div class="resumen-fila">
+                    <span>✍️ 4. Completa Frases Poéticas:</span>
+                    <strong>+35 pts</strong>
+                </div>
+                <div class="resumen-fila destaque">
+                    <span>⭐ Puntos Ganados en Este Poema:</span>
+                    <strong style="color: #2e7d32;">+115 pts</strong>
+                </div>
+                <div class="resumen-fila total">
+                    <span>🪙 Puntuación Total en el Reino:</span>
+                    <strong id="finTotalPoemaAcumulado">0 pts</strong>
+                </div>
+            </div>
+
+            <div style="display: flex; flex-direction: column; gap: 10px; align-items: center; width: 100%;">
+                <a href="/template/poemas/caldero.html" class="btn-avanzar-siguiente" style="font-size: 1.08rem; padding: 14px 24px; width: 100%; max-width: 440px; justify-content: center; box-sizing: border-box;">
+                    ➔ Pasar al siguiente poema: Había un caldero lleno... 🔮
+                </a>
+                <button type="button" class="btn-reiniciar-actividad" onclick="document.getElementById('modalFinTotalPoema').style.display='none'">
+                    Cerrar y ver mis versos
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SCRIPTS -->
+    <script src="/static/js/game-juice.js"></script>
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+
+    <script>
+        /**
+         * ==========================================================================
+         * SCRIPT CONTROLADOR DE TODOS LOS ANIMALES:
+         * 1. Caza de Patos y Rimas (Con pantalla de inicio)
+         * 2. Pac-Man Poético (Con pantalla de inicio)
+         * 3. Béisbol Poético (Con pantalla de inicio) + Completa Frases
+         * ==========================================================================
+         */
+
+        // NAVEGACIÓN DE PESTAÑAS (Detiene animaciones de otras pestañas)
+        function activarPestana(etapa) {
+            document.querySelectorAll('.tab-btn[data-etapa]').forEach(b => b.classList.remove('activo'));
+            document.querySelectorAll('.seccion-etapa').forEach(s => s.classList.remove('activo'));
+            
+            const btn = document.querySelector(`.tab-btn[data-etapa="${etapa}"]`);
+            if (btn) btn.classList.add('activo');
+            const sec = document.getElementById('etapa-' + etapa);
+            if (sec) {
+                sec.classList.add('activo');
+                sec.scrollIntoView({ behavior: 'smooth' });
+            }
+
+            // Si entra a Béisbol por primera vez y ya inició, redibujar canvas
+            if (etapa === 'transferencia' && beisbolIniciado) {
+                dibujarEstadioEstatico();
+            }
+        }
+
+        document.querySelectorAll('.tab-btn[data-etapa]').forEach(btn => {
+            btn.addEventListener('click', () => activarPestana(btn.dataset.etapa));
+        });
+
+        /* =========================================================================
+           1. JUEGO DE CAZAR PATOS (DUCK HUNT) + RIMAS DE ANIMALES
+           ========================================================================= */
+        const ANIMALES_CAZA = [
+            {
+                emoji: '🦗',
+                animal: 'El Grillo',
+                verso: '“Es un grillo pequeñito que toca y toca el violín”',
+                pregunta: '¿Con qué palabra rima VIOLÍN?',
+                opciones: [
+                    { texto: 'Jardín (o bailarín)', correcta: true },
+                    { texto: 'Zapato', correcta: false },
+                    { texto: 'Pelota', correcta: false }
+                ],
+                feedback: '📜 ¡Correcto! Violín rima con jardín en el poema: “el grillo pequeñito que toca y toca el violín”.'
+            },
+            {
+                emoji: '🐛',
+                animal: 'La Oruga',
+                verso: '“Hay orugas que parecen trencitos verdes con patas”',
+                pregunta: '¿Con qué palabra rima PATAS?',
+                opciones: [
+                    { texto: 'Corbatas (o piratas)', correcta: true },
+                    { texto: 'Flores', correcta: false },
+                    { texto: 'Camino', correcta: false }
+                ],
+                feedback: '📜 ¡Genial! Patas y corbatas terminan en -atas.'
+            },
+            {
+                emoji: '🕷️',
+                animal: 'La Arañita',
+                verso: '“Hay arañitas que tejen estrellas de seda y plata”',
+                pregunta: '¿Con qué palabra rima PLATA?',
+                opciones: [
+                    { texto: 'Gata (o fogata)', correcta: true },
+                    { texto: 'Nube', correcta: false },
+                    { texto: 'Árbol', correcta: false }
+                ],
+                feedback: '📜 ¡Exacto! Seda y plata rima con patas en la estrofa del poema.'
+            },
+            {
+                emoji: '🐝',
+                animal: 'La Abeja',
+                verso: '“Hay una abeja dorada, es la reina del panal”',
+                pregunta: '¿Con qué palabra rima PANAL?',
+                opciones: [
+                    { texto: 'Rosal (o zorzal)', correcta: true },
+                    { texto: 'Miel', correcta: false },
+                    { texto: 'Cielo', correcta: false }
+                ],
+                feedback: '📜 ¡Muy bien! En el poema: “reina del panal” rima con “princesita del rosal”.'
+            }
+        ];
+
+        let cazaIniciada = false;
+        let patosCazados = 0;
+        let puntosCaza = 0;
+
+        const escenarioCaza = document.getElementById('escenarioCaza');
+        const mirilla = document.getElementById('mirillaArma');
+        const hudPatos = document.getElementById('hudPatosCazados');
+        const hudPtsCaza = document.getElementById('hudPuntosCaza');
+        const overlayInicioCaza = document.getElementById('overlayInicioCaza');
+        const btnIniciarCaza = document.getElementById('btnIniciarCaza');
+
+        // Botón de Inicio de Caza de Patos
+        if (btnIniciarCaza) {
+            btnIniciarCaza.addEventListener('click', () => {
+                cazaIniciada = true;
+                overlayInicioCaza.style.display = 'none';
+                patosCazados = 0;
+                puntosCaza = 0;
+                hudPatos.textContent = `0 / ${ANIMALES_CAZA.length}`;
+                hudPtsCaza.textContent = '0';
+                if (window.GameJuice) window.GameJuice.playPop();
+            });
+        }
+
+        // Mirilla que sigue cursor
+        if (escenarioCaza && mirilla) {
+            escenarioCaza.addEventListener('mouseenter', () => {
+                if (cazaIniciada) mirilla.style.display = 'block';
+            });
+            escenarioCaza.addEventListener('mouseleave', () => mirilla.style.display = 'none');
+            escenarioCaza.addEventListener('mousemove', (e) => {
+                if (!cazaIniciada) return;
+                const rect = escenarioCaza.getBoundingClientRect();
+                mirilla.style.left = (e.clientX - rect.left) + 'px';
+                mirilla.style.top = (e.clientY - rect.top) + 'px';
+            });
+        }
+
+        // Animación de vuelo de los patos
+        const patos = [document.getElementById('pato0'), document.getElementById('pato1'), document.getElementById('pato2')];
+        let posicionesPato = [
+            { x: 50, y: 80, vx: 2.2, vy: 1 },
+            { x: 250, y: 60, vx: -2.5, vy: -1.2 },
+            { x: 450, y: 120, vx: 2.8, vy: -0.8 }
+        ];
+
+        function animarPatos() {
+            if (cazaIniciada && patosCazados < ANIMALES_CAZA.length) {
+                patos.forEach((pato, idx) => {
+                    if (!pato || pato.classList.contains('pato-derribado')) return;
+                    const pos = posicionesPato[idx];
+                    pos.x += pos.vx;
+                    pos.y += pos.vy;
+
+                    if (pos.x < 20 || pos.x > escenarioCaza.clientWidth - 70) {
+                        pos.vx *= -1;
+                        pato.style.transform = pos.vx > 0 ? 'scaleX(1)' : 'scaleX(-1)';
+                    }
+                    if (pos.y < 20 || pos.y > 220) pos.vy *= -1;
+
+                    pato.style.left = pos.x + 'px';
+                    pato.style.top = pos.y + 'px';
+                });
+            }
+            requestAnimationFrame(animarPatos);
+        }
+        requestAnimationFrame(animarPatos);
+
+        // Click en pato para dispararle
+        patos.forEach(pato => {
+            if (!pato) return;
+            pato.addEventListener('click', (e) => {
+                e.stopPropagation();
+                if (!cazaIniciada) return;
+                derribarPato(pato);
+            });
+        });
+
+        function derribarPato(pato) {
+            if (pato.classList.contains('pato-derribado')) return;
+            if (window.GameJuice) window.GameJuice.playPop();
+
+            pato.classList.add('pato-derribado');
+
+            const item = ANIMALES_CAZA[patosCazados % ANIMALES_CAZA.length];
+            setTimeout(() => {
+                abrirModalRimaPato(item, pato);
+            }, 350);
+        }
+
+        function abrirModalRimaPato(item, pato) {
+            const modal = document.getElementById('modalRimaPato');
+            const emojiEl = document.getElementById('patoAnimalEmoji');
+            const tituloEl = document.getElementById('patoAnimalTitulo');
+            const preguntaEl = document.getElementById('patoPreguntaTexto');
+            const grid = document.getElementById('patoOpcionesGrid');
+            const feedback = document.getElementById('patoFeedback');
+            const btnCerrar = document.getElementById('btnCerrarModalPato');
+
+            emojiEl.textContent = item.emoji;
+            tituloEl.textContent = `¡Derribaste el pato! Aparece: ${item.animal}`;
+            preguntaEl.innerHTML = `${item.verso}<br><br><strong>${item.pregunta}</strong>`;
+            grid.innerHTML = '';
+            feedback.style.display = 'none';
+            btnCerrar.style.display = 'none';
+
+            item.opciones.forEach(op => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn-opcion-rima';
+                btn.textContent = op.texto;
+                btn.addEventListener('click', () => {
+                    grid.querySelectorAll('button').forEach(b => b.disabled = true);
+                    if (op.correcta) {
+                        btn.classList.add('correcta');
+                        puntosCaza += 20;
+                        patosCazados++;
+                        hudPatos.textContent = `${patosCazados} / ${ANIMALES_CAZA.length}`;
+                        hudPtsCaza.textContent = puntosCaza;
+
+                        feedback.style.display = 'block';
+                        feedback.style.background = '#c8e6c9';
+                        feedback.style.color = '#1b5e20';
+                        feedback.innerHTML = `✅ ${item.feedback} (+20 pts)`;
+                        if (window.GameJuice) {
+                            window.GameJuice.playCorrect();
+                            window.GameJuice.floatingXP(20, btn);
+                        }
+                    } else {
+                        btn.classList.add('incorrecta');
+                        feedback.style.display = 'block';
+                        feedback.style.background = '#ffcdd2';
+                        feedback.style.color = '#b71c1c';
+                        feedback.innerHTML = `❌ ${item.feedback}`;
+                        if (window.GameJuice) window.GameJuice.playWrong();
+                    }
+                    btnCerrar.style.display = 'inline-block';
+                });
+                grid.appendChild(btn);
+            });
+
+            btnCerrar.onclick = () => {
+                modal.style.display = 'none';
+                pato.classList.remove('pato-derribado');
+
+                if (patosCazados >= ANIMALES_CAZA.length) {
+                    cazaIniciada = false;
+                    document.getElementById('avisoExitoCaza').style.display = 'block';
+
+                    if (window.ReinoDB) {
+                        window.ReinoDB.registrarPuntos('animales_sonidos_rimas', 25, { patosCazados });
+                        const total = window.ReinoDB.obtenerPuntosTotales();
+                        const elTot = document.getElementById('finTotalCaza');
+                        if (elTot) elTot.textContent = `${total} pts`;
+                    }
+                    const elPts = document.getElementById('finPtsCaza');
+                    if (elPts) elPts.textContent = `+${puntosCaza + 25} pts`;
+                    const elPatos = document.getElementById('finPatosCount');
+                    if (elPatos) elPatos.textContent = `${patosCazados} / ${ANIMALES_CAZA.length}`;
+                    const elRimas = document.getElementById('finRimasCount');
+                    if (elRimas) elRimas.textContent = `${patosCazados} / ${ANIMALES_CAZA.length}`;
+
+                    const finCaza = document.getElementById('pantallaFinCaza');
+                    if (finCaza) finCaza.style.display = 'flex';
+
+                    if (window.GameJuice) {
+                        window.GameJuice.celebrate(70);
+                        window.GameJuice.playFanfare();
+                    }
+                }
+            };
+
+            modal.style.display = 'flex';
+        }
+
+        function reiniciarCaza() {
+            patosCazados = 0;
+            puntosCaza = 0;
+            hudPatos.textContent = `0 / ${ANIMALES_CAZA.length}`;
+            hudPtsCaza.textContent = '0';
+            const finCaza = document.getElementById('pantallaFinCaza');
+            if (finCaza) finCaza.style.display = 'none';
+            patos.forEach(p => {
+                if (p) p.classList.remove('pato-derribado');
+            });
+            cazaIniciada = true;
+        }
+
+        /* =========================================================================
+           2. JUEGO PAC-MAN DE LOS ANIMALES + IDENTIFICACIÓN DEL POEMA
+           ========================================================================= */
+        const ANIMALES_PACMAN = [
+            {
+                tipo: 'grillo',
+                emoji: '🦗',
+                nombre: 'El Grillo',
+                pregunta: '¿Cómo describe el poema de Conrado Nalé Roxlo al grillo?',
+                opciones: [
+                    { texto: 'Un grillo pequeñito que toca y toca el violín 🎻', correcta: true },
+                    { texto: 'Un grillo cantor que duerme en el río', correcta: false },
+                    { texto: 'Un grillo gigante que usa botas', correcta: false }
+                ],
+                feedback: '📜 “es un grillo pequeñito que toca y toca el violín”. ¡Es el preferido del autor!'
+            },
+            {
+                tipo: 'oruga',
+                emoji: '🐛',
+                nombre: 'La Oruga',
+                pregunta: '¿A qué dice el poema que se parecen las orugas?',
+                opciones: [
+                    { texto: 'A trencitos verdes con patas 🚂', correcta: true },
+                    { texto: 'A ramitas secas del jardín', correcta: false },
+                    { texto: 'A gusanos de agua dulce', correcta: false }
+                ],
+                feedback: '📜 “Hay orugas que parecen trencitos verdes con patas”.'
+            },
+            {
+                tipo: 'arana',
+                emoji: '🕷️',
+                nombre: 'La Arañita',
+                pregunta: '¿Qué tejen las arañitas en el jardín del poema?',
+                opciones: [
+                    { texto: 'Estrellas de seda y plata ✨', correcta: true },
+                    { texto: 'Camas de hojas secas', correcta: false },
+                    { texto: 'Redes para pescar mariposas', correcta: false }
+                ],
+                feedback: '📜 “Hay arañitas que tejen estrellas de seda y plata”.'
+            },
+            {
+                tipo: 'abeja',
+                emoji: '🐝',
+                nombre: 'La Abeja Dorada',
+                pregunta: '¿Quién es la abeja dorada en el poema?',
+                opciones: [
+                    { texto: 'La reina del panal 👑', correcta: true },
+                    { texto: 'La capitana de las flores', correcta: false },
+                    { texto: 'La guardiana del árbol', correcta: false }
+                ],
+                feedback: '📜 “Hay una abeja dorada, es la reina del panal”.'
+            },
+            {
+                tipo: 'mariposa',
+                emoji: '🦋',
+                nombre: 'La Mariposa Blanca',
+                pregunta: '¿Qué título recibe la mariposa blanca en el poema?',
+                opciones: [
+                    { texto: 'Princesita del rosal 🌹', correcta: true },
+                    { texto: 'Reina de los mares', correcta: false },
+                    { texto: 'Bailarina de la noche', correcta: false }
+                ],
+                feedback: '📜 “y una mariposa blanca, princesita del rosal”.'
+            }
+        ];
+
+        let pacmanIniciado = false;
+        let pacmanPausado = false;
+        let pacPuntos = 0;
+        let animalesIdentificadosCount = 0;
+
+        const canvasPac = document.getElementById('canvasPacman');
+        const ctxPac = canvasPac ? canvasPac.getContext('2d') : null;
+        const overlayInicioPacman = document.getElementById('overlayInicioPacman');
+        const btnIniciarPacman = document.getElementById('btnIniciarPacman');
+
+        let pacman = { x: 40, y: 170, vx: 0, vy: 0, dir: 'derecha', boca: 0.2, bocaDir: 0.03 };
+        let animalesEnPacman = [
+            { tipo: 'grillo', emoji: '🦗', x: 120, y: 60, comido: false },
+            { tipo: 'oruga', emoji: '🐛', x: 260, y: 60, comido: false },
+            { tipo: 'arana', emoji: '🕷️', x: 460, y: 170, comido: false },
+            { tipo: 'abeja', emoji: '🐝', x: 160, y: 280, comido: false },
+            { tipo: 'mariposa', emoji: '🦋', x: 380, y: 280, comido: false }
+        ];
+
+        let bolitasPuntos = [];
+        for (let bx = 40; bx < 540; bx += 32) {
+            for (let by = 50; by < 320; by += 55) {
+                bolitasPuntos.push({ x: bx, y: by, comida: false });
+            }
+        }
+
+        if (btnIniciarPacman) {
+            btnIniciarPacman.addEventListener('click', () => {
+                pacmanIniciado = true;
+                pacmanPausado = false;
+                overlayInicioPacman.style.display = 'none';
+                pacPuntos = 0;
+                animalesIdentificadosCount = 0;
+                document.getElementById('hudPacAnimales').textContent = `0 / 5`;
+                document.getElementById('hudPuntosPac').textContent = '0';
+                if (window.GameJuice) window.GameJuice.playPop();
+            });
+        }
+
+        function moverPacman(direccion) {
+            if (!pacmanIniciado || pacmanPausado) return;
+            const vel = 3.2;
+            if (direccion === 'arriba') { pacman.vx = 0; pacman.vy = -vel; pacman.dir = 'arriba'; }
+            if (direccion === 'abajo') { pacman.vx = 0; pacman.vy = vel; pacman.dir = 'abajo'; }
+            if (direccion === 'izquierda') { pacman.vx = -vel; pacman.vy = 0; pacman.dir = 'izquierda'; }
+            if (direccion === 'derecha') { pacman.vx = vel; pacman.vy = 0; pacman.dir = 'derecha'; }
+            if (window.GameJuice) window.GameJuice.playPop();
+        }
+
+        window.addEventListener('keydown', (e) => {
+            if (!pacmanIniciado) return;
+            if (e.key === 'ArrowUp' || e.key === 'w') moverPacman('arriba');
+            if (e.key === 'ArrowDown' || e.key === 's') moverPacman('abajo');
+            if (e.key === 'ArrowLeft' || e.key === 'a') moverPacman('izquierda');
+            if (e.key === 'ArrowRight' || e.key === 'd') moverPacman('derecha');
+        });
+
+        function loopPacman() {
+            if (!ctxPac) return;
+
+            if (pacmanIniciado && !pacmanPausado) {
+                pacman.x += pacman.vx;
+                pacman.y += pacman.vy;
+
+                if (pacman.x < 20) pacman.x = 20;
+                if (pacman.x > canvasPac.width - 20) pacman.x = canvasPac.width - 20;
+                if (pacman.y < 20) pacman.y = 20;
+                if (pacman.y > canvasPac.height - 20) pacman.y = canvasPac.height - 20;
+
+                pacman.boca += pacman.bocaDir;
+                if (pacman.boca > 0.35 || pacman.boca < 0.04) pacman.bocaDir *= -1;
+
+                bolitasPuntos.forEach(b => {
+                    if (!b.comida && Math.hypot(pacman.x - b.x, pacman.y - b.y) < 14) {
+                        b.comida = true;
+                        pacPuntos += 2;
+                        document.getElementById('hudPuntosPac').textContent = pacPuntos;
+                    }
+                });
+
+                animalesEnPacman.forEach(anim => {
+                    if (!anim.comido && Math.hypot(pacman.x - anim.x, pacman.y - anim.y) < 22) {
+                        anim.comido = true;
+                        pacmanPausado = true;
+                        const dataAnim = ANIMALES_PACMAN.find(a => a.tipo === anim.tipo);
+                        abrirModalIdentificaPac(dataAnim);
+                    }
+                });
+            }
+
+            // Dibujar fondo
+            ctxPac.fillStyle = '#0a0a16';
+            ctxPac.fillRect(0, 0, canvasPac.width, canvasPac.height);
+
+            // Muros decorativos
+            ctxPac.strokeStyle = '#1e88e5';
+            ctxPac.lineWidth = 4;
+            ctxPac.strokeRect(10, 10, canvasPac.width - 20, canvasPac.height - 20);
+            ctxPac.strokeRect(80, 110, 120, 30);
+            ctxPac.strokeRect(360, 110, 120, 30);
+            ctxPac.strokeRect(220, 170, 120, 30);
+
+            // Bolitas
+            ctxPac.fillStyle = '#ffb300';
+            bolitasPuntos.forEach(b => {
+                if (!b.comida) {
+                    ctxPac.beginPath();
+                    ctxPac.arc(b.x, b.y, 3, 0, Math.PI * 2);
+                    ctxPac.fill();
+                }
+            });
+
+            // Animales
+            ctxPac.font = '24px serif';
+            ctxPac.textAlign = 'center';
+            animalesEnPacman.forEach(anim => {
+                if (!anim.comido) {
+                    ctxPac.fillText(anim.emoji, anim.x, anim.y + 8);
+                }
+            });
+
+            // Pacman
+            ctxPac.fillStyle = '#ffd600';
+            let rot = 0;
+            if (pacman.dir === 'derecha') rot = 0;
+            if (pacman.dir === 'abajo') rot = Math.PI / 2;
+            if (pacman.dir === 'izquierda') rot = Math.PI;
+            if (pacman.dir === 'arriba') rot = -Math.PI / 2;
+
+            ctxPac.beginPath();
+            ctxPac.arc(pacman.x, pacman.y, 16, rot + pacman.boca * Math.PI, rot + (2 - pacman.boca) * Math.PI);
+            ctxPac.lineTo(pacman.x, pacman.y);
+            ctxPac.fill();
+
+            requestAnimationFrame(loopPacman);
+        }
+        requestAnimationFrame(loopPacman);
+
+        function abrirModalIdentificaPac(dataAnim) {
+            const modal = document.getElementById('modalIdentificaPac');
+            const emojiEl = document.getElementById('pacAnimalEmoji');
+            const titEl = document.getElementById('pacAnimalTitulo');
+            const pregEl = document.getElementById('pacPreguntaTexto');
+            const grid = document.getElementById('pacOpcionesGrid');
+            const feedback = document.getElementById('pacFeedback');
+            const btnCont = document.getElementById('btnContinuarPacman');
+
+            emojiEl.textContent = dataAnim.emoji;
+            titEl.textContent = `¡Pac-Man atrapó a ${dataAnim.nombre}!`;
+            pregEl.textContent = dataAnim.pregunta;
+            grid.innerHTML = '';
+            feedback.style.display = 'none';
+            btnCont.style.display = 'none';
+
+            dataAnim.opciones.forEach(op => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn-opcion-rima';
+                btn.textContent = op.texto;
+                btn.addEventListener('click', () => {
+                    grid.querySelectorAll('button').forEach(b => b.disabled = true);
+                    if (op.correcta) {
+                        btn.classList.add('correcta');
+                        pacPuntos += 25;
+                        animalesIdentificadosCount++;
+                        document.getElementById('hudPacAnimales').textContent = `${animalesIdentificadosCount} / 5`;
+                        document.getElementById('hudPuntosPac').textContent = pacPuntos;
+
+                        feedback.style.display = 'block';
+                        feedback.style.background = '#c8e6c9';
+                        feedback.style.color = '#1b5e20';
+                        feedback.innerHTML = `✅ ${dataAnim.feedback} (+25 pts)`;
+                        if (window.GameJuice) {
+                            window.GameJuice.playCorrect();
+                            window.GameJuice.floatingXP(25, btn);
+                        }
+                    } else {
+                        btn.classList.add('incorrecta');
+                        feedback.style.display = 'block';
+                        feedback.style.background = '#ffcdd2';
+                        feedback.style.color = '#b71c1c';
+                        feedback.innerHTML = `❌ ${dataAnim.feedback}`;
+                        if (window.GameJuice) window.GameJuice.playWrong();
+                    }
+                    btnCont.style.display = 'inline-block';
+                });
+                grid.appendChild(btn);
+            });
+
+            btnCont.onclick = () => {
+                modal.style.display = 'none';
+                pacmanPausado = false;
+
+                if (animalesIdentificadosCount >= 5) {
+                    pacmanIniciado = false;
+                    pacmanPausado = true;
+                    document.getElementById('avisoExitoPacman').style.display = 'block';
+
+                    if (window.ReinoDB) {
+                        window.ReinoDB.registrarPuntos('animales_froggy_jumps', 30, { identificados: 5 });
+                        const total = window.ReinoDB.obtenerPuntosTotales();
+                        const elTot = document.getElementById('finTotalPac');
+                        if (elTot) elTot.textContent = `${total} pts`;
+                    }
+
+                    const bComidas = bolitasPuntos.filter(b => b.comida).length;
+                    const elB = document.getElementById('finBolitasPac');
+                    if (elB) elB.textContent = bComidas;
+
+                    const elPts = document.getElementById('finPtsPac');
+                    if (elPts) elPts.textContent = `+${pacPuntos + 30} pts`;
+
+                    const finPac = document.getElementById('pantallaFinPacman');
+                    if (finPac) finPac.style.display = 'flex';
+
+                    if (window.GameJuice) {
+                        window.GameJuice.celebrate(80);
+                        window.GameJuice.playFanfare();
+                    }
+                }
+            };
+
+            modal.style.display = 'flex';
+        }
+
+        function reiniciarPacman() {
+            animalesIdentificadosCount = 0;
+            pacPuntos = 0;
+            document.getElementById('hudPacAnimales').textContent = '0 / 5';
+            document.getElementById('hudPuntosPac').textContent = '0';
+            const finPac = document.getElementById('pantallaFinPacman');
+            if (finPac) finPac.style.display = 'none';
+
+            pacman = { x: 40, y: 170, vx: 0, vy: 0, dir: 'derecha', boca: 0.2, bocaDir: 0.03 };
+            animalesEnPacman.forEach(a => a.comido = false);
+            bolitasPuntos.forEach(b => b.comida = false);
+
+            pacmanIniciado = true;
+            pacmanPausado = false;
+        }
+
+        /* =========================================================================
+           3. JUEGO DE BÉISBOL POÉTICO (CON PANTALLA DE INICIO) + COMPLETA FRASES
+           ========================================================================= */
+        const PREGUNTAS_BEISBOL = [
+            {
+                pregunta: '¿En qué lugar viven los miles de animalitos según la primera estrofa?',
+                opciones: [
+                    { texto: 'En el mundo del jardín', correcta: true },
+                    { texto: 'En el fondo del mar', correcta: false },
+                    { texto: 'En la granja lejana', correcta: false }
+                ],
+                feedback: '📜 “Hay miles de animalitos en el mundo del jardín.”'
+            },
+            {
+                pregunta: '¿Por qué el autor compara a las orugas con trencitos con patas?',
+                opciones: [
+                    { texto: 'Porque caminan en fila y son verdecitas con muchas patitas', correcta: true },
+                    { texto: 'Porque echan humo negro', correcta: false },
+                    { texto: 'Porque van sobre rieles de hierro', correcta: false }
+                ],
+                feedback: '📜 “Hay orugas que parecen trencitos verdes con patas.”'
+            },
+            {
+                pregunta: '¿Por qué el autor eligió al grillo como el que más le gusta?',
+                opciones: [
+                    { texto: 'Porque es pequeñito y toca el violín con su canto', correcta: true },
+                    { texto: 'Porque sabe nadar muy rápido', correcta: false },
+                    { texto: 'Porque tiene alas doradas', correcta: false }
+                ],
+                feedback: '📜 “es un grillo pequeñito que toca y toca el violín.”'
+            },
+            {
+                pregunta: '¿Quién es la reina del panal en el poema?',
+                opciones: [
+                    { texto: 'La abeja dorada', correcta: true },
+                    { texto: 'La mariposa blanca', correcta: false },
+                    { texto: 'La arañita de plata', correcta: false }
+                ],
+                feedback: '📜 “Hay una abeja dorada, es la reina del panal.”'
+            }
+        ];
+
+        let beisbolIniciado = false;
+        let preguntaBeisbolIdx = 0;
+        let homerunsConectados = 0;
+        let strikesFallas = 0;
+        let puntosBeisbol = 0;
+        let preguntasBeisbolSuperadas = 0;
+
+        const canvasB = document.getElementById('canvasBeisbol');
+        const ctxB = canvasB ? canvasB.getContext('2d') : null;
+        const btnBatear = document.getElementById('btnBatear');
+        const msgB = document.getElementById('msgBeisbol');
+        const overlayInicioBeisbol = document.getElementById('overlayInicioBeisbol');
+        const btnIniciarBeisbol = document.getElementById('btnIniciarBeisbol');
+        const hudHomeruns = document.getElementById('hudHomeruns');
+        const hudStrikes = document.getElementById('hudStrikes');
+        const hudPtsBeisbol = document.getElementById('hudPtsBeisbol');
+
+        let pelota = { x: 455, y: 145, vx: -4.6, vy: 1.35, radio: 9, activa: false, bateada: false };
+        let bateador = { batiendo: false };
+        let animHomerun = { activa: false, y: 160, timer: 0 };
+
+        // IMÁGENES Y SPRITES DEL ESTADIO Y BEISBOLISTAS
+        const imgEstadio = new Image();
+        imgEstadio.src = '/assets/img/poemas/beisbol/estadio.jpg';
+
+        let spritePitcher = null;
+        let spriteBateadorEspera = null;
+        let spriteBateadorSwing = null;
+
+        function procesarFondoTransparente(img) {
+            try {
+                const c = document.createElement('canvas');
+                const w = img.naturalWidth || img.width || 400;
+                const h = img.naturalHeight || img.height || 400;
+                c.width = w;
+                c.height = h;
+                const ctx = c.getContext('2d');
+                ctx.drawImage(img, 0, 0, w, h);
+                const imgData = ctx.getImageData(0, 0, w, h);
+                const d = imgData.data;
+
+                // BFS Flood-fill desde los bordes para eliminar únicamente el fondo blanco exterior
+                const visited = new Uint8Array(w * h);
+                const queue = [];
+
+                function esBlancoExterior(x, y) {
+                    const idx = (y * w + x) * 4;
+                    return d[idx] > 220 && d[idx + 1] > 220 && d[idx + 2] > 220;
+                }
+
+                for (let x = 0; x < w; x++) {
+                    if (esBlancoExterior(x, 0)) { queue.push(x, 0); visited[x] = 1; }
+                    if (esBlancoExterior(x, h - 1)) { queue.push(x, h - 1); visited[(h - 1) * w + x] = 1; }
+                }
+                for (let y = 0; y < h; y++) {
+                    if (esBlancoExterior(0, y)) { queue.push(0, y); visited[y * w] = 1; }
+                    if (esBlancoExterior(w - 1, y)) { queue.push(w - 1, y); visited[y * w + (w - 1)] = 1; }
+                }
+
+                let head = 0;
+                while (head < queue.length) {
+                    const cx = queue[head++];
+                    const cy = queue[head++];
+                    const idx = (cy * w + cx) * 4;
+                    d[idx + 3] = 0; // Transparencia completa
+
+                    const dirs = [[cx + 1, cy], [cx - 1, cy], [cx, cy + 1], [cx, cy - 1]];
+                    for (let i = 0; i < 4; i++) {
+                        const nx = dirs[i][0], ny = dirs[i][1];
+                        if (nx >= 0 && nx < w && ny >= 0 && ny < h) {
+                            const nIdx = ny * w + nx;
+                            if (!visited[nIdx] && esBlancoExterior(nx, ny)) {
+                                visited[nIdx] = 1;
+                                queue.push(nx, ny);
+                            }
+                        }
+                    }
+                }
+                ctx.putImageData(imgData, 0, 0);
+                return c;
+            } catch (e) {
+                console.warn('Fallback al sprite original:', e);
+                return img;
+            }
+        }
+
+        // Cargar sprites
+        const pRaw = new Image();
+        pRaw.src = '/assets/img/poemas/beisbol/pitcher.jpg';
+        pRaw.onload = () => { spritePitcher = procesarFondoTransparente(pRaw); };
+
+        const bEspRaw = new Image();
+        bEspRaw.src = '/assets/img/poemas/beisbol/bateador_espera.jpg';
+        bEspRaw.onload = () => { spriteBateadorEspera = procesarFondoTransparente(bEspRaw); };
+
+        const bSwRaw = new Image();
+        bSwRaw.src = '/assets/img/poemas/beisbol/bateador_swing.jpg';
+        bSwRaw.onload = () => { spriteBateadorSwing = procesarFondoTransparente(bSwRaw); };
+
+        if (btnIniciarBeisbol) {
+            btnIniciarBeisbol.addEventListener('click', () => {
+                beisbolIniciado = true;
+                overlayInicioBeisbol.style.display = 'none';
+                homerunsConectados = 0;
+                strikesFallas = 0;
+                puntosBeisbol = 0;
+                preguntasBeisbolSuperadas = 0;
+                if (hudHomeruns) hudHomeruns.textContent = '0 / 3';
+                if (hudStrikes) hudStrikes.textContent = '0';
+                if (hudPtsBeisbol) hudPtsBeisbol.textContent = '0';
+                lanzarPelota();
+                if (window.GameJuice) window.GameJuice.playPop();
+            });
+        }
+
+        function dibujarEstadioCompleto() {
+            if (!ctxB) return;
+            ctxB.clearRect(0, 0, canvasB.width, canvasB.height);
+
+            // 1. Fondo del estadio ilustrado
+            if (imgEstadio && imgEstadio.complete) {
+                ctxB.drawImage(imgEstadio, 0, 0, canvasB.width, canvasB.height);
+            } else {
+                ctxB.fillStyle = '#4caf50';
+                ctxB.fillRect(0, 0, canvasB.width, canvasB.height);
+            }
+
+            // 2. Pitcher en el montículo (derecha)
+            const pw = 115, ph = 115;
+            const px = 455, py = 115;
+            if (spritePitcher) {
+                ctxB.drawImage(spritePitcher, px, py, pw, ph);
+            } else if (pRaw.complete) {
+                ctxB.drawImage(pRaw, px, py, pw, ph);
+            }
+
+            // 3. Indicador sutil de plato de bateo (guía visual para el niño)
+            ctxB.fillStyle = 'rgba(255, 235, 59, 0.35)';
+            ctxB.beginPath();
+            ctxB.ellipse(170, 245, 28, 12, 0, 0, Math.PI * 2);
+            ctxB.fill();
+            ctxB.strokeStyle = 'rgba(255, 193, 7, 0.8)';
+            ctxB.lineWidth = 2;
+            ctxB.stroke();
+
+            // 4. Bateador en home plate (izquierda)
+            const bw = 135, bh = 135;
+            const bx = 70, by = 160;
+            if (bateador.batiendo && spriteBateadorSwing) {
+                ctxB.drawImage(spriteBateadorSwing, bx - 10, by - 10, bw + 20, bh + 20);
+            } else if (spriteBateadorEspera) {
+                ctxB.drawImage(spriteBateadorEspera, bx, by, bw, bh);
+            } else if (bEspRaw.complete) {
+                ctxB.drawImage(bEspRaw, bx, by, bw, bh);
+            }
+
+            // 5. Pelota de Béisbol
+            if (pelota.activa) {
+                // Estela de la pelota
+                ctxB.fillStyle = pelota.bateada ? 'rgba(255, 215, 0, 0.5)' : 'rgba(255, 255, 255, 0.45)';
+                ctxB.beginPath();
+                ctxB.arc(pelota.x - pelota.vx * 1.5, pelota.y - pelota.vy * 1.5, pelota.radio * 0.75, 0, Math.PI * 2);
+                ctxB.fill();
+
+                // Pelota blanca
+                ctxB.fillStyle = '#ffffff';
+                ctxB.beginPath();
+                ctxB.arc(pelota.x, pelota.y, pelota.radio, 0, Math.PI * 2);
+                ctxB.fill();
+                ctxB.strokeStyle = '#c62828';
+                ctxB.lineWidth = 1.5;
+                ctxB.stroke();
+
+                // Costuras rojas de béisbol
+                ctxB.beginPath();
+                ctxB.arc(pelota.x - 2, pelota.y, pelota.radio * 0.65, -Math.PI / 3, Math.PI / 3);
+                ctxB.stroke();
+                ctxB.beginPath();
+                ctxB.arc(pelota.x + 2, pelota.y, pelota.radio * 0.65, 2 * Math.PI / 3, 4 * Math.PI / 3);
+                ctxB.stroke();
+            }
+
+            // 6. Texto animado HOMERUN en pantalla
+            if (animHomerun.activa) {
+                ctxB.save();
+                ctxB.font = '900 32px "Poppins", sans-serif';
+                ctxB.fillStyle = '#ffeb3b';
+                ctxB.shadowColor = '#d50000';
+                ctxB.shadowBlur = 12;
+                ctxB.textAlign = 'center';
+                ctxB.fillText('💥 ¡HOMERUN POÉTICO!', canvasB.width / 2, animHomerun.y);
+                ctxB.restore();
+                animHomerun.y -= 1.2;
+                animHomerun.timer--;
+                if (animHomerun.timer <= 0) animHomerun.activa = false;
+            }
+        }
+
+        function lanzarPelota() {
+            if (!beisbolIniciado) return;
+            pelota.x = 455;
+            pelota.y = 145;
+            pelota.vx = -4.6;
+            pelota.vy = 1.35;
+            pelota.activa = true;
+            pelota.bateada = false;
+            bateador.batiendo = false;
+            if (msgB) msgB.textContent = '⚾ ¡Viene la pelota! ¡Batea cuando cruce el plato amarillo!';
+        }
+
+        function animarBeisbol() {
+            if (ctxB && beisbolIniciado) {
+                dibujarEstadioCompleto();
+
+                if (pelota.activa) {
+                    pelota.x += pelota.vx;
+                    pelota.y += pelota.vy;
+
+                    if (pelota.bateada) {
+                        pelota.vy += 0.16; // Gravedad parabólica
+                    }
+
+                    // Si pasa de largo sin batear (Strike)
+                    if (pelota.x < 55 && !pelota.bateada) {
+                        pelota.activa = false;
+                        strikesFallas++;
+                        if (hudStrikes) hudStrikes.textContent = strikesFallas;
+                        fallaTiroBeisbol();
+                    }
+
+                    // Si fue bateada y vuela fuera del estadio
+                    if (pelota.bateada && (pelota.x > canvasB.width + 30 || pelota.y < -30)) {
+                        pelota.activa = false;
+
+                        if (homerunsConectados >= 3) {
+                            // ¡CAMPEONATO DE BÉISBOL SUPERADO!
+                            beisbolIniciado = false;
+                            if (window.ReinoDB) {
+                                window.ReinoDB.registrarPuntos('animales_beisbol', 25, { homeruns: 3 });
+                                const tot = window.ReinoDB.obtenerPuntosTotales();
+                                const totEl = document.getElementById('finTotalBeisbol');
+                                if (totEl) totEl.textContent = `${tot} pts`;
+                            }
+                            const finHom = document.getElementById('finHomeruns');
+                            if (finHom) finHom.textContent = `${homerunsConectados} de 3`;
+                            const finPreg = document.getElementById('finPreguntasBeisbol');
+                            if (finPreg) finPreg.textContent = preguntasBeisbolSuperadas;
+                            const finPts = document.getElementById('finPtsBeisbol');
+                            if (finPts) finPts.textContent = `+${puntosBeisbol + 25} pts`;
+
+                            const finB = document.getElementById('pantallaFinBeisbol');
+                            if (finB) finB.style.display = 'flex';
+
+                            if (window.GameJuice) {
+                                window.GameJuice.celebrate(90);
+                                window.GameJuice.playFanfare();
+                            }
+                        } else {
+                            setTimeout(lanzarPelota, 1200);
+                        }
+                    }
+                }
+            }
+            requestAnimationFrame(animarBeisbol);
+        }
+        requestAnimationFrame(animarBeisbol);
+
+        if (btnBatear) {
+            btnBatear.addEventListener('click', () => {
+                if (!beisbolIniciado) return;
+                bateador.batiendo = true;
+                setTimeout(() => bateador.batiendo = false, 320);
+
+                // Zona ideal de contacto en el plato
+                if (pelota.activa && pelota.x >= 130 && pelota.x <= 200 && !pelota.bateada) {
+                    // ¡HOME RUN!
+                    pelota.bateada = true;
+                    pelota.vx = 8.5;
+                    pelota.vy = -7.5;
+                    homerunsConectados++;
+                    puntosBeisbol += 20;
+                    if (hudHomeruns) hudHomeruns.textContent = `${homerunsConectados} / 3`;
+                    if (hudPtsBeisbol) hudPtsBeisbol.textContent = puntosBeisbol;
+
+                    animHomerun.activa = true;
+                    animHomerun.y = 160;
+                    animHomerun.timer = 50;
+
+                    if (msgB) msgB.innerHTML = `💥 ¡HOMERUN POÉTICO (${homerunsConectados}/3)! ¡La sacaste del parque!`;
+                    if (window.GameJuice) {
+                        window.GameJuice.playCorrect();
+                        window.GameJuice.celebrate(80);
+                    }
+                } else if (pelota.activa && !pelota.bateada) {
+                    pelota.activa = false;
+                    strikesFallas++;
+                    if (hudStrikes) hudStrikes.textContent = strikesFallas;
+                    fallaTiroBeisbol();
+                }
+            });
+        }
+
+        function fallaTiroBeisbol() {
+            if (msgB) msgB.textContent = '❌ ¡Strike! Responde la pregunta de comprensión para recuperarte.';
+            if (window.GameJuice) window.GameJuice.playWrong();
+
+            const item = PREGUNTAS_BEISBOL[preguntaBeisbolIdx % PREGUNTAS_BEISBOL.length];
+            preguntaBeisbolIdx++;
+
+            setTimeout(() => {
+                abrirModalBeisbol(item);
+            }, 350);
+        }
+
+        function abrirModalBeisbol(item) {
+            const modal = document.getElementById('modalBeisbolPregunta');
+            const pregTexto = document.getElementById('beisbolPreguntaTexto');
+            const grid = document.getElementById('beisbolOpcionesGrid');
+            const feedback = document.getElementById('beisbolFeedback');
+            const btnCerrar = document.getElementById('btnCerrarModalBeisbol');
+
+            pregTexto.textContent = item.pregunta;
+            grid.innerHTML = '';
+            feedback.style.display = 'none';
+            btnCerrar.style.display = 'none';
+
+            item.opciones.forEach(op => {
+                const btn = document.createElement('button');
+                btn.type = 'button';
+                btn.className = 'btn-opcion-rima';
+                btn.textContent = op.texto;
+                btn.addEventListener('click', () => {
+                    grid.querySelectorAll('button').forEach(b => b.disabled = true);
+                    if (op.correcta) {
+                        btn.classList.add('correcta');
+                        preguntasBeisbolSuperadas++;
+                        puntosBeisbol += 10;
+                        if (hudPtsBeisbol) hudPtsBeisbol.textContent = puntosBeisbol;
+                        feedback.style.display = 'block';
+                        feedback.style.background = '#c8e6c9';
+                        feedback.style.color = '#1b5e20';
+                        feedback.innerHTML = `✅ ¡Gran batazo salvador! ${item.feedback} (+10 pts)`;
+                        if (window.GameJuice) {
+                            window.GameJuice.playCorrect();
+                            window.GameJuice.floatingXP(10, btn);
+                        }
+                    } else {
+                        btn.classList.add('incorrecta');
+                        feedback.style.display = 'block';
+                        feedback.style.background = '#ffcdd2';
+                        feedback.style.color = '#b71c1c';
+                        feedback.innerHTML = `❌ ${item.feedback}`;
+                        if (window.GameJuice) window.GameJuice.playWrong();
+                    }
+                    btnCerrar.style.display = 'inline-block';
+                });
+                grid.appendChild(btn);
+            });
+
+            btnCerrar.onclick = () => {
+                modal.style.display = 'none';
+                lanzarPelota();
+            };
+
+            modal.style.display = 'flex';
+        }
+
+        function irACompletaFrases() {
+            const bloque = document.querySelector('.bloque-completa-frases');
+            if (bloque) {
+                bloque.scrollIntoView({ behavior: 'smooth' });
+                const f1 = document.getElementById('frase1');
+                if (f1) f1.focus();
+            }
+        }
+
+        function reiniciarBeisbol() {
+            homerunsConectados = 0;
+            strikesFallas = 0;
+            puntosBeisbol = 0;
+            preguntasBeisbolSuperadas = 0;
+            if (hudHomeruns) hudHomeruns.textContent = '0 / 3';
+            if (hudStrikes) hudStrikes.textContent = '0';
+            if (hudPtsBeisbol) hudPtsBeisbol.textContent = '0';
+            const finB = document.getElementById('pantallaFinBeisbol');
+            if (finB) finB.style.display = 'none';
+            beisbolIniciado = true;
+            lanzarPelota();
+        }
+
+        // 3.B COMPLETA FRASES CORTAS DE ACUERDO AL POEMA
+        const btnComprobarFrases = document.getElementById('btnComprobarFrases');
+        const msgFrases = document.getElementById('msgFrasesFeedback');
+        const bannerSiguiente = document.getElementById('bannerSiguienteAnimales');
+
+        if (btnComprobarFrases) {
+            btnComprobarFrases.addEventListener('click', async () => {
+                const f1 = document.getElementById('frase1').value.trim().toLowerCase();
+                const f2 = document.getElementById('frase2').value.trim().toLowerCase();
+                const f3 = document.getElementById('frase3').value.trim().toLowerCase();
+                const f4 = document.getElementById('frase4').value.trim().toLowerCase();
+                const f5 = document.getElementById('frase5').value.trim().toLowerCase();
+
+                let aciertosFrases = 0;
+
+                // 1. Trencitos verdes con patas
+                if (f1.includes('trencito') || f1.includes('patas') || f1.includes('tren')) {
+                    document.getElementById('checkFrase1').innerHTML = ' ✅';
+                    aciertosFrases++;
+                } else {
+                    document.getElementById('checkFrase1').innerHTML = ' ❌ (trencitos verdes con patas)';
+                }
+
+                // 2. Estrellas de seda y plata
+                if (f2.includes('estrella') || f2.includes('seda') || f2.includes('plata')) {
+                    document.getElementById('checkFrase2').innerHTML = ' ✅';
+                    aciertosFrases++;
+                } else {
+                    document.getElementById('checkFrase2').innerHTML = ' ❌ (estrellas de seda y plata)';
+                }
+
+                // 3. Panal
+                if (f3.includes('panal')) {
+                    document.getElementById('checkFrase3').innerHTML = ' ✅';
+                    aciertosFrases++;
+                } else {
+                    document.getElementById('checkFrase3').innerHTML = ' ❌ (panal)';
+                }
+
+                // 4. Rosal
+                if (f4.includes('rosal')) {
+                    document.getElementById('checkFrase4').innerHTML = ' ✅';
+                    aciertosFrases++;
+                } else {
+                    document.getElementById('checkFrase4').innerHTML = ' ❌ (rosal)';
+                }
+
+                // 5. Violín
+                if (f5.includes('violin') || f5.includes('violín')) {
+                    document.getElementById('checkFrase5').innerHTML = ' ✅';
+                    aciertosFrases++;
+                } else {
+                    document.getElementById('checkFrase5').innerHTML = ' ❌ (violín)';
+                }
+
+                if (aciertosFrases >= 3) {
+                    msgFrases.innerHTML = `🌟 ¡Fabuloso! Completaste ${aciertosFrases} de 5 frases correctamente. ¡Has ganado +35 puntos!`;
+                    msgFrases.style.color = '#2e7d32';
+                    btnComprobarFrases.disabled = true;
+
+                    if (window.ReinoDB) {
+                        await window.ReinoDB.registrarPuntos('animales_escape_room', 35, {
+                            aciertos: aciertosFrases,
+                            completado: true
+                        });
+                    }
+
+                    if (window.GameJuice) {
+                        window.GameJuice.celebrate(100);
+                        window.GameJuice.playFanfare();
+                    }
+
+                    bannerSiguiente.style.display = 'block';
+
+                    // Mostrar Gran Modal de Fin Total del Poema con desglose
+                    const modalTotal = document.getElementById('modalFinTotalPoema');
+                    if (modalTotal) {
+                        if (window.ReinoDB) {
+                            const tot = window.ReinoDB.obtenerPuntosTotales();
+                            const totEl = document.getElementById('finTotalPoemaAcumulado');
+                            if (totEl) totEl.textContent = `${tot} pts`;
+                        }
+                        setTimeout(() => {
+                            modalTotal.style.display = 'flex';
+                        }, 700);
+                    }
+                } else {
+                    msgFrases.innerHTML = `⚠️ Tienes ${aciertosFrases} aciertos. Revisa las pistas entre paréntesis y vuelve a intentar.`;
+                    msgFrases.style.color = '#c62828';
+                    if (window.GameJuice) window.GameJuice.shakeElement(document.querySelector('.bloque-completa-frases'));
+                }
+            });
+        }
+
+        // Si ya estaba completado
+        if (window.ReinoDB && window.ReinoDB.estaActividadCompletada('animales_escape_room')) {
+            if (bannerSiguiente) bannerSiguiente.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

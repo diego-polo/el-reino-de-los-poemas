@@ -1,0 +1,898 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transferencia - Colorea y Crea tu Rima | La Mona Jacinta</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/actividades/mona-jacinta/despues.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <style>
+        /* Ajuste responsivo del contenedor principal */
+        .tarjeta-transferencia {
+            max-width: 880px !important;
+            padding: 30px 24px !important;
+        }
+
+        /* --- SECCIÓN 1: TALLER DE COLOREAR --- */
+        .seccion-colorear {
+            background: #ffffff;
+            border: 3px solid #ba68c8;
+            border-radius: 22px;
+            padding: 22px 18px;
+            margin: 25px 0;
+            box-shadow: 0 10px 30px rgba(186, 104, 200, 0.2);
+            text-align: center;
+        }
+
+        .seccion-colorear h2 {
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            color: #7b1fa2;
+            font-size: 1.6rem;
+            margin-bottom: 6px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .seccion-colorear .sub-instruccion {
+            color: #555;
+            font-size: 0.95rem;
+            margin-bottom: 16px;
+        }
+
+        /* Barra de Herramientas y Paleta */
+        .paleta-herramientas {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #fdf4ff;
+            border: 2px dashed #ce93d8;
+            border-radius: 18px;
+            padding: 14px;
+            margin-bottom: 16px;
+        }
+
+        .paleta-colores {
+            display: flex;
+            flex-wrap: wrap;
+            justify-content: center;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .swatch-color {
+            width: 38px;
+            height: 38px;
+            border-radius: 50%;
+            border: 3px solid #ffffff;
+            box-shadow: 0 3px 6px rgba(0,0,0,0.2);
+            cursor: pointer;
+            transition: transform 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            outline: none;
+            position: relative;
+        }
+
+        .swatch-color:hover {
+            transform: scale(1.22);
+            z-index: 2;
+        }
+
+        .swatch-color.activo {
+            transform: scale(1.28);
+            border-color: #212121;
+            box-shadow: 0 0 12px rgba(0,0,0,0.35);
+        }
+
+        .swatch-color.activo::after {
+            content: "✓";
+            position: absolute;
+            inset: 0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 16px;
+            color: #ffffff;
+            text-shadow: 0 0 3px #000;
+        }
+
+        /* Selector personalizado y botones de acción */
+        .barra-botones-dibujo {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-dibujo {
+            background: white;
+            border: 2px solid #ba68c8;
+            color: #4a148c;
+            font-family: var(--font-body, 'Lexend', sans-serif);
+            font-weight: 700;
+            font-size: 0.9rem;
+            padding: 8px 16px;
+            border-radius: 12px;
+            cursor: pointer;
+            transition: all 0.2s ease;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-dibujo:hover {
+            background: #f3e5f5;
+            transform: translateY(-2px);
+        }
+
+        .picker-custom-label {
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #4a148c;
+            background: white;
+            border: 2px solid #ba68c8;
+            padding: 6px 12px;
+            border-radius: 12px;
+            cursor: pointer;
+        }
+
+        .picker-custom-label input {
+            cursor: pointer;
+            width: 26px;
+            height: 26px;
+            border: none;
+            border-radius: 6px;
+            padding: 0;
+            background: none;
+        }
+
+        /* Contenedor del Lienzo SVG */
+        .lienzo-svg-contenedor {
+            width: 100%;
+            background: #ffffff;
+            border: 3px solid #ab47bc;
+            border-radius: 18px;
+            overflow: hidden;
+            box-shadow: inset 0 0 15px rgba(0,0,0,0.06);
+            position: relative;
+        }
+
+        #lienzoColorear {
+            width: 100%;
+            height: auto;
+            max-height: 520px;
+            display: block;
+            background: #ffffff;
+        }
+
+        /* Regiones para pintar */
+        .zona-pintar {
+            cursor: pointer;
+            stroke: #2a2a2a;
+            stroke-width: 3px;
+            stroke-linecap: round;
+            stroke-linejoin: round;
+            transition: fill 0.15s ease-out;
+        }
+
+        .zona-pintar:hover {
+            opacity: 0.85;
+            filter: drop-shadow(0 0 4px #e040fb);
+        }
+
+        /* Medidor de zonas coloreadas */
+        .indicador-coloreado {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-top: 12px;
+            font-size: 0.95rem;
+            font-weight: 700;
+            color: #6a1b9a;
+            background: #ede7f6;
+            padding: 8px 16px;
+            border-radius: 12px;
+        }
+
+        /* Banner de siguiente poema */
+        .banner-siguiente {
+            background: linear-gradient(135deg, #2e7d32, #66bb6a);
+            color: white;
+            padding: 24px;
+            border-radius: 20px;
+            margin-top: 25px;
+            display: none;
+            box-shadow: 0 12px 30px rgba(46, 125, 50, 0.35);
+            text-align: center;
+            border: 3px solid #a5d6a7;
+            animation: fadeIn 0.5s ease;
+        }
+
+        .btn-proximo-poema {
+            display: inline-block;
+            background: #ffd700;
+            color: #1b5e20;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 1.15rem;
+            padding: 14px 28px;
+            border-radius: 16px;
+            margin-top: 14px;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.25);
+            transition: transform 0.2s ease, background 0.2s;
+        }
+
+        .btn-proximo-poema:hover {
+            transform: scale(1.05);
+            background: #ffea00;
+        }
+
+        /* Ajustes zona creativa */
+        .zona-creativa {
+            background: #fff8e1;
+            border: 2px dashed #ffb300;
+            border-radius: 20px;
+            padding: 22px;
+            margin-bottom: 25px;
+            text-align: left;
+            box-shadow: 0 8px 20px rgba(255, 179, 0, 0.15);
+        }
+
+        .zona-creativa h3 {
+            color: #e65100;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            font-size: 1.25rem;
+            margin-bottom: 6px;
+        }
+
+        .input-rima {
+            width: 100%;
+            padding: 14px;
+            border: 2px solid #ffcc80;
+            border-radius: 14px;
+            font-size: 1.05rem;
+            font-family: inherit;
+            resize: vertical;
+            min-height: 90px;
+            margin-top: 10px;
+            outline: none;
+            transition: 0.2s ease;
+            box-sizing: border-box;
+        }
+
+        .input-rima:focus {
+            border-color: #ff9800;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.25);
+        }
+
+        .btn-crear {
+            background: linear-gradient(135deg, #ffd700, #ff9800);
+            color: #3e2723;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 14px;
+            font-weight: 900;
+            cursor: pointer;
+            font-size: 1.05rem;
+            box-shadow: 0 5px 0 #e65100, 0 8px 15px rgba(255, 152, 0, 0.3);
+            transition: all 0.15s ease;
+        }
+
+        .btn-crear:hover {
+            transform: translateY(-2px);
+            background: linear-gradient(135deg, #ffe082, #ffa726);
+        }
+
+        .btn-crear:active {
+            transform: translateY(3px);
+            box-shadow: 0 2px 0 #e65100;
+        }
+
+        /* TABS ETAPAS – DISEÑO PILL BOTONES MONA JACINTA */
+        .tabs-etapas {
+            display: flex;
+            gap: 12px;
+            margin: 15px auto 25px auto;
+            flex-wrap: wrap;
+            justify-content: center;
+            max-width: 880px;
+            width: 92%;
+        }
+        .tab-btn {
+            background: #ffffff;
+            border: 2.5px solid #ab47bc;
+            color: #4a148c;
+            padding: 12px 28px;
+            border-radius: 50px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            cursor: pointer;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            box-shadow: 0 4px 12px rgba(106, 27, 154, 0.08);
+            transition: all 0.25s ease;
+        }
+        .tab-btn:hover {
+            background: #f3e5f5;
+            border-color: #7b1fa2;
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(106, 27, 154, 0.18);
+            color: #311b92;
+        }
+        .tab-btn.activo {
+            background: #4a148c;
+            border-color: #311b92;
+            color: #ffffff;
+            box-shadow: 0 6px 18px rgba(74, 20, 140, 0.4);
+            transform: translateY(-2px);
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
+</head>
+<body>
+    <!-- NAVEGACIÓN ENTRE LAS 3 ETAPAS CURRICULARES (DISEÑO PILL BOTONES MONA JACINTA) -->
+    <nav class="tabs-etapas" style="margin-top: 20px;">
+        <a href="/template/planeaciones/planeacion-la-mona/antes.html" class="tab-btn">1. Exploración (Alcanza una Estrella y Rimas)</a>
+        <a href="/template/planeaciones/planeacion-la-mona/durante.html" class="tab-btn">2. Estructuración (Descubre Rimas y Aplasta Monas)</a>
+        <a href="/template/planeaciones/planeacion-la-mona/despues.html" class="tab-btn activo">3. Transferencia (Colorea y Crea tu Rima)</a>
+    </nav>
+
+    <main class="tarjeta-transferencia">
+        <span class="icono-trofeo">🏆</span>
+        <h1>¡Momento de Crear y Pintar!</h1>
+        <p class="descripcion">
+            ¡Felicitaciones por llegar a la <strong>Fase de Transferencia</strong>! Ahora pon a volar tu creatividad: 
+            <strong>colorea a La Mona Jacinta en su bosque mágico</strong> y <strong>escribe tu propio verso rimado</strong> 
+            para ganar puntos escolares y desbloquear el siguiente poema: <em>De todos los animales</em>.
+        </p>
+
+        <!-- ============================================================== -->
+        <!-- SECCIÓN 1: DIBUJO PARA COLOREAR (LA MONA JACINTA EN EL BOSQUE)  -->
+        <!-- ============================================================== -->
+        <section class="seccion-colorear">
+            <h2>🎨 ¡Taller de Arte: Colorea a Jacinta en el Bosque! 🌳🐵</h2>
+            <p class="sub-instruccion">
+                Elige un color de la paleta y <strong>toca cualquier parte del dibujo</strong> (el cielo, los árboles, las flores, el sol o a la mona) para pintarla.
+            </p>
+
+            <!-- PALETA DE COLORES Y HERRAMIENTAS -->
+            <div class="paleta-herramientas">
+                <div class="paleta-colores" id="paletaColores">
+                    <!-- 14 colores vibrantes para primaria -->
+                    <button type="button" class="swatch-color activo" data-color="#8d5613" title="Café Pelaje" style="background: #8d5613;"></button>
+                    <button type="button" class="swatch-color" data-color="#b87333" title="Canela Dorado" style="background: #b87333;"></button>
+                    <button type="button" class="swatch-color" data-color="#ffd1a4" title="Piel / Hocico" style="background: #ffd1a4;"></button>
+                    <button type="button" class="swatch-color" data-color="#e91e63" title="Rosa Cinta de Jacinta" style="background: #e91e63;"></button>
+                    <button type="button" class="swatch-color" data-color="#ff4081" title="Fucsia Brillante" style="background: #ff4081;"></button>
+                    <button type="button" class="swatch-color" data-color="#4caf50" title="Verde Hoja" style="background: #4caf50;"></button>
+                    <button type="button" class="swatch-color" data-color="#2e7d32" title="Verde Bosque" style="background: #2e7d32;"></button>
+                    <button type="button" class="swatch-color" data-color="#aed581" title="Verde Menta Pastel" style="background: #aed581;"></button>
+                    <button type="button" class="swatch-color" data-color="#ffd600" title="Amarillo Sol y Oro" style="background: #ffd600;"></button>
+                    <button type="button" class="swatch-color" data-color="#ff9800" title="Naranja Flor" style="background: #ff9800;"></button>
+                    <button type="button" class="swatch-color" data-color="#81d4fa" title="Celeste Cielo" style="background: #81d4fa;"></button>
+                    <button type="button" class="swatch-color" data-color="#2196f3" title="Azul Fuente de Agua" style="background: #2196f3;"></button>
+                    <button type="button" class="swatch-color" data-color="#9c27b0" title="Púrpura Reina" style="background: #9c27b0;"></button>
+                    <button type="button" class="swatch-color" data-color="#ffffff" title="Blanco / Borrador" style="background: #ffffff; border-color: #ccc;"></button>
+                </div>
+
+                <div class="barra-botones-dibujo">
+                    <label class="picker-custom-label" title="Elegir otro color">
+                        <span>🎨 Más colores:</span>
+                        <input type="color" id="colorPickerPersonalizado" value="#e91e63">
+                    </label>
+
+                    <button type="button" class="btn-dibujo" id="btnRellenoMagico" title="Pintar automáticamente con colores hermosos">
+                        🪄 Relleno Mágico
+                    </button>
+
+                    <button type="button" class="btn-dibujo" id="btnLimpiarDibujo" title="Borrar y empezar de nuevo">
+                        🧹 Reiniciar Dibujo
+                    </button>
+
+                    <button type="button" class="btn-dibujo" id="btnDescargarDibujo" title="Guardar imagen para imprimir o llevar">
+                        📸 Guardar Dibujo
+                    </button>
+                </div>
+            </div>
+
+            <!-- LIENZO SVG ILUSTRADO: LA MONA JACINTA EN EL BOSQUE -->
+            <div class="lienzo-svg-contenedor">
+                <svg id="lienzoColorear" viewBox="0 0 800 530" xmlns="http://www.w3.org/2000/svg">
+                    <!-- 1. FONDO: CIELO -->
+                    <rect x="0" y="0" width="800" height="530" class="zona-pintar" id="zona_cielo" fill="#ffffff" title="Cielo"/>
+
+                    <!-- 2. SOL BRILLANTE CON RAYOS -->
+                    <g id="grupo_sol">
+                        <polygon points="720,20 726,45 745,30 736,52 760,50 742,66 765,80 740,86 755,108 732,100 735,125 718,108 710,130 700,108 685,125 688,100 665,108 680,86 655,80 678,66 660,50 684,52 675,30 694,45" class="zona-pintar" id="zona_rayos_sol" fill="#ffffff" title="Rayos del Sol"/>
+                        <circle cx="710" cy="75" r="38" class="zona-pintar" id="zona_sol_centro" fill="#ffffff" title="Sol"/>
+                        <!-- Carita del sol -->
+                        <circle cx="698" cy="70" r="3.5" fill="#333"/>
+                        <circle cx="722" cy="70" r="3.5" fill="#333"/>
+                        <path d="M 700 84 Q 710 94 720 84" stroke="#333" stroke-width="2.5" fill="none" stroke-linecap="round"/>
+                    </g>
+
+                    <!-- 3. NUBES ALGONODOSAS -->
+                    <path d="M 80 80 C 80 55, 115 50, 135 65 C 150 45, 195 50, 205 75 C 225 75, 235 100, 215 115 C 205 125, 95 125, 80 110 C 65 100, 65 85, 80 80 Z" class="zona-pintar" id="zona_nube1" fill="#ffffff" title="Nube esponjosa"/>
+                    <path d="M 480 65 C 480 45, 505 40, 520 52 C 535 35, 570 40, 580 60 C 595 60, 605 80, 590 92 L 485 92 C 470 82, 470 70, 480 65 Z" class="zona-pintar" id="zona_nube2" fill="#ffffff" title="Nube"/>
+
+                    <!-- 4. COLINAS LEJANAS Y CASTILLO -->
+                    <path d="M 0 320 Q 220 240 450 300 T 800 270 L 800 530 L 0 530 Z" class="zona-pintar" id="zona_colinas" fill="#ffffff" title="Montañas y Colinas"/>
+                    
+                    <!-- Castillo de un solo ladrillo en la colina -->
+                    <g id="grupo_castillo">
+                        <rect x="640" y="210" width="55" height="65" class="zona-pintar" id="zona_castillo_torre" fill="#ffffff" title="Torre del Castillo"/>
+                        <polygon points="635,210 667,165 700,210" class="zona-pintar" id="zona_castillo_techo" fill="#ffffff" title="Techo del Castillo"/>
+                        <polygon points="667,165 667,142 690,152 667,160" class="zona-pintar" id="zona_castillo_bandera" fill="#ffffff" title="Bandera Real"/>
+                        <!-- El famoso único ladrillo -->
+                        <rect x="652" y="235" width="30" height="15" rx="3" class="zona-pintar" id="zona_castillo_ladrillo" fill="#ffffff" title="Un solo Ladrillo"/>
+                    </g>
+
+                    <!-- 5. ÁRBOLES DEL BOSQUE (IZQUIERDA) -->
+                    <g id="grupo_arbol_izq">
+                        <path d="M 30 530 C 55 420, 45 280, 80 200 C 95 280, 85 420, 115 530 Z" class="zona-pintar" id="zona_arbol_izq_tronco" fill="#ffffff" title="Tronco del Árbol"/>
+                        <path d="M 10 230 C -20 160, 20 90, 85 90 C 145 50, 215 80, 225 150 C 245 200, 220 260, 160 270 C 110 280, 45 280, 10 230 Z" class="zona-pintar" id="zona_arbol_izq_copa1" fill="#ffffff" title="Copa del Árbol"/>
+                        <path d="M 50 150 C 80 110, 150 110, 180 160 C 160 190, 110 200, 70 180 Z" class="zona-pintar" id="zona_arbol_izq_copa2" fill="#ffffff" title="Hojas del Árbol"/>
+                        <!-- Liana colgante -->
+                        <path d="M 180 210 Q 230 300 200 380 Q 170 430 205 470" stroke="#2a2a2a" stroke-width="4.5" fill="none" stroke-linecap="round"/>
+                        <path d="M 195 280 C 180 270, 180 290, 195 285 Z" class="zona-pintar" id="zona_liana_hoja1" fill="#ffffff" title="Hoja de la Liana"/>
+                        <path d="M 215 350 C 230 340, 230 360, 215 355 Z" class="zona-pintar" id="zona_liana_hoja2" fill="#ffffff" title="Hoja de la Liana"/>
+                    </g>
+
+                    <!-- 6. ÁRBOL DEL BOSQUE (DERECHA) -->
+                    <g id="grupo_arbol_der">
+                        <path d="M 725 530 C 705 440, 720 340, 695 260 C 735 310, 745 420, 765 530 Z" class="zona-pintar" id="zona_arbol_der_tronco" fill="#ffffff" title="Tronco Derecho"/>
+                        <path d="M 640 260 C 620 190, 660 120, 735 120 C 790 110, 830 160, 825 230 C 825 280, 785 310, 725 310 C 675 310, 640 290, 640 260 Z" class="zona-pintar" id="zona_arbol_der_copa" fill="#ffffff" title="Copa del Árbol Derecho"/>
+                    </g>
+
+                    <!-- 7. SUELO DE PASTO Y ESTANQUE -->
+                    <path d="M 0 385 Q 260 345 520 385 T 800 370 L 800 530 L 0 530 Z" class="zona-pintar" id="zona_pasto_delantero" fill="#ffffff" title="Prado y Césped"/>
+                    
+                    <!-- Estanque de agua donde se mira la mona -->
+                    <ellipse cx="645" cy="455" rx="85" ry="32" class="zona-pintar" id="zona_fuente_agua" fill="#ffffff" title="Fuente de Agua"/>
+                    <path d="M 560 455 C 560 480, 730 480, 730 455 C 730 472, 560 472, 560 455 Z" class="zona-pintar" id="zona_fuente_borde" fill="#ffffff" title="Borde de la Fuente"/>
+
+                    <!-- Sapo cantor sentado en la piedra -->
+                    <g id="grupo_sapo">
+                        <ellipse cx="560" cy="460" rx="34" ry="16" class="zona-pintar" id="zona_sapo_piedra" fill="#ffffff" title="Piedra del Sapo"/>
+                        <ellipse cx="560" cy="436" rx="18" ry="14" class="zona-pintar" id="zona_sapo_cuerpo" fill="#ffffff" title="Sapo Cantor"/>
+                        <circle cx="552" cy="425" r="5" class="zona-pintar" id="zona_sapo_ojo1" fill="#ffffff" title="Ojo del Sapo"/>
+                        <circle cx="568" cy="425" r="5" class="zona-pintar" id="zona_sapo_ojo2" fill="#ffffff" title="Ojo del Sapo"/>
+                        <circle cx="552" cy="425" r="2" fill="#222"/>
+                        <circle cx="568" cy="425" r="2" fill="#222"/>
+                        <path d="M 555 440 Q 560 445 565 440" stroke="#222" stroke-width="1.8" fill="none"/>
+                        <text x="578" y="420" font-size="16" fill="#4a148c" font-weight="bold">🎵</text>
+                    </g>
+
+                    <!-- Flores y Hongos en el pasto -->
+                    <g id="grupo_flores">
+                        <!-- Flor 1 -->
+                        <path d="M 125 480 Q 130 445 135 425" stroke="#2a2a2a" stroke-width="3" fill="none"/>
+                        <circle cx="135" cy="420" r="14" class="zona-pintar" id="zona_flor1_petalos" fill="#ffffff" title="Pétalos de Flor"/>
+                        <circle cx="135" cy="420" r="6" class="zona-pintar" id="zona_flor1_centro" fill="#ffffff" title="Centro de Flor"/>
+                        <!-- Flor 2 -->
+                        <path d="M 235 490 Q 240 455 245 440" stroke="#2a2a2a" stroke-width="3" fill="none"/>
+                        <circle cx="245" cy="435" r="15" class="zona-pintar" id="zona_flor2_petalos" fill="#ffffff" title="Pétalos de Flor"/>
+                        <circle cx="245" cy="435" r="6.5" class="zona-pintar" id="zona_flor2_centro" fill="#ffffff" title="Centro de Flor"/>
+                        <!-- Hongo del bosque -->
+                        <path d="M 166 490 L 176 490 L 174 466 L 168 466 Z" class="zona-pintar" id="zona_hongo_tallo" fill="#ffffff" title="Tallo de Hongo"/>
+                        <path d="M 156 466 C 156 442, 186 442, 186 466 Z" class="zona-pintar" id="zona_hongo_sombrero" fill="#ffffff" title="Sombrero de Hongo"/>
+                        <circle cx="166" cy="454" r="2.8" class="zona-pintar" id="zona_hongo_punto1" fill="#ffffff" title="Punto de Hongo"/>
+                        <circle cx="176" cy="457" r="2.4" class="zona-pintar" id="zona_hongo_punto2" fill="#ffffff" title="Punto de Hongo"/>
+                    </g>
+
+                    <!-- ============================================================== -->
+                    <!-- 8. PERSONAJE PRINCIPAL: LA MONA JACINTA                        -->
+                    <!-- ============================================================== -->
+                    <g id="grupo_mona_jacinta">
+                        <!-- Cola enroscada -->
+                        <path d="M 320 435 C 275 465, 245 395, 265 355 C 280 325, 315 335, 305 360 C 295 375, 285 370, 290 360" stroke="#2a2a2a" stroke-width="8" stroke-linecap="round" fill="none" class="zona-pintar" id="zona_mona_cola" title="Cola de Jacinta"/>
+
+                        <!-- Patas sentadas -->
+                        <ellipse cx="320" cy="460" rx="30" ry="18" transform="rotate(-15 320 460)" class="zona-pintar" id="zona_mona_pata_izq" fill="#ffffff" title="Pata Izquierda"/>
+                        <ellipse cx="420" cy="460" rx="30" ry="18" transform="rotate(15 420 460)" class="zona-pintar" id="zona_mona_pata_der" fill="#ffffff" title="Pata Derecha"/>
+
+                        <!-- Cuerpo de la mona -->
+                        <ellipse cx="370" cy="405" rx="58" ry="64" class="zona-pintar" id="zona_mona_cuerpo" fill="#ffffff" title="Cuerpo de la Mona"/>
+                        <ellipse cx="370" cy="415" rx="36" ry="44" class="zona-pintar" id="zona_mona_barriga" fill="#ffffff" title="Barriguita de la Mona"/>
+
+                        <!-- Brazos -->
+                        <path d="M 315 375 Q 285 410 315 435" stroke="#2a2a2a" stroke-width="14" stroke-linecap="round" fill="none" class="zona-pintar" id="zona_mona_brazo_izq" title="Brazo Izquierdo"/>
+                        <path d="M 425 375 Q 465 390 450 355" stroke="#2a2a2a" stroke-width="14" stroke-linecap="round" fill="none" class="zona-pintar" id="zona_mona_brazo_der" title="Brazo Derecho"/>
+
+                        <!-- Espejo de mano en el que se mira alegremente -->
+                        <ellipse cx="452" cy="340" rx="15" ry="18" class="zona-pintar" id="zona_mona_espejo_marco" fill="#ffffff" title="Marco del Espejo"/>
+                        <ellipse cx="452" cy="340" rx="9" ry="12" class="zona-pintar" id="zona_mona_espejo_cristal" fill="#ffffff" title="Cristal del Espejo"/>
+
+                        <!-- Collar de espuma (perlas) -->
+                        <circle cx="344" cy="354" r="5" class="zona-pintar" id="zona_mona_perla1" fill="#ffffff" title="Collar de Espuma"/>
+                        <circle cx="357" cy="358" r="5.5" class="zona-pintar" id="zona_mona_perla2" fill="#ffffff" title="Collar de Espuma"/>
+                        <circle cx="370" cy="360" r="6" class="zona-pintar" id="zona_mona_perla3" fill="#ffffff" title="Collar de Espuma"/>
+                        <circle cx="383" cy="358" r="5.5" class="zona-pintar" id="zona_mona_perla4" fill="#ffffff" title="Collar de Espuma"/>
+                        <circle cx="396" cy="354" r="5" class="zona-pintar" id="zona_mona_perla5" fill="#ffffff" title="Collar de Espuma"/>
+
+                        <!-- Orejas -->
+                        <circle cx="305" cy="265" r="26" class="zona-pintar" id="zona_mona_oreja_izq" fill="#ffffff" title="Oreja Izquierda"/>
+                        <circle cx="305" cy="265" r="15" class="zona-pintar" id="zona_mona_oreja_in_izq" fill="#ffffff" title="Interior Oreja Izquierda"/>
+                        <circle cx="435" cy="265" r="26" class="zona-pintar" id="zona_mona_oreja_der" fill="#ffffff" title="Oreja Derecha"/>
+                        <circle cx="435" cy="265" r="15" class="zona-pintar" id="zona_mona_oreja_in_der" fill="#ffffff" title="Interior Oreja Derecha"/>
+
+                        <!-- Cabeza -->
+                        <ellipse cx="370" cy="275" rx="56" ry="50" class="zona-pintar" id="zona_mona_cabeza" fill="#ffffff" title="Cabeza de la Mona"/>
+                        <path d="M 335 260 C 335 235, 360 240, 370 255 C 380 240, 405 235, 405 260 C 405 285, 395 310, 370 310 C 345 310, 335 285, 335 260 Z" class="zona-pintar" id="zona_mona_frente" fill="#ffffff" title="Frente de la Mona"/>
+                        <ellipse cx="370" cy="295" rx="35" ry="24" class="zona-pintar" id="zona_mona_hocico" fill="#ffffff" title="Hocico de la Mona"/>
+
+                        <!-- Ojos pícaros y sonrientes -->
+                        <ellipse cx="355" cy="262" rx="7.5" ry="9" fill="#212121"/>
+                        <circle cx="357" cy="259" r="3" fill="#ffffff"/>
+                        <ellipse cx="385" cy="262" rx="7.5" ry="9" fill="#212121"/>
+                        <circle cx="387" cy="259" r="3" fill="#ffffff"/>
+
+                        <!-- Nariz y Sonrisa -->
+                        <circle cx="366" cy="288" r="2.2" fill="#222"/>
+                        <circle cx="374" cy="288" r="2.2" fill="#222"/>
+                        <path d="M 352 298 Q 370 315 388 298" stroke="#222" stroke-width="3" fill="none" stroke-linecap="round"/>
+                        <!-- Mejillas sonrosadas -->
+                        <circle cx="342" cy="294" r="6" class="zona-pintar" id="zona_mona_mejilla1" fill="#ffffff" title="Mejilla"/>
+                        <circle cx="398" cy="294" r="6" class="zona-pintar" id="zona_mona_mejilla2" fill="#ffffff" title="Mejilla"/>
+
+                        <!-- LA CINTA DE LA MONA JACINTA (Rosa / Fucsia) -->
+                        <path d="M 324 240 Q 370 226 416 240 Q 370 234 324 240 Z" class="zona-pintar" id="zona_mona_cinta_banda" fill="#ffffff" title="Banda de la Cinta"/>
+                        <path d="M 370 232 C 338 205, 328 235, 355 238 Z" class="zona-pintar" id="zona_mona_cinta_lazo_izq" fill="#ffffff" title="Lazo de la Cinta"/>
+                        <path d="M 370 232 C 402 205, 412 235, 385 238 Z" class="zona-pintar" id="zona_mona_cinta_lazo_der" fill="#ffffff" title="Lazo de la Cinta"/>
+                        <circle cx="370" cy="234" r="7.5" class="zona-pintar" id="zona_mona_cinta_nudo" fill="#ffffff" title="Nudo de la Cinta"/>
+                        <!-- Colitas de la cinta -->
+                        <path d="M 366 238 Q 350 258 340 260 Q 355 254 367 241 Z" class="zona-pintar" id="zona_mona_cinta_cola1" fill="#ffffff" title="Cinta Colgante"/>
+                        <path d="M 374 238 Q 390 258 400 260 Q 385 254 373 241 Z" class="zona-pintar" id="zona_mona_cinta_cola2" fill="#ffffff" title="Cinta Colgante"/>
+
+                        <!-- Galera de hoja de higuera ("Tiene una galera de hoja de higuera") -->
+                        <path d="M 388 225 C 412 185, 438 200, 422 235 Z" class="zona-pintar" id="zona_mona_galera_hoja" fill="#ffffff" title="Galera de Hoja de Higuera"/>
+                        <line x1="395" y1="222" x2="416" y2="200" stroke="#222" stroke-width="2"/>
+                    </g>
+                </svg>
+            </div>
+
+            <!-- CONTADOR DE ZONAS PINTADAS -->
+            <div class="indicador-coloreado">
+                <span id="txtZonasPintadas">🖌️ Zonas pintadas: <strong>0</strong></span>
+                <span id="txtInsigniaArte">⭐ ¡Pinta al menos 6 zonas para ganar puntos!</span>
+            </div>
+        </section>
+
+        <!-- ============================================================== -->
+        <!-- SECCIÓN 2: ESCRIBE TU PROPIA RIMA (CONSERVADO Y REFORZADO)      -->
+        <!-- ============================================================== -->
+        <section class="zona-creativa">
+            <h3>✍️ Escribe tu propio verso o rima (+20 pts):</h3>
+            <p style="color: #666; font-size: 0.95rem; margin-bottom: 8px;">
+                Crea una rima divertida inspirada en Jacinta, su cinta, su castillo o sus monerías.<br>
+                <em>Ejemplo: "La mona Jacinta se pone a pintar, y un lindo castillo dibuja a la par."</em>
+            </p>
+            <textarea id="versoUsuario" class="input-rima" placeholder="Escribe aquí tu frase o verso rimado..."></textarea>
+            
+            <div style="text-align: right; margin-top: 14px;">
+                <button id="guardarVerso" class="btn-crear">✨ Guardar mi verso y terminar (+20 pts)</button>
+            </div>
+            <p id="mensajeVerso" class="mensaje-exito"></p>
+        </section>
+
+        <!-- BANNER DE PASO AL SIGUIENTE POEMA -->
+        <div id="bannerSiguiente" class="banner-siguiente">
+            <span style="font-size: 45px;">🎉👑🐾</span>
+            <h3 style="font-size: 1.6rem; margin-top: 8px;">¡LA MONA JACINTA COMPLETADA CON ÉXITO!</h3>
+            <p style="font-size: 1.1rem; margin-top: 8px;">
+                ¡Eres todo un artista y poeta! Has pintado el bosque de Jacinta y creado tu propio verso.<br>
+                Has desbloqueado el siguiente poema en tu ruta de aprendizaje del Reino.
+            </p>
+            <a href="/template/poemas/animales.html" class="btn-proximo-poema">
+                ➔ Pasar al siguiente poema: De todos los animales 🐾
+            </a>
+        </div>
+
+        <!-- ACCIONES DE NAVEGACIÓN -->
+        <div class="acciones" style="margin-top: 25px;">
+            <a href="/template/planeaciones/planeacion-la-mona/durante.html" class="btn-link">⬅ Volver a Estructuración</a>
+            <a href="/template/poemas/mona-jacinta.html" class="btn-link">🐵 Ver Menú de La Mona</a>
+            <a href="/index.html" class="btn-link">🏰 Volver al Reino</a>
+        </div>
+    </main>
+
+    <!-- SCRIPTS -->
+    <script src="/static/js/game-juice.js"></script>
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+
+    <script>
+        /**
+         * ==========================================================================
+         * TALLER DE COLOREAR Y CREAR VERSO - TRANSFERENCIA MONA JACINTA
+         * ==========================================================================
+         */
+        document.addEventListener('DOMContentLoaded', () => {
+            // VERIFICACIÓN SECUENCIAL ESTRICTA
+            if (window.ReinoDB && !window.ReinoDB.estaActividadCompletada('mona_quiz')) {
+                const modal = document.createElement('div');
+                modal.className = 'reino-modal-overlay';
+                modal.style.zIndex = '999999';
+                modal.innerHTML = `
+                    <div class="reino-modal-card" style="text-align: center; max-width: 450px;">
+                        <div style="font-size: 60px; margin-bottom: 10px;">🎨🔒</div>
+                        <h2 style="color: #4a148c; margin-bottom: 12px;">¡Transferencia Bloqueada!</h2>
+                        <p style="color: #555; line-height: 1.5; margin-bottom: 25px;">
+                            Para ingresar a <strong>Transferencia (Colorear y Crear Verso)</strong>, primero debes superar el juego <strong>Aplasta Monas</strong> en la etapa de Estructuración.
+                        </p>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <a href="/template/planeaciones/planeacion-la-mona/actividades/actividades-durante/quiz-mona.html" class="reino-btn-submit" style="text-decoration: none; text-align: center;">
+                                🔨 Ir a Aplasta Monas
+                            </a>
+                            <a href="/template/planeaciones/planeacion-la-mona/durante.html" style="color: #7b1fa2; font-weight: bold; text-decoration: none; padding: 10px;">
+                                ⬅ Volver a Estructuración
+                            </a>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                return;
+            }
+
+            // 1. ESTADO DEL COLOR SELECCIONADO
+            let colorActual = '#8d5613';
+            let zonasColoreadasCount = 0;
+            let bonoDibujoOtorgado = false;
+            const ZONAS_MINIMAS_BONO = 6;
+
+            const swatches = document.querySelectorAll('.swatch-color');
+            const colorPicker = document.getElementById('colorPickerPersonalizado');
+            const lienzoSVG = document.getElementById('lienzoColorear');
+            const zonasPintar = lienzoSVG.querySelectorAll('.zona-pintar');
+            const txtZonas = document.getElementById('txtZonasPintadas');
+            const txtInsignia = document.getElementById('txtInsigniaArte');
+            const btnMagico = document.getElementById('btnRellenoMagico');
+            const btnLimpiar = document.getElementById('btnLimpiarDibujo');
+            const btnDescargar = document.getElementById('btnDescargarDibujo');
+
+            // 2. SELECCIÓN DE COLORES DE LA PALETA
+            swatches.forEach(swatch => {
+                swatch.addEventListener('click', () => {
+                    swatches.forEach(s => s.classList.remove('activo'));
+                    swatch.classList.add('activo');
+                    colorActual = swatch.dataset.color;
+                    if (window.GameJuice) window.GameJuice.playPop();
+                });
+            });
+
+            // Selector personalizado
+            if (colorPicker) {
+                colorPicker.addEventListener('input', (e) => {
+                    colorActual = e.target.value;
+                    swatches.forEach(s => s.classList.remove('activo'));
+                });
+            }
+
+            // 3. PINTAR CADA ZONA AL HACER CLIC / TOUCH
+            zonasPintar.forEach(zona => {
+                zona.addEventListener('click', (e) => {
+                    e.stopPropagation();
+                    const colorAnterior = zona.getAttribute('fill') || '#ffffff';
+                    zona.setAttribute('fill', colorActual);
+
+                    // Si antes era blanco y ahora tiene color, sumamos al contador
+                    if (colorAnterior === '#ffffff' && colorActual !== '#ffffff') {
+                        zonasColoreadasCount++;
+                        actualizarContadorZonas();
+                    }
+
+                    if (window.GameJuice) {
+                        window.GameJuice.playPop();
+                    }
+                });
+            });
+
+            function actualizarContadorZonas() {
+                if (txtZonas) {
+                    txtZonas.innerHTML = `🖌️ Zonas pintadas: <strong>${zonasColoreadasCount}</strong>`;
+                }
+
+                if (zonasColoreadasCount >= ZONAS_MINIMAS_BONO && !bonoDibujoOtorgado) {
+                    bonoDibujoOtorgado = true;
+                    if (txtInsignia) {
+                        txtInsignia.innerHTML = `🎉 <strong>¡Hermoso dibujo! (+15 pts ganados)</strong>`;
+                        txtInsignia.style.color = '#2e7d32';
+                    }
+                    if (window.GameJuice) {
+                        window.GameJuice.celebrate(50);
+                        window.GameJuice.playCorrect();
+                        window.GameJuice.floatingXP(15, txtInsignia);
+                    }
+                }
+            }
+
+            // 4. RELLENO MÁGICO (COLORES OFICIALES DEL POEMA)
+            const PALETA_MAGICA = {
+                zona_cielo: '#e1f5fe',
+                zona_sol_centro: '#ffd600',
+                zona_rayos_sol: '#fff59d',
+                zona_nube1: '#ffffff',
+                zona_nube2: '#ffffff',
+                zona_colinas: '#c8e6c9',
+                zona_castillo_torre: '#b39ddb',
+                zona_castillo_techo: '#e91e63',
+                zona_castillo_bandera: '#ffd600',
+                zona_castillo_ladrillo: '#ff7043',
+                zona_arbol_izq_tronco: '#8d5613',
+                zona_arbol_izq_copa1: '#43a047',
+                zona_arbol_izq_copa2: '#66bb6a',
+                zona_liana_hoja1: '#81c784',
+                zona_liana_hoja2: '#81c784',
+                zona_arbol_der_tronco: '#795548',
+                zona_arbol_der_copa: '#388e3c',
+                zona_pasto_delantero: '#a5d6a7',
+                zona_fuente_agua: '#81d4fa',
+                zona_fuente_borde: '#b0bec5',
+                zona_sapo_piedra: '#90a4ae',
+                zona_sapo_cuerpo: '#4caf50',
+                zona_sapo_ojo1: '#c8e6c9',
+                zona_sapo_ojo2: '#c8e6c9',
+                zona_flor1_petalos: '#ff4081',
+                zona_flor1_centro: '#ffd600',
+                zona_flor2_petalos: '#ab47bc',
+                zona_flor2_centro: '#fff59d',
+                zona_hongo_tallo: '#f5f5f5',
+                zona_hongo_sombrero: '#e53935',
+                zona_hongo_punto1: '#ffffff',
+                zona_hongo_punto2: '#ffffff',
+                zona_mona_cola: '#8d5613',
+                zona_mona_pata_izq: '#8d5613',
+                zona_mona_pata_der: '#8d5613',
+                zona_mona_cuerpo: '#8d5613',
+                zona_mona_barriga: '#ffd1a4',
+                zona_mona_brazo_izq: '#8d5613',
+                zona_mona_brazo_der: '#8d5613',
+                zona_mona_espejo_marco: '#ffd700',
+                zona_mona_espejo_cristal: '#e0f7fa',
+                zona_mona_perla1: '#ffffff',
+                zona_mona_perla2: '#ffffff',
+                zona_mona_perla3: '#ffffff',
+                zona_mona_perla4: '#ffffff',
+                zona_mona_perla5: '#ffffff',
+                zona_mona_oreja_izq: '#8d5613',
+                zona_mona_oreja_in_izq: '#ffccbc',
+                zona_mona_oreja_der: '#8d5613',
+                zona_mona_oreja_in_der: '#ffccbc',
+                zona_mona_cabeza: '#8d5613',
+                zona_mona_frente: '#ffd1a4',
+                zona_mona_hocico: '#ffe0b2',
+                zona_mona_mejilla1: '#ff80ab',
+                zona_mona_mejilla2: '#ff80ab',
+                zona_mona_cinta_banda: '#e91e63',
+                zona_mona_cinta_lazo_izq: '#ff4081',
+                zona_mona_cinta_lazo_der: '#ff4081',
+                zona_mona_cinta_nudo: '#ffd54f',
+                zona_mona_cinta_cola1: '#e91e63',
+                zona_mona_cinta_cola2: '#e91e63',
+                zona_mona_galera_hoja: '#4caf50'
+            };
+
+            btnMagico.addEventListener('click', () => {
+                Object.keys(PALETA_MAGICA).forEach(id => {
+                    const el = document.getElementById(id);
+                    if (el) el.setAttribute('fill', PALETA_MAGICA[id]);
+                });
+                zonasColoreadasCount = Object.keys(PALETA_MAGICA).length;
+                actualizarContadorZonas();
+                if (window.GameJuice) {
+                    window.GameJuice.playMagic();
+                    window.GameJuice.celebrate(60);
+                }
+            });
+
+            // 5. REINICIAR DIBUJO
+            btnLimpiar.addEventListener('click', () => {
+                if (confirm('¿Quieres borrar los colores del dibujo y empezar de nuevo?')) {
+                    zonasPintar.forEach(z => z.setAttribute('fill', '#ffffff'));
+                    zonasColoreadasCount = 0;
+                    bonoDibujoOtorgado = false;
+                    actualizarContadorZonas();
+                    if (txtInsignia) {
+                        txtInsignia.textContent = '⭐ ¡Pinta al menos 6 zonas para ganar puntos!';
+                        txtInsignia.style.color = '#6a1b9a';
+                    }
+                    if (window.GameJuice) window.GameJuice.playPop();
+                }
+            });
+
+            // 6. DESCARGAR / GUARDAR DIBUJO COMO PNG
+            btnDescargar.addEventListener('click', () => {
+                const svgData = new XMLSerializer().serializeToString(lienzoSVG);
+                const svgBlob = new Blob([svgData], { type: 'image/svg+xml;charset=utf-8' });
+                const URL = window.URL || window.webkitURL || window;
+                const blobURL = URL.createObjectURL(svgBlob);
+
+                const image = new Image();
+                image.onload = () => {
+                    const canvas = document.createElement('canvas');
+                    canvas.width = 800;
+                    canvas.height = 530;
+                    const context = canvas.getContext('2d');
+                    context.fillStyle = '#ffffff';
+                    context.fillRect(0, 0, canvas.width, canvas.height);
+                    context.drawImage(image, 0, 0);
+
+                    const png = canvas.toDataURL('image/png');
+                    const link = document.createElement('a');
+                    link.download = 'La_Mona_Jacinta_en_el_Bosque.png';
+                    link.href = png;
+                    link.click();
+                    URL.revokeObjectURL(blobURL);
+
+                    if (window.GameJuice) {
+                        window.GameJuice.celebrate(40);
+                    }
+                };
+                image.src = blobURL;
+            });
+
+            // 7. GUARDAR EL VERSO Y COMPLETAR TRANSFERENCIA
+            const btnGuardarVerso = document.getElementById('guardarVerso');
+            const inputVerso = document.getElementById('versoUsuario');
+            const msgVerso = document.getElementById('mensajeVerso');
+            const bannerSiguiente = document.getElementById('bannerSiguiente');
+
+            btnGuardarVerso.addEventListener('click', async () => {
+                const val = inputVerso.value.trim();
+
+                if (val.length < 6) {
+                    msgVerso.textContent = '⚠️ ¡Escribe al menos una línea rimada para tu verso poético!';
+                    msgVerso.style.color = '#d32f2f';
+                    if (window.GameJuice) window.GameJuice.shakeElement(inputVerso);
+                    return;
+                }
+
+                btnGuardarVerso.disabled = true;
+                btnGuardarVerso.textContent = '✅ ¡Verso y Dibujo Guardados!';
+                inputVerso.style.borderColor = '#4caf50';
+                msgVerso.textContent = '🎉 ¡Excelente creación poética! Ganaste +35 puntos en tu aventura escolar.';
+                msgVerso.style.color = '#2e7d32';
+
+                // Registrar en ReinoDB (+35 puntos en total de la fase de transferencia)
+                if (window.ReinoDB) {
+                    await window.ReinoDB.registrarPuntos('mona_transferencia', 35, {
+                        verso: val,
+                        dibujoCompletado: true,
+                        zonasPintadas: zonasColoreadasCount
+                    });
+                }
+
+                if (window.GameJuice) {
+                    window.GameJuice.playFanfare();
+                    window.GameJuice.celebrate(90);
+                }
+
+                bannerSiguiente.style.display = 'block';
+                bannerSiguiente.scrollIntoView({ behavior: 'smooth' });
+            });
+
+            // Si ya estaba completado previamente
+            if (window.ReinoDB && window.ReinoDB.estaActividadCompletada('mona_transferencia')) {
+                bannerSiguiente.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

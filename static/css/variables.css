@@ -1,0 +1,104 @@
+/* ==========================================================================
+   PALETA DE COLORES Y SISTEMA DE DISEÑO - EL REINO DE LOS POEMAS
+   Archivo central con todos los colores, degradados, sombras y estilos originales.
+   ========================================================================== */
+
+:root {
+  /* --- FONDOS Y GRADIENTES GLOBALES --- */
+  --bg-dots-pattern: radial-gradient(rgba(0, 0, 0, 0.15) 1.5px, transparent 1.5px);
+  --bg-dots-size: 20px 20px;
+
+  /* Fondos de páginas */
+  --bg-reino: radial-gradient(circle at center, #d6f5ff, #d6fff0);
+  --bg-mona-jacinta: radial-gradient(circle at center, #C3B1E1, #d6fff0);
+  --bg-actividades: radial-gradient(circle at center, #ffb5c0, #d6fff0);
+  --bg-juego-estrellas: linear-gradient(135deg, #17134d, #302b82, #5d3fd3);
+  --bg-juego-rimas: linear-gradient(135deg, #7c4dff, #00bcd4);
+
+  /* --- TARJETAS DE POEMAS (COLORES Y SOMBRAS NEÓN) --- */
+  /* Diagnóstico ("El pasadizo secreto") */
+  --color-diagnostico: #f272ac;
+  --color-diagnostico-texto: #06402B;
+
+  /* 1. La Mona Jacinta */
+  --color-poema-mona: #bc4ed8;
+  --shadow-poema-mona: 1px 4px 20px #ff0000;
+  --text-poema-mona: #fffb00;
+
+  /* 2. De todos los animales */
+  --color-poema-animales: #329542;
+  --shadow-poema-animales: 1px 4px 20px #953285;
+  --text-poema-animales: #ffeedb;
+
+  /* 3. Había un caldero lleno */
+  --color-poema-caldero: #DEBE42;
+  --shadow-poema-caldero: 1px 4px 20px #4262DE;
+  --text-poema-caldero: #2103e5;
+
+  /* 4. ¿Qué se pondrá osito? */
+  --color-poema-osito: #006DB2;
+  --shadow-poema-osito: 1px 4px 20px #B24500;
+  --text-poema-osito: #ffe600;
+
+  /* 5. La pobre viejecita */
+  --color-poema-viejecita: #e87f18;
+  --shadow-poema-viejecita: 1px 4px 20px #1881E8;
+  --text-poema-viejecita: #00f0ff;
+
+  /* Evaluación de la clase */
+  --color-evaluacion: #f272ac;
+  --shadow-evaluacion: 1px 4px 20px #72f2b8;
+  --text-evaluacion: #800000;
+
+  /* --- ACTIVIDADES Y ETAPAS --- */
+  --color-etapa-naranja: #e87f18;
+  --shadow-etapa-azul: 1px 4px 20px #1881E8;
+  --color-alcanza-estrella: #E8E000;
+  --color-juego-rimas-card: #0000ff;
+  --color-actividad-crimson: crimson;
+
+  /* --- BOTONES E INTERACCIONES --- */
+  /* Botón Principal (Menta -> Celeste Neón) */
+  --btn-primary-bg: #B2EBE0;
+  --btn-primary-text: #000000;
+  --btn-primary-hover-bg: #00f0ff;
+
+  /* Botón Secundario (Lavanda -> Ciruela Oscuro) */
+  --btn-purple-bg: #b38cdc;
+  --btn-purple-text: #000000;
+  --btn-purple-hover-bg: #27103f;
+  --btn-purple-hover-text: #ffffff;
+
+  /* Botón Juego Reiniciar */
+  --btn-white-bg: #ffffff;
+  --btn-white-text: #302b82;
+  --btn-white-hover-bg: #eeeeee;
+
+  /* Estados de Quiz / Rimas */
+  --color-success: #4caf50;
+  --color-error: #f44336;
+  --color-star-gold-1: #ffd700;
+  --color-star-gold-2: #ff9f00;
+
+  /* --- TIPOGRAFÍA --- */
+  --font-heading: 'Poppins', sans-serif;
+  --font-body: 'Lexend', sans-serif;
+  --font-poetic: 'Gill Sans', 'Gill Sans MT', Calibri, sans-serif;
+  --font-game: 'Trebuchet MS', Arial, sans-serif;
+
+  /* --- SOMBRAS Y BRILLOS --- */
+  --glow-green: 2px 2px 8px #008000;
+  --glow-blue: 2px 2px 16px rgba(43, 1, 255, 0.85);
+  --shadow-card: 0 4px 10px rgba(0, 0, 0, 0.2);
+  --shadow-hover: 0 10px 25px rgba(0, 0, 0, 0.35);
+
+  /* --- BORDES Y RADIOS --- */
+  --radius-sm: 5px;
+  --radius-md: 10px;
+  --radius-lg: 20px;
+  --radius-xl: 30px;
+
+  /* --- TRANSICIONES --- */
+  --transition-fast: 0.2s ease;
+  --transition-normal: 0.3s ease-in-out;
+}

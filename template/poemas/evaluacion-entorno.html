@@ -1,0 +1,1276 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Evaluación Final de la Clase | El Reino de los Poemas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Poppins:wght@600;700;800;900&family=Cinzel:wght@700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <!-- Librería html2pdf para descargas en PDF directas en 1 sola hoja -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        
+        body {
+            min-height: 100vh;
+            font-family: var(--font-body, 'Lexend', Arial, sans-serif);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px 10px 60px 10px;
+            background-image:
+                var(--bg-dots-pattern, radial-gradient(rgba(0, 0, 0, 0.15) 1.5px, transparent 1.5px)),
+                var(--bg-reino, radial-gradient(circle at center, #d6f5ff, #d6fff0));
+            background-size: var(--bg-dots-size, 20px 20px), 100% 100%;
+            color: #2c3e50;
+        }
+
+        .eval-contenedor {
+            background: white;
+            border-radius: 25px;
+            max-width: 960px;
+            width: 100%;
+            padding: 35px 25px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.12);
+            text-align: center;
+        }
+
+        .img-eval {
+            width: 100%;
+            max-height: 240px;
+            object-fit: cover;
+            border-radius: 18px;
+            margin-bottom: 20px;
+            box-shadow: 0 6px 18px rgba(0,0,0,0.12);
+        }
+
+        h1 {
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            color: #ad1457;
+            font-size: 2.2rem;
+            margin-bottom: 8px;
+        }
+
+        .eval-subtitulo {
+            font-size: 1.05rem;
+            color: #4a148c;
+            margin-bottom: 25px;
+        }
+
+        /* RESUMEN DE PROGRESO DE LA BASE DE DATOS */
+        .resumen-card {
+            background: linear-gradient(135deg, #fce4ec, #f8bbd0);
+            border: 2px dashed #ec407a;
+            border-radius: 20px;
+            padding: 22px;
+            margin: 25px 0 35px 0;
+            text-align: left;
+        }
+
+        .resumen-card h3 { 
+            color: #880e4f; 
+            margin-bottom: 14px; 
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            font-size: 1.25rem;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 15px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        .stat-item {
+            background: white;
+            padding: 15px 10px;
+            border-radius: 14px;
+            border: 2px solid #f8bbd0;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.05);
+        }
+
+        .stat-item span { font-size: 2.2rem; display: block; margin-bottom: 4px; }
+        .stat-item strong { font-size: 1.4rem; color: #ad1457; display: block; }
+        .stat-item p { font-size: 0.85rem; color: #555; margin-top: 2px; }
+
+        /* SEMÁFORO DE EMOCIONES */
+        .semaforo-seccion {
+            background: #ffffff;
+            border: 2px solid #ce93d8;
+            border-radius: 20px;
+            padding: 24px;
+            margin: 30px 0;
+            text-align: center;
+        }
+
+        .semaforo-seccion h3 {
+            color: #4a148c;
+            font-size: 1.25rem;
+            margin-bottom: 15px;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+        }
+
+        .semaforo-grid {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin: 15px 0 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn-semaforo {
+            padding: 12px 22px;
+            border-radius: 30px;
+            border: 2px solid #ddd;
+            background: white;
+            font-size: 1rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.25s;
+            box-shadow: 0 4px 10px rgba(0,0,0,0.06);
+        }
+
+        .btn-semaforo:hover { transform: translateY(-3px); box-shadow: 0 6px 15px rgba(0,0,0,0.12); }
+        .btn-semaforo.activo { background: #e91e63; color: white; border-color: #c2185b; }
+
+        /* ========================================================
+           CUESTIONARIO DE LA CLASE: RÚBRICA PARA 3ER GRADO
+           ======================================================== */
+        .cuestionario-rubrica-container {
+            background: #ffffff;
+            border: 3px solid #7b1fa2;
+            border-radius: 22px;
+            padding: 26px 20px;
+            margin: 35px 0;
+            text-align: left;
+            box-shadow: 0 10px 30px rgba(123, 31, 162, 0.12);
+        }
+
+        /* Barra de herramientas superior del cuestionario */
+        .cuestionario-toolbar {
+            display: flex;
+            justify-content: flex-start;
+            gap: 10px;
+            margin-bottom: 20px;
+            flex-wrap: wrap;
+        }
+
+        .btn-tool-cuestionario {
+            padding: 9px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            border: none;
+            transition: 0.2s;
+            display: inline-flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .btn-reiniciar-rubrica {
+            background: #f1f2f6;
+            color: #2f3542;
+            border: 1.5px solid #ced6e0;
+        }
+        .btn-reiniciar-rubrica:hover { background: #dfe4ea; transform: translateY(-2px); }
+
+        .btn-imprimir-rubrica {
+            background: #7c4dff;
+            color: white;
+        }
+        .btn-imprimir-rubrica:hover { background: #651fff; transform: translateY(-2px); }
+
+        .btn-pdf-rubrica {
+            background: #00b0ff;
+            color: white;
+        }
+        .btn-pdf-rubrica:hover { background: #0091ea; transform: translateY(-2px); }
+
+        /* Cabecera escolar con campos */
+        .cuestionario-header-campos {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            background: #f8f4fc;
+            padding: 16px 20px;
+            border-radius: 14px;
+            border: 1.5px solid #e1bee7;
+            margin-bottom: 22px;
+        }
+
+        .campo-fila-rubrica {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 14px;
+        }
+
+        .campo-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            flex: 1;
+            min-width: 260px;
+        }
+
+        .label-rubrica {
+            font-weight: 800;
+            color: #37474f;
+            font-size: 0.95rem;
+            white-space: nowrap;
+        }
+
+        .valor-linea {
+            flex: 1;
+            border-bottom: 1.5px solid #263238;
+            padding: 2px 6px;
+            font-size: 0.95rem;
+            color: #1a237e;
+            font-weight: 600;
+            outline: none;
+            min-height: 22px;
+        }
+
+        .valor-linea.editable {
+            background: #ffffff;
+            border-radius: 4px;
+            border: 1px dashed #7b1fa2;
+            cursor: text;
+        }
+
+        .puntuacion-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            background: #ffffff;
+            padding: 6px 14px;
+            border-radius: 20px;
+            border: 2px solid #ffb300;
+            box-shadow: 0 2px 8px rgba(255, 179, 0, 0.2);
+        }
+
+        .puntuacion-badge {
+            font-size: 1.35rem;
+            font-weight: 900;
+            color: #d84315;
+            min-width: 38px;
+            text-align: center;
+        }
+
+        .puntuacion-max {
+            font-size: 0.85rem;
+            font-weight: 700;
+            color: #666;
+        }
+
+        .cuestionario-titulo {
+            text-align: center;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            color: #2c3e50;
+            font-size: 1.45rem;
+            margin: 15px 0 6px 0;
+        }
+
+        .cuestionario-subtitulo {
+            text-align: center;
+            font-size: 0.95rem;
+            color: #5d4037;
+            margin-bottom: 20px;
+        }
+
+        /* Tabla de rúbrica */
+        .tabla-rubrica-responsive {
+            width: 100%;
+            overflow-x: auto;
+            border-radius: 12px;
+            border: 2px solid #333333;
+        }
+
+        .tabla-rubrica {
+            width: 100%;
+            border-collapse: collapse;
+            font-size: 0.9rem;
+            background: #ffffff;
+        }
+
+        .tabla-rubrica th,
+        .tabla-rubrica td {
+            border: 1.5px solid #333333;
+            padding: 12px 10px;
+            vertical-align: middle;
+        }
+
+        .tabla-rubrica th {
+            text-align: center;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            font-weight: 800;
+            padding: 10px 8px;
+        }
+
+        .col-criterio {
+            width: 22%;
+            background: #f1f2f6;
+            color: #1e272e;
+            font-size: 0.88rem;
+        }
+
+        .col-superior {
+            width: 19.5%;
+            background: #e8f5e9;
+            color: #1b5e20;
+        }
+
+        .col-alto {
+            width: 19.5%;
+            background: #e1f5fe;
+            color: #01579b;
+        }
+
+        .col-basico {
+            width: 19.5%;
+            background: #fff8e1;
+            color: #e65100;
+        }
+
+        .col-bajo {
+            width: 19.5%;
+            background: #ffebee;
+            color: #b71c1c;
+        }
+
+        .td-criterio {
+            background: #fafafa;
+        }
+
+        .td-criterio strong {
+            display: block;
+            color: #2c3e50;
+            font-size: 0.92rem;
+            margin-bottom: 4px;
+        }
+
+        .desc-criterio {
+            font-size: 0.8rem;
+            color: #666666;
+            line-height: 1.35;
+        }
+
+        .td-opcion {
+            cursor: pointer;
+            transition: all 0.2s ease;
+            position: relative;
+            background: #ffffff;
+        }
+
+        .td-opcion:hover {
+            background: #f5f6fa;
+        }
+
+        .opcion-contenido {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            gap: 8px;
+            min-height: 52px;
+        }
+
+        .opcion-contenido span {
+            font-size: 0.83rem;
+            line-height: 1.35;
+            color: #333333;
+            flex: 1;
+        }
+
+        /* Casilla de verificación para chulear */
+        .checkbox-chulo {
+            width: 22px;
+            height: 22px;
+            min-width: 22px;
+            border: 2px solid #555555;
+            border-radius: 4px;
+            background: #ffffff;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 900;
+            font-size: 1.1rem;
+            color: transparent;
+            transition: all 0.2s;
+            user-select: none;
+        }
+
+        /* Estado Chuleado / Seleccionado */
+        .td-opcion.chuleado {
+            background: #e8f5e9 !important;
+            border-color: #2e7d32 !important;
+        }
+
+        .td-opcion.chuleado .checkbox-chulo {
+            background: #2e7d32;
+            border-color: #2e7d32;
+            color: #ffffff;
+        }
+
+        .td-opcion.chuleado span {
+            font-weight: 700;
+            color: #1b5e20;
+        }
+
+        /* Pie de la rúbrica */
+        .rubrica-footer-nota {
+            margin-top: 15px;
+            padding: 10px 16px;
+            background: #f1f8e9;
+            border-radius: 10px;
+            border-left: 4px solid #4caf50;
+            font-size: 0.92rem;
+            color: #2e7d32;
+        }
+
+        /* ========================================================
+           DIPLOMA DE HONOR CALDISTA (DISEÑADO EN 1 SOLA HOJA)
+           ======================================================== */
+        .diploma-caldista {
+            background: #fffdf5;
+            border: 8px double #d4af37;
+            border-radius: 20px;
+            padding: 28px 24px;
+            margin: 40px auto 25px auto;
+            position: relative;
+            box-shadow: 0 12px 35px rgba(212, 175, 55, 0.25);
+            max-width: 860px;
+            width: 100%;
+            box-sizing: border-box;
+            page-break-inside: avoid;
+        }
+
+        .diploma-inner-border {
+            border: 2px solid #c5a059;
+            border-radius: 12px;
+            padding: 22px 18px;
+            background: rgba(255, 255, 255, 0.65);
+        }
+
+        .diploma-escudo {
+            font-size: 42px;
+            display: block;
+            margin-bottom: 4px;
+        }
+
+        .diploma-caldista h2 {
+            color: #8c6d1f;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            font-size: 1.45rem;
+            letter-spacing: 0.5px;
+            margin-bottom: 4px;
+            text-transform: uppercase;
+        }
+
+        .diploma-lema {
+            font-style: italic;
+            color: #bf360c;
+            font-weight: 700;
+            font-size: 0.95rem;
+            margin-bottom: 12px;
+        }
+
+        .diploma-cinta-titulo {
+            display: inline-block;
+            background: linear-gradient(135deg, #d4af37, #b8860b);
+            color: #ffffff;
+            font-family: 'Cinzel', serif, Georgia;
+            font-size: 1.15rem;
+            font-weight: 700;
+            letter-spacing: 1.5px;
+            padding: 6px 24px;
+            border-radius: 30px;
+            box-shadow: 0 4px 12px rgba(184, 134, 11, 0.35);
+            margin-bottom: 15px;
+        }
+
+        .diploma-otorgado-a {
+            color: #555555;
+            font-size: 0.95rem;
+            margin-bottom: 6px;
+        }
+
+        .diploma-nombre {
+            font-size: 1.8rem;
+            color: #1a237e;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            font-weight: 900;
+            border-bottom: 3px double #d4af37;
+            display: inline-block;
+            padding: 2px 28px 6px 28px;
+            margin: 6px 0 14px 0;
+            cursor: text;
+        }
+
+        .diploma-texto-motivo {
+            font-size: 1rem;
+            line-height: 1.55;
+            color: #333333;
+            max-width: 680px;
+            margin: 0 auto 24px auto;
+        }
+
+        .diploma-firmas-grid {
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+            margin-top: 25px;
+            gap: 15px;
+            flex-wrap: wrap;
+        }
+
+        .firma-col {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            font-size: 0.85rem;
+            color: #444444;
+            min-width: 180px;
+        }
+
+        .linea-firma {
+            width: 170px;
+            border-bottom: 1.5px solid #444444;
+            margin-bottom: 6px;
+        }
+
+        .sello-caldista {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            border: 3px dashed #d4af37;
+            background: #fff8e1;
+            color: #8c6d1f;
+            font-weight: 900;
+            font-size: 0.72rem;
+            box-shadow: 0 4px 10px rgba(212, 175, 55, 0.2);
+        }
+
+        .sello-icono {
+            font-size: 1.25rem;
+        }
+
+        /* Botones de acción del diploma */
+        .acciones-diploma-btns {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0;
+            flex-wrap: wrap;
+        }
+
+        .btn-imprimir-diploma {
+            background: linear-gradient(135deg, #2e7d32, #1b5e20);
+            color: white;
+            border: none;
+            padding: 13px 26px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(46, 125, 50, 0.3);
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-imprimir-diploma:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(46, 125, 50, 0.45);
+        }
+
+        .btn-pdf-diploma {
+            background: linear-gradient(135deg, #d4af37, #b8860b);
+            color: white;
+            border: none;
+            padding: 13px 26px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 1rem;
+            cursor: pointer;
+            box-shadow: 0 5px 15px rgba(212, 175, 55, 0.35);
+            transition: all 0.25s;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-pdf-diploma:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(212, 175, 55, 0.5);
+        }
+
+        .btn-volver {
+            display: inline-block;
+            background: var(--btn-primary-bg, #B2EBE0);
+            color: black;
+            text-decoration: none;
+            font-weight: bold;
+            padding: 12px 25px;
+            border-radius: 12px;
+            margin-top: 15px;
+            transition: 0.3s;
+        }
+
+        .btn-volver:hover { background: var(--btn-primary-hover-bg, #00f0ff); }
+
+        /* ========================================================
+           REGLAS CRÍTICAS PARA IMPRESIÓN Y PDF (@media print)
+           GARANTIZA QUE EL DIPLOMA Y LA RÚBRICA QUEDEN EN 1 HOJA
+           ======================================================== */
+        @media print {
+            @page {
+                size: letter landscape;
+                margin: 6mm;
+            }
+
+            html, body {
+                background: #ffffff !important;
+                margin: 0 !important;
+                padding: 0 !important;
+                width: 100% !important;
+                min-height: auto !important;
+                box-sizing: border-box !important;
+            }
+
+            /* Si se está imprimiendo el Diploma: OCULTAR TODO LO DEMÁS */
+            body.modo-imprimir-diploma .reino-topbar,
+            body.modo-imprimir-diploma .img-eval,
+            body.modo-imprimir-diploma h1,
+            body.modo-imprimir-diploma .eval-subtitulo,
+            body.modo-imprimir-diploma .resumen-card,
+            body.modo-imprimir-diploma .semaforo-seccion,
+            body.modo-imprimir-diploma .cuestionario-rubrica-container,
+            body.modo-imprimir-diploma .acciones-diploma-btns,
+            body.modo-imprimir-diploma .btn-volver,
+            body.modo-imprimir-diploma #reinoModalAuth,
+            body.modo-imprimir-diploma .no-print {
+                display: none !important;
+            }
+
+            body.modo-imprimir-diploma .eval-contenedor {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            body.modo-imprimir-diploma .diploma-caldista {
+                display: block !important;
+                width: 100% !important;
+                max-width: 260mm !important;
+                margin: 0 auto !important;
+                padding: 16px 20px !important;
+                box-shadow: none !important;
+                border: 6px double #d4af37 !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+                page-break-before: avoid !important;
+                break-inside: avoid !important;
+                background: #fffdf5 !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            /* Si se está imprimiendo el Cuestionario: OCULTAR TODO LO DEMÁS */
+            body.modo-imprimir-cuestionario .reino-topbar,
+            body.modo-imprimir-cuestionario .img-eval,
+            body.modo-imprimir-cuestionario h1,
+            body.modo-imprimir-cuestionario .eval-subtitulo,
+            body.modo-imprimir-cuestionario .resumen-card,
+            body.modo-imprimir-cuestionario .semaforo-seccion,
+            body.modo-imprimir-cuestionario .diploma-caldista,
+            body.modo-imprimir-cuestionario .acciones-diploma-btns,
+            body.modo-imprimir-cuestionario .cuestionario-toolbar,
+            body.modo-imprimir-cuestionario .btn-volver,
+            body.modo-imprimir-cuestionario #reinoModalAuth,
+            body.modo-imprimir-cuestionario .no-print {
+                display: none !important;
+            }
+
+            body.modo-imprimir-cuestionario .eval-contenedor {
+                box-shadow: none !important;
+                border: none !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                max-width: 100% !important;
+                width: 100% !important;
+            }
+
+            body.modo-imprimir-cuestionario .cuestionario-rubrica-container {
+                display: block !important;
+                width: 100% !important;
+                margin: 0 auto !important;
+                padding: 10px 14px !important;
+                box-shadow: none !important;
+                border: 2px solid #222222 !important;
+                page-break-inside: avoid !important;
+                page-break-after: avoid !important;
+                page-break-before: avoid !important;
+                break-inside: avoid !important;
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+
+            body.modo-imprimir-cuestionario .tabla-rubrica th,
+            body.modo-imprimir-cuestionario .tabla-rubrica td {
+                padding: 8px 6px !important;
+                font-size: 0.82rem !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <main class="eval-contenedor">
+        <img src="/assets/img/poemas/evaluacion-entorno.jpeg" alt="Evaluación del entorno" class="img-eval">
+        <h1>🌟 Evaluación del Reino de los Poemas</h1>
+        <p class="eval-subtitulo">¡Llegaste a la meta! Revisa tus logros poéticos, califica tu experiencia y obtén tu Diploma de Honor.</p>
+
+        <!-- PANEL DE PROGRESO DE LA BASE DE DATOS -->
+        <section class="resumen-card">
+            <h3>📊 Resumen de tu Aventura Poética</h3>
+            <div class="stats-grid">
+                <div class="stat-item">
+                    <span>⭐</span>
+                    <strong id="evalPuntos">0</strong>
+                    <p>Puntos Caldistas</p>
+                </div>
+                <div class="stat-item">
+                    <span>🏆</span>
+                    <strong id="evalProgreso">0%</strong>
+                    <p>Reino Completado</p>
+                </div>
+                <div class="stat-item">
+                    <span>📜</span>
+                    <strong id="evalActividades">0</strong>
+                    <p>Retos Superados</p>
+                </div>
+            </div>
+            <p id="evalEstudianteInfo" style="font-weight: bold; color: #4a148c;"></p>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- NUEVO: CUESTIONARIO Y RÚBRICA DE LA CLASE (3ER GRADO)     -->
+        <!-- ======================================================== -->
+        <section class="cuestionario-rubrica-container" id="cuestionarioClase">
+            <!-- Barra de herramientas: Reiniciar e Imprimir -->
+            <div class="cuestionario-toolbar no-print">
+                <button type="button" class="btn-tool-cuestionario btn-reiniciar-rubrica" onclick="reiniciarCuestionario()">
+                    🔄 Reiniciar
+                </button>
+                <button type="button" class="btn-tool-cuestionario btn-imprimir-rubrica" onclick="imprimirCuestionarioSolo()">
+                    🖨️ Imprimir Cuestionario
+                </button>
+                <button type="button" class="btn-tool-cuestionario btn-pdf-rubrica" onclick="descargarCuestionarioPDF()">
+                    📥 Descargar Cuestionario en PDF
+                </button>
+            </div>
+
+            <!-- Cabecera de datos escolares -->
+            <header class="cuestionario-header-campos">
+                <div class="campo-fila-rubrica">
+                    <div class="campo-item">
+                        <span class="label-rubrica">Actividad:</span>
+                        <span class="valor-linea">Evaluación de la clase: El Reino de los Poemas</span>
+                    </div>
+                    <div class="campo-item" style="max-width: 250px;">
+                        <span class="label-rubrica">Fecha:</span>
+                        <span class="valor-linea" id="rubricaFecha">14 de Octubre de 2026</span>
+                    </div>
+                </div>
+                <div class="campo-fila-rubrica">
+                    <div class="campo-item">
+                        <span class="label-rubrica">Nombre:</span>
+                        <span class="valor-linea editable" id="rubricaNombreEstudiante" contenteditable="true" title="Haz clic para escribir o editar tu nombre">Estudiante Caldista</span>
+                    </div>
+                    <div class="campo-item puntuacion-item" style="max-width: 260px; justify-content: flex-end;">
+                        <span class="label-rubrica">Puntuación:</span>
+                        <span class="puntuacion-badge" id="rubricaPuntuacionTotal">0.0</span>
+                        <span class="puntuacion-max">/ 10.0 pts</span>
+                    </div>
+                </div>
+            </header>
+
+            <h2 class="cuestionario-titulo">Evaluación de la clase: El Reino de los Poemas</h2>
+            <p class="cuestionario-subtitulo">
+                👉 Haz clic en la casilla para chulear (<strong>✓</strong>) tu respuesta en cada aspecto de la clase:
+            </p>
+
+            <!-- TABLA INTERACTIVA ADAPTADA PARA TERCER GRADO -->
+            <div class="tabla-rubrica-responsive">
+                <table class="tabla-rubrica" id="tablaRubrica">
+                    <thead>
+                        <tr>
+                            <th class="col-criterio">CRITERIO EVALUADO</th>
+                            <th class="col-superior">🌟 SUPERIOR<br><small>(2.5 pts)</small></th>
+                            <th class="col-alto">😊 ALTO<br><small>(1.75 pts)</small></th>
+                            <th class="col-basico">😐 BÁSICO<br><small>(1.50 pts)</small></th>
+                            <th class="col-bajo">😟 BAJO<br><small>(1.25 pts)</small></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <!-- CRITERIO 1 -->
+                        <tr data-criterio="claridad">
+                            <td class="td-criterio">
+                                <strong>📖 CLARIDAD EN LA TEMÁTICA</strong>
+                                <span class="desc-criterio">¿Los temas y poemas fueron fáciles de comprender?</span>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 2.5)">
+                                <div class="opcion-contenido">
+                                    <span>Los temas fueron muy claros y comprensibles.</span>
+                                    <div class="checkbox-chulo" data-puntos="2.5"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.75)">
+                                <div class="opcion-contenido">
+                                    <span>La mayoría de los temas fueron claros y comprensibles.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.75"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.50)">
+                                <div class="opcion-contenido">
+                                    <span>Algunos de los temas fueron claros, pero con dudas.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.50"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.25)">
+                                <div class="opcion-contenido">
+                                    <span>Ninguno de los temas fue claro ni comprensible.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.25"></div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- CRITERIO 2 -->
+                        <tr data-criterio="secuencia">
+                            <td class="td-criterio">
+                                <strong>🪜 SECUENCIA DE LA CLASE</strong>
+                                <span class="desc-criterio">¿Hubo un buen orden paso a paso en las actividades?</span>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 2.5)">
+                                <div class="opcion-contenido">
+                                    <span>Todos los temas y actividades tuvieron secuencia y orden.</span>
+                                    <div class="checkbox-chulo" data-puntos="2.5"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.75)">
+                                <div class="opcion-contenido">
+                                    <span>En la mayoría de temas y actividades hubo secuencia y orden.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.75"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.50)">
+                                <div class="opcion-contenido">
+                                    <span>En algunas actividades hubo secuencia y orden.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.50"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.25)">
+                                <div class="opcion-contenido">
+                                    <span>Ninguna de las actividades tuvo secuencia ni orden.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.25"></div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- CRITERIO 3 -->
+                        <tr data-criterio="gamificacion">
+                            <td class="td-criterio">
+                                <strong>🎮 GAMIFICACIÓN DE LA CLASE</strong>
+                                <span class="desc-criterio">¿Los juegos interactivos te ayudaron a aprender?</span>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 2.5)">
+                                <div class="opcion-contenido">
+                                    <span>En todos los temas hubo actividades mediante juegos divertidos.</span>
+                                    <div class="checkbox-chulo" data-puntos="2.5"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.75)">
+                                <div class="opcion-contenido">
+                                    <span>En la mayoría de temas hubo actividades mediante juegos.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.75"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.50)">
+                                <div class="opcion-contenido">
+                                    <span>Solo en algunas actividades hubo juegos interactivos.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.50"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.25)">
+                                <div class="opcion-contenido">
+                                    <span>Ningún tema tuvo actividades mediante juegos que me motivaran.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.25"></div>
+                                </div>
+                            </td>
+                        </tr>
+
+                        <!-- CRITERIO 4 -->
+                        <tr data-criterio="docentes">
+                            <td class="td-criterio">
+                                <strong>🤝 ACOMPAÑAMIENTO DOCENTE</strong>
+                                <span class="desc-criterio">¿Sentiste la guía, apoyo y entusiasmo de los profes?</span>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 2.5)">
+                                <div class="opcion-contenido">
+                                    <span>En todas las clases hubo acompañamiento y apoyo de los docentes.</span>
+                                    <div class="checkbox-chulo" data-puntos="2.5"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.75)">
+                                <div class="opcion-contenido">
+                                    <span>En la mayoría de las clases sentí el acompañamiento de los docentes.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.75"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.50)">
+                                <div class="opcion-contenido">
+                                    <span>Solo en algunas clases sentí el acompañamiento de los docentes.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.50"></div>
+                                </div>
+                            </td>
+                            <td class="td-opcion" onclick="seleccionarOpcion(this, 1.25)">
+                                <div class="opcion-contenido">
+                                    <span>En ninguna de las clases sentí acompañamiento de los docentes.</span>
+                                    <div class="checkbox-chulo" data-puntos="1.25"></div>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- RESULTADO Y NIVEL ALCANZADO -->
+            <div class="rubrica-footer-nota">
+                ⭐ <strong>Nivel Alcanzado:</strong> <span id="rubricaNivelTexto">Haz clic en una opción por cada fila para calcular tu puntaje.</span>
+            </div>
+        </section>
+
+        <!-- SEMÁFORO DE EMOCIONES GENERAL -->
+        <section class="semaforo-seccion">
+            <h3>🚦 ¿Cómo calificarías tu viaje por el Reino de los Poemas? (+50 pts)</h3>
+            <div class="semaforo-grid">
+                <button type="button" class="btn-semaforo" data-calif="excelente">🟢 ¡Me encantó!</button>
+                <button type="button" class="btn-semaforo" data-calif="bueno">🟡 Estuvo bien</button>
+                <button type="button" class="btn-semaforo" data-calif="apoyo">🔴 Necesito más práctica</button>
+            </div>
+            <textarea id="comentarioFinal" placeholder="¿Qué poema fue tu favorito y por qué?" style="width: 100%; padding: 12px; border-radius: 10px; border: 2px solid #f48fb1; min-height: 70px; font-family: inherit; margin-bottom: 12px;"></textarea>
+            <button type="button" id="btnGuardarEvalFinal" class="btn-imprimir-diploma" style="background: linear-gradient(135deg, #e91e63, #c2185b);">✨ Guardar Evaluación Final (+50 pts)</button>
+            <p id="msgEvalFinal" style="color: #2e7d32; font-weight: bold; margin-top: 10px; min-height: 25px;"></p>
+        </section>
+
+        <!-- ======================================================== -->
+        <!-- DIPLOMA DE HONOR CALDISTA (DISEÑADO EN 1 SOLA HOJA)      -->
+        <!-- ======================================================== -->
+        <section class="diploma-caldista" id="diplomaArea">
+            <div class="diploma-inner-border">
+                <span class="diploma-escudo">🎓🎖️</span>
+                <h2>INSTITUCIÓN EDUCATIVA TÉCNICA COMERCIAL CALDAS</h2>
+                <p class="diploma-lema">“Ser Caldista honor que enaltece” — Sede El Carmen (Guamo - Tolima)</p>
+                <div class="diploma-cinta-titulo">DIPLOMA DE EXCELENCIA Y HONOR POÉTICO</div>
+                
+                <p class="diploma-otorgado-a">Se otorga con orgullo el presente reconocimiento a:</p>
+                <div id="diplomaNombre" class="diploma-nombre" contenteditable="true" title="Haz clic para escribir o editar tu nombre">Nombre del Estudiante</div>
+                
+                <p class="diploma-texto-motivo">
+                    Por haber superado con dedicación, alegría y creatividad todos los retos de <strong>El Reino de los Poemas</strong>, explorando rimas, figuras literarias y construyendo su propia voz poética con apoyo de la tecnología.
+                </p>
+
+                <div class="diploma-firmas-grid">
+                    <div class="firma-col">
+                        <div class="linea-firma"></div>
+                        <strong>Docente de Lengua Castellana</strong>
+                        <span>I.E.T.C. Caldas - Sede El Carmen</span>
+                    </div>
+                    <div class="firma-col">
+                        <div class="sello-caldista">
+                            <span class="sello-icono">🛡️</span>
+                            <span>HONOR</span>
+                            <small>GRADO 3°</small>
+                        </div>
+                    </div>
+                    <div class="firma-col">
+                        <div class="linea-firma"></div>
+                        <strong>Coordinación Académica</strong>
+                        <span>Guamo, Tolima</span>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- ACCIONES DE IMPRESIÓN Y DESCARGA DEL DIPLOMA -->
+        <div class="acciones-diploma-btns no-print">
+            <button type="button" class="btn-imprimir-diploma" onclick="imprimirDiplomaSolo()">
+                🖨️ Imprimir Diploma (1 Sola Hoja)
+            </button>
+            <button type="button" class="btn-pdf-diploma" onclick="descargarDiplomaPDF()">
+                📥 Descargar Diploma en PDF
+            </button>
+        </div>
+
+        <a href="/index.html" class="btn-volver no-print">🏰 Volver al Gran Reino</a>
+    </main>
+
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+    <script>
+        // ESTADO DE PUNTUACIÓN DE LA RÚBRICA
+        const puntajesSeleccionados = {
+            claridad: 0,
+            secuencia: 0,
+            gamificacion: 0,
+            docentes: 0
+        };
+
+        // 1. Manejo interactivo de casillas chuleadas en la rúbrica
+        function seleccionarOpcion(td, puntos) {
+            const fila = td.closest('tr');
+            if (!fila) return;
+            const criterio = fila.dataset.criterio;
+
+            // Si ya estaba chuleado, no hacemos nada o toggle
+            const yaEstabaChuleado = td.classList.contains('chuleado');
+
+            // Desmarcar todas las opciones de esta fila
+            fila.querySelectorAll('.td-opcion').forEach(opcion => {
+                opcion.classList.remove('chuleado');
+                const box = opcion.querySelector('.checkbox-chulo');
+                if (box) box.textContent = '';
+            });
+
+            if (!yaEstabaChuleado) {
+                // Chulear la nueva opción seleccionada
+                td.classList.add('chuleado');
+                const box = td.querySelector('.checkbox-chulo');
+                if (box) box.textContent = '✓';
+                puntajesSeleccionados[criterio] = puntos;
+            } else {
+                puntajesSeleccionados[criterio] = 0;
+            }
+
+            actualizarPuntuacionTotal();
+        }
+
+        // 2. Calcular puntuación total
+        function actualizarPuntuacionTotal() {
+            const total = Object.values(puntajesSeleccionados).reduce((acc, curr) => acc + curr, 0);
+            const badge = document.getElementById('rubricaPuntuacionTotal');
+            if (badge) badge.textContent = total.toFixed(1);
+
+            const textoNivel = document.getElementById('rubricaNivelTexto');
+            const respondidas = Object.values(puntajesSeleccionados).filter(p => p > 0).length;
+
+            if (respondidas === 4) {
+                if (total >= 9.0) {
+                    textoNivel.innerHTML = `<strong>🌟 SUPERIOR (${total.toFixed(1)} pts):</strong> ¡Excelente! Comprendiste todos los poemas, disfrutaste los juegos y tuviste el mejor orden.`;
+                } else if (total >= 7.0) {
+                    textoNivel.innerHTML = `<strong>😊 ALTO (${total.toFixed(1)} pts):</strong> ¡Muy Bien! Tuviste gran entusiasmo y comprendiste la mayor parte de las actividades.`;
+                } else if (total >= 6.0) {
+                    textoNivel.innerHTML = `<strong>😐 BÁSICO (${total.toFixed(1)} pts):</strong> ¡Buen esfuerzo! Superaste los retos principales, seguiremos reforzando.`;
+                } else {
+                    textoNivel.innerHTML = `<strong>😟 BAJO (${total.toFixed(1)} pts):</strong> ¡Ánimo! Vamos a repasar juntos los poemas para que te diviertas aún más.`;
+                }
+            } else {
+                textoNivel.innerHTML = `Llevas <strong>${respondidas} de 4</strong> aspectos chuleados. Puntuación actual: <strong>${total.toFixed(1)}</strong>`;
+            }
+        }
+
+        // 3. Reiniciar rúbrica
+        function reiniciarCuestionario() {
+            document.querySelectorAll('.tabla-rubrica .td-opcion').forEach(opcion => {
+                opcion.classList.remove('chuleado');
+                const box = opcion.querySelector('.checkbox-chulo');
+                if (box) box.textContent = '';
+            });
+
+            for (const key in puntajesSeleccionados) {
+                puntajesSeleccionados[key] = 0;
+            }
+
+            actualizarPuntuacionTotal();
+        }
+
+        // 4. Imprimir exclusivamente el cuestionario en 1 sola hoja
+        function imprimirCuestionarioSolo() {
+            document.body.classList.remove('modo-imprimir-diploma');
+            document.body.classList.add('modo-imprimir-cuestionario');
+            window.print();
+            setTimeout(() => {
+                document.body.classList.remove('modo-imprimir-cuestionario');
+            }, 600);
+        }
+
+        // 5. Descargar cuestionario en PDF
+        function descargarCuestionarioPDF() {
+            const cuestionario = document.getElementById('cuestionarioClase');
+            if (!cuestionario) return;
+
+            const clon = cuestionario.cloneNode(true);
+            const toolbar = clon.querySelector('.cuestionario-toolbar');
+            if (toolbar) toolbar.remove();
+            clon.style.boxShadow = 'none';
+            clon.style.margin = '0 auto';
+            clon.style.padding = '12px';
+
+            const nombreEst = document.getElementById('rubricaNombreEstudiante').textContent.trim() || 'Estudiante';
+            const opciones = {
+                margin:       [6, 8, 6, 8],
+                filename:     `Evaluacion_Clase_${nombreEst.replace(/\s+/g, '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'letter', orientation: 'landscape' }
+            };
+
+            if (window.html2pdf) {
+                window.html2pdf().set(opciones).from(clon).save();
+            } else {
+                imprimirCuestionarioSolo();
+            }
+        }
+
+        // 6. Imprimir exclusivamente el diploma en 1 sola hoja
+        function imprimirDiplomaSolo() {
+            document.body.classList.remove('modo-imprimir-cuestionario');
+            document.body.classList.add('modo-imprimir-diploma');
+            window.print();
+            setTimeout(() => {
+                document.body.classList.remove('modo-imprimir-diploma');
+            }, 600);
+        }
+
+        // 7. Descargar diploma en PDF directo (garantizado en 1 hoja landscape)
+        function descargarDiplomaPDF() {
+            const diploma = document.getElementById('diplomaArea');
+            if (!diploma) return;
+
+            const clon = diploma.cloneNode(true);
+            clon.style.width = '260mm';
+            clon.style.maxWidth = '260mm';
+            clon.style.margin = '0 auto';
+            clon.style.padding = '16px 20px';
+            clon.style.boxSizing = 'border-box';
+            clon.style.boxShadow = 'none';
+
+            const nombreEst = document.getElementById('diplomaNombre').textContent.trim() || 'Estudiante';
+            const opciones = {
+                margin:       [6, 6, 6, 6],
+                filename:     `Diploma_Caldista_${nombreEst.replace(/\s+/g, '_')}.pdf`,
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'letter', orientation: 'landscape' }
+            };
+
+            if (window.html2pdf) {
+                window.html2pdf().set(opciones).from(clon).save();
+            } else {
+                imprimirDiplomaSolo();
+            }
+        }
+
+        // Inicialización y carga de base de datos
+        document.addEventListener('DOMContentLoaded', () => {
+            const user = window.ReinoDB ? window.ReinoDB.getUsuarioActual() : null;
+            const prog = window.ReinoDB ? window.ReinoDB.getProgresoActual() : {};
+
+            // Fecha actual en español
+            const fechaHoy = new Date().toLocaleDateString('es-CO', {
+                day: 'numeric',
+                month: 'long',
+                year: 'numeric'
+            });
+            const rubFecha = document.getElementById('rubricaFecha');
+            if (rubFecha) rubFecha.textContent = fechaHoy;
+
+            // Datos de usuario
+            if (user) {
+                const nombreLimpio = `${user.avatar || '🎓'} ${user.nombre}`;
+                const dip = document.getElementById('diplomaNombre');
+                const rubNombre = document.getElementById('rubricaNombreEstudiante');
+                if (dip) dip.textContent = nombreLimpio;
+                if (rubNombre) rubNombre.textContent = `${user.nombre} (${user.grado || 'Grado 3°'})`;
+
+                const info = document.getElementById('evalEstudianteInfo');
+                if (info) info.textContent = `Estudiante: ${user.nombre} | Grado: ${user.grado || 'Grado 3°'}`;
+            }
+
+            // Datos de gamificación
+            const ptot = document.getElementById('evalPuntos');
+            const ppor = document.getElementById('evalProgreso');
+            const pact = document.getElementById('evalActividades');
+            if (ptot) ptot.textContent = prog.puntosTotales || 0;
+            if (ppor) ppor.textContent = `${prog.porcentaje || 0}%`;
+            if (pact) pact.textContent = Object.keys(prog.actividadesCompletadas || {}).length;
+
+            // Semáforo de emociones
+            document.querySelectorAll('.btn-semaforo').forEach(btn => {
+                btn.addEventListener('click', () => {
+                    document.querySelectorAll('.btn-semaforo').forEach(b => b.classList.remove('activo'));
+                    btn.classList.add('activo');
+                });
+            });
+
+            // Guardar evaluación final
+            const btnGuardar = document.getElementById('btnGuardarEvalFinal');
+            if (btnGuardar) {
+                btnGuardar.addEventListener('click', async () => {
+                    const calif = document.querySelector('.btn-semaforo.activo');
+                    const com = document.getElementById('comentarioFinal').value.trim();
+                    const msg = document.getElementById('msgEvalFinal');
+
+                    if (!calif) {
+                        msg.textContent = '⚠️ ¡Elige cómo calificarías tu viaje en el semáforo!';
+                        msg.style.color = '#c62828';
+                        return;
+                    }
+
+                    if (window.ReinoDB) {
+                        await window.ReinoDB.registrarPuntos('evaluacion_final', 50, {
+                            calificacion: calif.dataset.calif,
+                            comentario: com,
+                            rubricaPuntuacion: document.getElementById('rubricaPuntuacionTotal').textContent
+                        });
+                    }
+
+                    msg.textContent = '🎉 ¡Evaluación guardada con éxito! Ganaste +50 puntos de honor Caldista.';
+                    msg.style.color = '#2e7d32';
+                    btnGuardar.disabled = true;
+
+                    if (window.ReinoDB) {
+                        const nuevoProg = window.ReinoDB.getProgresoActual();
+                        if (ptot) ptot.textContent = nuevoProg.puntosTotales;
+                        if (ppor) ppor.textContent = `${nuevoProg.porcentaje}%`;
+                    }
+                });
+            }
+
+            if (window.ReinoDB && window.ReinoDB.estaPoemaCompletado('evaluacion')) {
+                const msg = document.getElementById('msgEvalFinal');
+                const btn = document.getElementById('btnGuardarEvalFinal');
+                if (msg) msg.textContent = '🎉 ¡Ya has completado tu evaluación final y tienes tu Diploma Caldista!';
+                if (btn) {
+                    btn.textContent = '✅ Evaluación Completada (+50 pts)';
+                    btn.disabled = true;
+                }
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1966 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Había un caldero lleno... - El Reino de los Poemas</title>
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            font-family: var(--font-body, 'Lexend', Arial, sans-serif);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-image:
+                var(--bg-dots-pattern, radial-gradient(rgba(0,0,0,0.15) 1.5px, transparent 1.5px)),
+                radial-gradient(circle at center, #1a0033, #311b92);
+            background-size: var(--bg-dots-size, 20px 20px), 100% 100%;
+        }
+        .header-poema { text-align: center; max-width: 800px; margin-bottom: 20px; }
+        .header-poema h1 { font-family: var(--font-heading,'Poppins',sans-serif); color: #fff; font-size: 2.1rem; margin-bottom: 5px; text-shadow: 0 2px 10px #7b1fa2; }
+        .header-poema p { color: #e1bee7; font-size: 1rem; }
+        .img-banner { width: 100%; max-width: 600px; height: 220px; object-fit: cover; border-radius: 20px; box-shadow: 0 10px 25px rgba(0,0,0,0.4); margin-bottom: 20px; border: 3px solid #7b1fa2; }
+        .video-container-yt { width: 100%; max-width: 560px; aspect-ratio: 16/9; margin: 15px auto; border-radius: 15px; overflow: hidden; box-shadow: 0 8px 20px rgba(0,0,0,0.4); }
+        .video-container-yt iframe { width: 100%; height: 100%; border: none; }
+        .tabs-etapas { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+        .tab-btn { background: rgba(255,255,255,0.1); border: 2px solid #ab47bc; color: #e1bee7; padding: 10px 22px; border-radius: 20px; font-weight: 800; font-size: 1rem; cursor: pointer; transition: 0.3s; }
+        .tab-btn.activo { background: #7b1fa2; color: white; box-shadow: 0 6px 15px rgba(123,31,162,0.5); transform: translateY(-2px); }
+        .seccion-etapa { background: rgba(255,255,255,0.97); border-radius: 25px; padding: 30px; max-width: 820px; width: 100%; box-shadow: 0 15px 35px rgba(0,0,0,0.3); display: none; border: 3px solid #7b1fa2; }
+        .seccion-etapa.activo { display: block; animation: fadeIn 0.4s ease; }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* ====== OVERLAY INICIO ====== */
+        .overlay-inicio-juego {
+            position: absolute; inset: 0; border-radius: 20px;
+            background: radial-gradient(circle at center, #1a0033fa, #311b92fa);
+            display: flex; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 50; gap: 16px; padding: 30px; text-align: center;
+        }
+        .overlay-inicio-juego h3 { color: #ffd54f; font-size: 1.9rem; text-shadow: 0 2px 8px #000; }
+        .overlay-inicio-juego p { color: #e1bee7; font-size: 1.05rem; max-width: 480px; line-height: 1.5; }
+        .btn-empezar-verde {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            border: none; color: white; font-size: 1.3rem; font-weight: 900;
+            padding: 14px 38px; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 6px 0 #1b5e20, 0 10px 20px rgba(0,0,0,0.3);
+            transition: all 0.15s; letter-spacing: 0.5px;
+        }
+        .btn-empezar-verde:hover { transform: translateY(-3px); box-shadow: 0 9px 0 #1b5e20; }
+        .btn-empezar-verde:active { transform: translateY(3px); box-shadow: 0 3px 0 #1b5e20; }
+
+        /* ====== PANTALLA FIN ====== */
+        .pantalla-fin-juego {
+            position: absolute; inset: 0; border-radius: 20px;
+            background: linear-gradient(135deg, #1a0033fa, #4a148cfa);
+            display: none; flex-direction: column; align-items: center; justify-content: center;
+            z-index: 60; gap: 8px; padding: 14px 20px; text-align: center;
+            overflow-y: auto;
+        }
+        .pantalla-fin-juego h2 { color: #ffd54f; font-size: 1.7rem; text-shadow: 0 2px 8px #000; margin: 2px 0; }
+        .pantalla-fin-juego p { color: #e1bee7; font-size: 0.95rem; margin-bottom: 2px; }
+        .resumen-puntos-card { background: rgba(255,255,255,0.12); border: 2px solid #ffd54f; border-radius: 16px; padding: 10px 22px; min-width: 250px; }
+        .resumen-fila { display: flex; justify-content: space-between; gap: 20px; margin: 5px 0; font-size: 0.98rem; }
+        .resumen-lbl { color: #e1bee7; font-weight: 700; }
+        .resumen-val { color: #ffd54f; font-weight: 900; }
+        .btn-avanzar-siguiente {
+            background: linear-gradient(135deg, #7b1fa2, #4a148c);
+            border: 2px solid #ffd54f; color: white; font-size: 1.02rem; font-weight: 900;
+            padding: 10px 22px; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 4px 0 #1a0033, 0 6px 12px rgba(0,0,0,0.3);
+            transition: all 0.15s;
+        }
+        .btn-avanzar-siguiente:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #1a0033; }
+        .btn-reiniciar-destacado {
+            background: linear-gradient(135deg, #ff9800, #f57f17);
+            border: 2px solid #fff; color: white; font-size: 1.02rem; font-weight: 900;
+            padding: 10px 22px; border-radius: 50px; cursor: pointer;
+            box-shadow: 0 4px 0 #b26a00, 0 6px 12px rgba(0,0,0,0.3);
+            transition: all 0.15s;
+        }
+        .btn-reiniciar-destacado:hover { transform: translateY(-2px); box-shadow: 0 6px 0 #b26a00; }
+        .btn-reiniciar { background: rgba(255,255,255,0.15); border: 2px solid #e1bee7; color: #e1bee7; font-size: 1rem; font-weight: 700; padding: 10px 22px; border-radius: 50px; cursor: pointer; transition: 0.2s; }
+        .btn-reiniciar:hover { background: rgba(255,255,255,0.25); }
+
+        /* ====== CANVAS ARENAS ====== */
+        .runner-arena {
+            position: relative; background: #0d0020;
+            border-radius: 20px; overflow: hidden;
+            width: 100%; max-width: 760px; height: 350px; margin: 16px auto;
+            border: 3px solid #7b1fa2;
+            box-shadow: 0 0 30px #7b1fa255, inset 0 0 60px #1a003355;
+        }
+        .runner2-arena {
+            position: relative; background: #070014;
+            border-radius: 20px; overflow: hidden;
+            width: 100%; max-width: 760px; height: 410px; margin: 16px auto;
+            border: 3px solid #ab47bc;
+            box-shadow: 0 0 35px rgba(171,71,188,0.45), inset 0 0 60px rgba(26,0,51,0.7);
+        }
+        #canvasRunner, #canvasRunner2 { display: block; width: 100%; height: 100%; }
+
+        /* HUD Runner */
+        .hud-runner {
+            display: flex; justify-content: space-between; align-items: center;
+            padding: 10px 18px; background: rgba(26,0,51,0.95);
+            border-radius: 14px; margin-bottom: 8px;
+            border: 1px solid #7b1fa2; flex-wrap: wrap; gap: 8px;
+        }
+        .hud-col { text-align: center; }
+        .hud-lbl { font-size: 0.72rem; font-weight: 800; color: #ce93d8; text-transform: uppercase; letter-spacing: 0.5px; }
+        .hud-val { font-size: 1.15rem; font-weight: 900; color: #ffd54f; }
+
+        /* Controles touch Runner 1 */
+        .controles-touch { display: flex; justify-content: center; gap: 20px; margin-top: 12px; }
+        .btn-touch {
+            background: linear-gradient(135deg, #7b1fa2, #4a148c); border: 2px solid #e1bee7;
+            color: white; font-size: 1.7rem; width: 68px; height: 68px;
+            border-radius: 50%; cursor: pointer; display: flex; align-items: center; justify-content: center;
+            box-shadow: 0 5px 0 #1a0033; transition: 0.1s; user-select: none;
+        }
+        .btn-touch:active { transform: translateY(3px); box-shadow: 0 2px 0 #1a0033; }
+
+        /* Controles touch Cat Parkour (Runner 2) */
+        .controles-touch-parkour {
+            display: flex; justify-content: center; gap: 14px; margin-top: 14px; flex-wrap: wrap;
+        }
+        .btn-touch-parkour {
+            background: linear-gradient(135deg, #7b1fa2, #4a148c); border: 2px solid #ffd54f;
+            color: white; font-size: 1.6rem; width: 68px; height: 64px;
+            border-radius: 18px; cursor: pointer; display: flex; flex-direction: column;
+            align-items: center; justify-content: center;
+            box-shadow: 0 5px 0 #1a0033; transition: 0.1s; user-select: none;
+        }
+        .btn-touch-parkour span { font-size: 0.65rem; font-weight: 800; color: #ffd54f; text-transform: uppercase; margin-top: 2px; }
+        .btn-touch-parkour:active { transform: translateY(3px); box-shadow: 0 2px 0 #1a0033; }
+
+        /* ====== QUIZ MODAL ====== */
+        .quiz-overlay {
+            position: fixed; inset: 0; background: rgba(0,0,0,0.85);
+            display: none; align-items: center; justify-content: center; z-index: 9999;
+            backdrop-filter: blur(4px);
+        }
+        .quiz-card {
+            background: linear-gradient(135deg, #1a0033, #38006b);
+            border: 3px solid #ffd54f; border-radius: 26px; padding: 28px 24px;
+            max-width: 490px; width: 92%; text-align: center;
+            box-shadow: 0 20px 45px rgba(0,0,0,0.7);
+            animation: popIn 0.3s cubic-bezier(0.175,0.885,0.32,1.275);
+        }
+        @keyframes popIn { from { transform: scale(0.7); opacity: 0; } to { transform: scale(1); opacity: 1; } }
+        .quiz-icono { font-size: 3.2rem; margin-bottom: 6px; }
+        .quiz-card h3 { color: #ffd54f; font-size: 1.4rem; margin-bottom: 8px; }
+        .quiz-card .pregunta-texto { color: #fff; font-size: 1.1rem; margin-bottom: 18px; line-height: 1.5; font-weight: 600; }
+        .quiz-opciones { display: flex; flex-direction: column; gap: 10px; }
+        .btn-opcion {
+            background: rgba(255,255,255,0.1); border: 2px solid #ab47bc;
+            color: #f3e5f5; padding: 12px 18px; border-radius: 14px;
+            cursor: pointer; font-size: 1rem; font-weight: 700; transition: 0.2s; text-align: left;
+            display: flex; align-items: center; gap: 10px;
+        }
+        .btn-opcion:hover:not(:disabled) { background: rgba(171,71,188,0.4); border-color: #ffd54f; transform: translateX(4px); }
+        .btn-opcion:disabled { cursor: default; }
+        .btn-opcion.correcta { background: rgba(76,175,80,0.45) !important; border-color: #4caf50 !important; color: #c8e6c9 !important; }
+        .btn-opcion.incorrecta { background: rgba(244,67,54,0.4) !important; border-color: #f44336 !important; color: #ffcdd2 !important; }
+
+        .quiz-feedback-box {
+            margin-top: 16px; padding-top: 14px; border-top: 1px solid rgba(255,255,255,0.2);
+        }
+        .quiz-feedback { font-size: 1.05rem; font-weight: 800; min-height: 26px; line-height: 1.4; }
+        .quiz-feedback.ok { color: #a5d6a7; }
+        .quiz-feedback.mal { color: #ef9a9a; }
+        .btn-continuar-quiz {
+            margin-top: 16px; background: linear-gradient(135deg, #ffd54f, #ffb300); color: #1a0033;
+            border: none; padding: 13px 34px; border-radius: 50px; font-size: 1.15rem;
+            font-weight: 900; cursor: pointer; box-shadow: 0 5px 0 #f57f17, 0 8px 15px rgba(0,0,0,0.3);
+            animation: pulseBtn 1.5s infinite;
+        }
+        .btn-continuar-quiz:hover { transform: translateY(-2px); box-shadow: 0 7px 0 #f57f17; }
+        @keyframes pulseBtn {
+            0%, 100% { transform: scale(1); }
+            50% { transform: scale(1.04); }
+        }
+
+        /* ====== TALLER: CREA TU PROPIO CALDERO (TRANSFERENCIA) ====== */
+        .taller-caldero-contenedor {
+            background: #fdf7ff;
+            border: 3px dashed #ab47bc;
+            border-radius: 24px;
+            padding: 26px;
+            margin-top: 32px;
+            box-shadow: 0 8px 25px rgba(123,31,162,0.1);
+        }
+        .taller-header { text-align: center; margin-bottom: 20px; }
+        .taller-header h3 { color: #4a148c; font-size: 1.6rem; margin: 6px 0; }
+        .taller-header p { color: #6a1b9a; font-size: 1rem; }
+
+        .laboratorio-caldero-transferencia {
+            background: radial-gradient(circle at center, #311b92, #1a0033);
+            border-radius: 20px;
+            padding: 22px;
+            color: white;
+            text-align: center;
+            margin: 15px 0;
+            border: 2px solid #7b1fa2;
+        }
+        .caldero-visual {
+            position: relative;
+            width: 170px;
+            height: 130px;
+            background: linear-gradient(180deg, #424242, #111);
+            border-radius: 20px 20px 85px 85px;
+            margin: 0 auto 15px auto;
+            border-top: 10px solid #212121;
+            box-shadow: 0 12px 25px rgba(0,0,0,0.6), inset 0 -10px 20px rgba(0,0,0,0.8);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+        .pocima-liquido {
+            position: absolute;
+            top: 5px;
+            width: 135px;
+            height: 32px;
+            background: #ab47bc;
+            border-radius: 50%;
+            box-shadow: 0 0 25px #ea80fc, inset 0 0 10px #f3e5f5;
+            transition: all 0.5s ease;
+            animation: hervor 2s infinite alternate ease-in-out;
+        }
+        @keyframes hervor {
+            0% { transform: scale(1) translateY(0); filter: hue-rotate(0deg); }
+            50% { transform: scale(1.04) translateY(-2px); }
+            100% { transform: scale(0.98) translateY(2px); filter: hue-rotate(45deg); }
+        }
+        .burbujas-flotantes { font-size: 30px; animation: burbujeo 1.5s infinite ease-in-out alternate; }
+        @keyframes burbujeo {
+            from { transform: translateY(4px) scale(0.9); }
+            to { transform: translateY(-6px) scale(1.15); }
+        }
+
+        .ingredientes-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(130px, 1fr));
+            gap: 12px;
+            margin: 20px 0;
+        }
+        .ingrediente-card {
+            background: white;
+            border: 2px solid #ba68c8;
+            border-radius: 16px;
+            padding: 12px 8px;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #ab47bc, 0 8px 12px rgba(0,0,0,0.06);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            user-select: none;
+            text-align: center;
+        }
+        .ingrediente-card:hover { transform: translateY(-3px) scale(1.03); background: #fdf4ff; }
+        .ingrediente-card:active { transform: translateY(3px); box-shadow: 0 2px 0 #ab47bc; }
+        .ingrediente-card.agregado { background: #e8f5e9; border-color: #4caf50; box-shadow: 0 4px 0 #2e7d32; }
+        .ingrediente-icono { font-size: 30px; display: block; margin-bottom: 4px; }
+        .ingrediente-nombre { font-size: 0.88rem; font-weight: 800; color: #4a148c; }
+
+        .taller-pocima-formula {
+            background: #fffde7;
+            border: 2px solid #fbc02d;
+            border-radius: 18px;
+            padding: 22px;
+            margin-top: 15px;
+        }
+        .taller-pocima-formula input {
+            padding: 8px 14px;
+            border-radius: 12px;
+            border: 2px solid #fbc02d;
+            font-family: inherit;
+            font-size: 1.05rem;
+            font-weight: bold;
+            color: #4a148c;
+            margin: 4px;
+            outline: none;
+            background: white;
+            transition: border-color 0.2s;
+        }
+        .taller-pocima-formula input:focus {
+            border-color: #e65100;
+            box-shadow: 0 0 10px rgba(255, 152, 0, 0.4);
+        }
+
+        .pergamino-poema-creado {
+            background: linear-gradient(135deg, #fff9c4, #fffde7);
+            border: 3px solid #fbc02d;
+            border-radius: 20px;
+            padding: 24px;
+            margin-top: 20px;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.1);
+            animation: popIn 0.4s ease;
+        }
+
+        /* EMOCIONES */
+        .emociones-selector { display: flex; justify-content: center; gap: 12px; margin: 20px 0; flex-wrap: wrap; }
+        .btn-emocion { background: white; border: 2px solid #ab47bc; color: #6a1b9a; padding: 10px 18px; border-radius: 16px; font-weight: 800; cursor: pointer; box-shadow: 0 4px 0 #8e24aa; transition: 0.2s; }
+        .btn-emocion:hover { background: #f3e5f5; }
+        .btn-emocion.activo { background: #8e24aa; color: white; transform: translateY(2px); box-shadow: 0 2px 0 #4a148c; }
+        .caja-poema { border-radius: 20px; padding: 25px; font-style: italic; line-height: 1.9; font-size: 1.2rem; text-align: center; margin: 20px 0; transition: all 0.5s ease; box-shadow: 0 8px 25px rgba(0,0,0,0.08); border-left: 6px solid #8e24aa; }
+
+        /* MODAL FIN TOTAL */
+        .modal-fin-total { position: fixed; inset: 0; background: rgba(0,0,0,0.85); display: none; align-items: center; justify-content: center; z-index: 9999; backdrop-filter: blur(5px); }
+        .modal-fin-card { background: linear-gradient(135deg, #1a0033, #4a148c); border: 3px solid #ffd54f; border-radius: 28px; padding: 36px 32px; max-width: 500px; width: 92%; text-align: center; box-shadow: 0 25px 50px rgba(0,0,0,0.7); animation: popIn 0.4s cubic-bezier(0.175,0.885,0.32,1.275); }
+        .modal-fin-card h2 { color: #ffd54f; font-size: 2.2rem; margin-bottom: 8px; }
+        .modal-fin-card p { color: #e1bee7; margin-bottom: 18px; font-size: 1.05rem; }
+        .modal-fin-card .total-pts { font-size: 2.8rem; font-weight: 900; color: #fff176; text-shadow: 0 2px 10px #ffd54f; }
+        .msg-feedback { font-weight: 800; margin-top: 14px; font-size: 1.15rem; min-height: 30px; text-align: center; }
+        .msg-feedback.exito { color: #2e7d32; }
+        .msg-feedback.error { color: #c62828; }
+    </style>
+</head>
+<body>
+    <header class="header-poema">
+        <img src="/assets/img/poemas/habia-un-caldero-lleno-de.jpeg" alt="Había un caldero lleno..." class="img-banner">
+        <h1>🔮 Había un caldero lleno...</h1>
+        <p><strong>Autora:</strong> Cecilia Pisos (2004) | Grado Segundo - Tercero</p>
+        <div class="video-container-yt">
+            <iframe src="https://www.youtube.com/embed/bm4AgJgKG40" title="Había un caldero lleno... - Poema Infantil" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </header>
+
+    <nav class="tabs-etapas">
+        <button type="button" class="tab-btn activo" data-etapa="exploracion">1. Exploración 🧙‍♀️ (Calderos de Ranas)</button>
+        <button type="button" class="tab-btn" data-etapa="estructuracion">2. Estructuración 📖 (Lectura)</button>
+        <button type="button" class="tab-btn" data-etapa="transferencia">3. Transferencia 🐾 (Cat Parkour y Crea tu Caldero)</button>
+    </nav>
+
+    <!-- ===================== ETAPA 1: EXPLORACIÓN - RUNNER BRUJA COME CALDEROS ===================== -->
+    <section id="etapa-exploracion" class="seccion-etapa activo">
+        <h2 style="color:#4a148c; margin-bottom:6px;">🧙‍♀️ 1. Exploración: La Brujita y los Calderos de Ranas</h2>
+        <p style="color:#6a1b9a; margin-bottom:14px; font-size:0.95rem;">
+            Ayuda a la brujita a atrapar <strong>5 calderos de ranas</strong>. Usa <strong>↑ (saltar)</strong> y <strong>↓ (agacharse)</strong> para esquivar murciélagos y culebras. ¡Cada caldero que comas te hará una pregunta sobre el poema! (+25 pts)
+        </p>
+
+        <div class="hud-runner">
+            <div class="hud-col"><div class="hud-lbl">Calderos de Ranas 🍲🐸</div><div class="hud-val" id="hudCalderos">0 / 5</div></div>
+            <div class="hud-col"><div class="hud-lbl">Vidas ❤️</div><div class="hud-val" id="hudVidas">3</div></div>
+            <div class="hud-col"><div class="hud-lbl">Preguntas Acertadas</div><div class="hud-val" id="hudPreguntasExp">0</div></div>
+            <div class="hud-col"><div class="hud-lbl">Puntos Ganados</div><div class="hud-val" id="hudPtsExp">0 pts</div></div>
+        </div>
+
+        <div class="runner-arena" id="arenaRunner">
+            <canvas id="canvasRunner"></canvas>
+
+            <!-- OVERLAY INICIO -->
+            <div class="overlay-inicio-juego" id="overlayInicioRunner">
+                <div style="font-size:3.8rem;">🧙‍♀️🍲🐸</div>
+                <h3>¡La Bruja Come Calderos!</h3>
+                <p>Usa <strong>↑ / Espacio</strong> para saltar y <strong>↓</strong> para agacharte.<br>Atrapa 5 calderos de ranas y responde las preguntas del poema para ganar.</p>
+                <button class="btn-empezar-verde" id="btnIniciarRunner">🚀 ¡Comenzar Juego!</button>
+            </div>
+
+            <!-- PANTALLA FIN -->
+            <div class="pantalla-fin-juego" id="pantallaFinRunner">
+                <div style="font-size:3.8rem;">⭐🎉✨</div>
+                <h2>¡Poción Mágica Completada!</h2>
+                <p>La brujita atrapó todos los calderos de ranas del poema.</p>
+                <div class="resumen-puntos-card">
+                    <div class="resumen-fila"><span class="resumen-lbl">Calderos comidos:</span><span class="resumen-val" id="finCalderosCount">5 / 5</span></div>
+                    <div class="resumen-fila"><span class="resumen-lbl">Preguntas correctas:</span><span class="resumen-val" id="finCorrectasExp">0 / 5</span></div>
+                    <div class="resumen-fila"><span class="resumen-lbl">Puntos ganados:</span><span class="resumen-val" id="finPtsExp">+25 pts</span></div>
+                </div>
+                <button class="btn-avanzar-siguiente" id="btnIrEstructuracion">📖 Ir a Estructuración (Lectura) ➔</button>
+                <button class="btn-reiniciar" id="btnReiniciarRunner">🔄 Jugar de nuevo</button>
+            </div>
+        </div>
+
+        <div class="controles-touch">
+            <button class="btn-touch" id="btnSaltar" title="Saltar">⬆️</button>
+            <button class="btn-touch" id="btnAgachar" title="Agacharse">⬇️</button>
+        </div>
+    </section>
+
+    <!-- ===================== ETAPA 2: ESTRUCTURACIÓN ===================== -->
+    <section id="etapa-estructuracion" class="seccion-etapa">
+        <h2 style="color:#4a148c; margin-bottom:10px;">📖 2. Estructuración: El Poema y sus Emociones</h2>
+        <p style="color:#6a1b9a; margin-bottom:14px;">Cambia el tono de voz y responde la pregunta de comprensión (+25 pts):</p>
+
+        <div class="emociones-selector">
+            <button type="button" class="btn-emocion activo" data-emocion="misterio">👻 Tono Misterioso</button>
+            <button type="button" class="btn-emocion" data-emocion="alegre">😄 Tono Alegre</button>
+            <button type="button" class="btn-emocion" data-emocion="susurro">🤫 En Susurro</button>
+        </div>
+
+        <div id="cajaPoemaCaldero" class="caja-poema" style="background:#311b92; color:#e1bee7; line-height:1.8;">
+            Había un caldero lleno<br>
+            de sapos y culebras<br>
+            que una bruja cuidaba<br>
+            con su cuchara negra.<br><br>
+
+            Había un caldero lleno<br>
+            de piedras y de brillo<br>
+            que hervía con cricrac<br>
+            de estrellas y de grillo.<br><br>
+
+            Había un caldero lleno<br>
+            de llaves y candados:<br>
+            con una probadita,<br>
+            quedabas encerrado.<br><br>
+
+            Había un caldero lleno<br>
+            de aire de burbujas,<br>
+            de mentiras enormes<br>
+            que decían las brujas.<br><br>
+
+            Había un caldero lleno<br>
+            y es verdad, yo lo vi,<br>
+            de comida de bruja,<br>
+            pero yo no comí.
+        </div>
+
+        <div style="text-align:center; margin-top:20px;">
+            <p style="font-weight:800; color:#4a148c; font-size:1.15rem; margin-bottom:14px;">¿Qué cuidaba la bruja en su primer caldero con su cuchara negra? (+25 pts)</p>
+            <div style="display:flex; justify-content:center; gap:15px; flex-wrap:wrap;">
+                <button type="button" class="btn-3d btn-3d-verde" onclick="responderPreguntaCaldero(true)">🐸 Sapos y culebras</button>
+                <button type="button" class="btn-3d btn-3d-amarillo" onclick="responderPreguntaCaldero(false)">🍲 Sopa de fideos</button>
+                <button type="button" class="btn-3d btn-3d-morado" onclick="responderPreguntaCaldero(false)">🌟 Polvo de estrellas</button>
+            </div>
+            <p id="msgEstructura" class="msg-feedback"></p>
+        </div>
+
+        <div style="text-align:center; margin-top:24px;">
+            <button type="button" class="btn-3d btn-3d-morado" id="btnIrTransferenciaCaldero" style="display:none;" onclick="irATransferencia()">
+                🐾 Ir a Transferencia (Cat Parkour y Taller) ➔
+            </button>
+        </div>
+    </section>
+
+    <!-- ===================== ETAPA 3: TRANSFERENCIA ===================== -->
+    <section id="etapa-transferencia" class="seccion-etapa">
+        <h2 style="color:#4a148c; margin-bottom:6px;">🐾 3. Transferencia: ¡Cat Parkour y Crea tu Propio Caldero!</h2>
+        <p style="color:#6a1b9a; margin-bottom:16px; font-size:0.95rem;">
+            En esta etapa completarás 2 retos poéticos: primero esquivarás los obstáculos en <strong>Cat Parkour</strong> y luego <strong>crearás tu propia fórmula de caldero</strong> (+35 pts).
+        </p>
+
+        <!-- RETO 1: CAT PARKOUR 3D -->
+        <div style="background: rgba(123,31,162,0.06); border: 2px solid #ce93d8; border-radius: 20px; padding: 18px; margin-bottom: 25px;">
+            <h3 style="color:#4a148c; margin-bottom:6px; display:flex; align-items:center; gap:8px;">
+                <span>🐾 Reto 1: Cat Parkour en los 3 Carriles</span>
+            </h3>
+            <p style="color:#6a1b9a; font-size:0.9rem; margin-bottom:12px;">
+                Usa <strong>⬅️ ➡️</strong> para cambiar de carril, <strong>⬆️</strong> para saltar sapos y culebras, y <strong>⬇️</strong> para deslizarte bajo candados voladores. ¡Recoge monedas doradas 🪙 y si chocas, responde la pregunta para continuar!
+            </p>
+
+            <div class="hud-runner">
+                <div class="hud-col"><div class="hud-lbl">Monedas Mágicas 🪙</div><div class="hud-val" id="hud2Monedas">0</div></div>
+                <div class="hud-col"><div class="hud-lbl">Distancia 🏃</div><div class="hud-val" id="hud2Distancia">0 m</div></div>
+                <div class="hud-col"><div class="hud-lbl">Vidas ❤️</div><div class="hud-val" id="hud2Vidas">3</div></div>
+                <div class="hud-col"><div class="hud-lbl">Preguntas del Poema 📖</div><div class="hud-val" id="hud2Encuentros">0 / 5</div></div>
+            </div>
+
+            <div class="runner2-arena" id="arenaRunner2">
+                <canvas id="canvasRunner2"></canvas>
+
+                <!-- OVERLAY INICIO -->
+                <div class="overlay-inicio-juego" id="overlayInicioRunner2">
+                    <div style="font-size:3.5rem;">🐱🏃💨✨</div>
+                    <h3>¡Cat Parkour del Caldero!</h3>
+                    <p>Corre en 3 carriles como en Cat Parkour.<br><strong>⬅️ ➡️</strong> cambia de carril | <strong>⬆️</strong> salta | <strong>⬇️</strong> deslízate.<br>¡Responde las <strong>5 preguntas</strong> del poema para completar la carrera!</p>
+                    <button class="btn-empezar-verde" id="btnIniciarRunner2">🚀 ¡Comenzar Parkour!</button>
+                </div>
+
+                <!-- PANTALLA FIN RETO 1 -->
+                <div class="pantalla-fin-juego" id="pantallaFinRunner2">
+                    <div style="font-size:2.8rem; margin-bottom:2px;">🏆🐱🌟</div>
+                    <h2>¡Parkour Completado!</h2>
+                    <p>¡Has respondido con éxito las 5 preguntas del poema!</p>
+                    <div class="resumen-puntos-card">
+                        <div class="resumen-fila"><span class="resumen-lbl">Distancia corrida:</span><span class="resumen-val" id="fin2Distancia">0 m</span></div>
+                        <div class="resumen-fila"><span class="resumen-lbl">Monedas mágicas:</span><span class="resumen-val" id="fin2Monedas">0 🪙</span></div>
+                        <div class="resumen-fila"><span class="resumen-lbl">Preguntas acertadas:</span><span class="resumen-val" id="fin2Correctas">0 / 5</span></div>
+                    </div>
+                    <div style="display:flex; gap:10px; justify-content:center; align-items:center; flex-wrap:wrap; margin-top:8px;">
+                        <button type="button" class="btn-avanzar-siguiente" id="btnIrATallerCaldero">🧙‍♀️ Reto 2: Crear Caldero ➔</button>
+                        <button type="button" class="btn-reiniciar-destacado" id="btnReiniciarRunner2">🔄 Volver a Jugar</button>
+                    </div>
+                </div>
+            </div>
+
+            <div class="controles-touch-parkour">
+                <button class="btn-touch-parkour" id="btnParkourIzq" title="Mover Izquierda">⬅️<span>Izq</span></button>
+                <button class="btn-touch-parkour" id="btnParkourSalto" title="Saltar">⬆️<span>Salto</span></button>
+                <button class="btn-touch-parkour" id="btnParkourSlide" title="Deslizarse">⬇️<span>Slide</span></button>
+                <button class="btn-touch-parkour" id="btnParkourDer" title="Mover Derecha">➡️<span>Der</span></button>
+            </div>
+        </div>
+
+        <!-- RETO 2: TALLER POÉTICO - CREA TU PROPIO CALDERO MÁGICO -->
+        <div class="taller-caldero-contenedor" id="tallerCalderoSeccion">
+            <div class="taller-header">
+                <div style="font-size:2.8rem;">🧙‍♀️🍲✨</div>
+                <h3>Reto 2: ¡Crea tu Propio Caldero Poético!</h3>
+                <p>Toca los ingredientes mágicos para echarlos al caldero y escribe tus propios versos (+35 pts):</p>
+            </div>
+
+            <!-- Caldero interactivo que hierve y cambia de color -->
+            <div class="laboratorio-caldero-transferencia">
+                <div class="burbujas-flotantes" id="burbujasTaller">✨🍲✨</div>
+                <div class="caldero-visual">
+                    <div class="pocima-liquido" id="liquidoTaller"></div>
+                </div>
+                <h4 id="estadoPocimaTaller" style="color: #ffd54f; margin-bottom: 4px;">Caldero en reposo</h4>
+                <p id="textoIngsTaller" style="font-size: 0.95rem; color: #e1bee7;">Toca los ingredientes para echarlos a la pócima:</p>
+            </div>
+
+            <!-- Bandeja de ingredientes clicables -->
+            <div class="ingredientes-grid" id="bandejaIngredientesTaller">
+                <div class="ingrediente-card" data-ing="estrellas" data-color="#ffd54f" data-nombre="Polvo de estrellas">
+                    <span class="ingrediente-icono">🌟</span>
+                    <span class="ingrediente-nombre">Polvo de estrellas</span>
+                </div>
+                <div class="ingrediente-card" data-ing="sapos" data-color="#00e676" data-nombre="Sapos cantores">
+                    <span class="ingrediente-icono">🐸</span>
+                    <span class="ingrediente-nombre">Sapos cantores</span>
+                </div>
+                <div class="ingrediente-card" data-ing="caramelos" data-color="#ff4081" data-nombre="Risas de caramelo">
+                    <span class="ingrediente-icono">🍬</span>
+                    <span class="ingrediente-nombre">Risas de caramelo</span>
+                </div>
+                <div class="ingrediente-card" data-ing="luna" data-color="#40c4ff" data-nombre="Pétalos de luna">
+                    <span class="ingrediente-icono">🌸</span>
+                    <span class="ingrediente-nombre">Pétalos de luna</span>
+                </div>
+                <div class="ingrediente-card" data-ing="chocolate" data-color="#8d6e63" data-nombre="Chocolate dulce">
+                    <span class="ingrediente-icono">🍫</span>
+                    <span class="ingrediente-nombre">Chocolate dulce</span>
+                </div>
+                <div class="ingrediente-card" data-ing="unicornio" data-color="#b388ff" data-nombre="Brillo unicornio">
+                    <span class="ingrediente-icono">🦄</span>
+                    <span class="ingrediente-nombre">Brillo unicornio</span>
+                </div>
+            </div>
+
+            <!-- Formulario poético -->
+            <div class="taller-pocima-formula">
+                <p style="font-size: 1.15rem; line-height: 2.3; text-align: center; color: #4a148c; font-weight: 700;">
+                    "Había un caldero lleno de <input type="text" id="ing1" placeholder="ej: estrellas"> y de <input type="text" id="ing2" placeholder="ej: chocolate">,<br>
+                    que hervía con <input type="text" id="ing3" placeholder="ej: risas de sapo"> y también con <input type="text" id="ing4" placeholder="ej: brillo de luna">."
+                </p>
+                <div style="text-align: center; margin-top: 20px;">
+                    <button type="button" id="btnCrearCaldero" class="btn-3d btn-3d-amarillo" style="font-size: 1.15rem; padding: 14px 34px;">
+                        ✨ ¡Hervir y Publicar mi Caldero Mágico! (+35 pts)
+                    </button>
+                </div>
+                <p id="msgTransferencia" class="msg-feedback"></p>
+
+                <!-- Tarjeta pergamino con el poema generado por el estudiante -->
+                <div id="resultadoCalderoCreado" class="pergamino-poema-creado" style="display:none;"></div>
+            </div>
+        </div>
+    </section>
+
+    <div style="margin-top:30px;">
+        <a href="/index.html" class="btn-3d btn-3d-morado" style="font-size:0.95rem; padding:10px 20px;">🏰 Volver al Reino</a>
+    </div>
+
+    <!-- ====== QUIZ MODAL COMPARTIDO ====== -->
+    <div class="quiz-overlay" id="quizOverlay">
+        <div class="quiz-card">
+            <div class="quiz-icono" id="quizIcono">🍲🐸</div>
+            <h3 id="quizTitulo">¡Caldero de Ranas Atrapado!</h3>
+            <p class="pregunta-texto" id="quizTexto"></p>
+            <div class="quiz-opciones" id="quizOpciones"></div>
+            <div class="quiz-feedback-box" id="quizFeedbackBox" style="display:none;">
+                <p class="quiz-feedback" id="quizFeedback"></p>
+                <button type="button" class="btn-continuar-quiz" id="btnContinuarQuiz">👉 ¡Continuar! ➔</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- ====== MODAL FIN TOTAL DEL POEMA ====== -->
+    <div class="modal-fin-total" id="modalFinTotal">
+        <div class="modal-fin-card">
+            <div style="font-size:3.8rem;">🧙‍♀️🔮✨</div>
+            <h2>¡Poema Completado!</h2>
+            <p>Has superado todas las actividades del poema <strong>"Había un caldero lleno..."</strong></p>
+            <div class="resumen-puntos-card" style="margin:16px auto;">
+                <div class="resumen-fila"><span class="resumen-lbl">🧙‍♀️ 1. Exploración (Calderos de Ranas):</span><span class="resumen-val">+25 pts</span></div>
+                <div class="resumen-fila"><span class="resumen-lbl">📖 2. Estructuración (Lectura y Emoción):</span><span class="resumen-val">+25 pts</span></div>
+                <div class="resumen-fila"><span class="resumen-lbl">🐾 3. Transferencia (Parkour y Caldero):</span><span class="resumen-val">+35 pts</span></div>
+                <hr style="border-color:rgba(255,213,79,0.3); margin:10px 0;">
+                <div class="resumen-fila"><span class="resumen-lbl" style="color:#ffd54f; font-size:1.2rem;">PUNTUACIÓN TOTAL:</span><div class="total-pts">85 pts</div></div>
+            </div>
+            <p style="color:#b39ddb; font-size:0.95rem; margin-bottom:18px;">¡Excelente trabajo poético! Continúa tu aventura:</p>
+            <a href="/template/poemas/que-se-pondra-osito.html" class="btn-avanzar-siguiente" style="text-decoration:none; display:inline-block;">
+                🐻 Pasar al siguiente poema: ¿Qué se pondrá Osito? ➔
+            </a>
+        </div>
+    </div>
+
+    <script src="/static/js/game-juice.js"></script>
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+    <script>
+    // =====================================================================
+    //  PREGUNTAS DEL POEMA "Había un caldero lleno..." — Cecilia Pisos
+    // =====================================================================
+    const PREGUNTAS_CALDERO = [
+        {
+            pregunta: "¿Qué había adentro del primer caldero del poema?",
+            opciones: ["Sapos y culebras", "Piedras y flores", "Polvo de estrellas", "Comida caliente"],
+            correcta: 0,
+            explicacion: "¡Correcto! 'Había un caldero lleno de sapos y culebras que una bruja cuidaba...'"
+        },
+        {
+            pregunta: "¿Con qué utensilio cuidaba la bruja su caldero?",
+            opciones: ["Con una varita mágica", "Con su cuchara negra", "Con un tenedor de plata", "Con un cucharón de oro"],
+            correcta: 1,
+            explicacion: "¡Exacto! La bruja cuidaba el caldero 'con su cuchara negra'."
+        },
+        {
+            pregunta: "¿Qué sonido hacía hervir el segundo caldero de piedras y brillo?",
+            opciones: ["Burbujeo alegre", "Cricrac de estrellas y de grillo", "Silbidos de viento", "Canto de sapos"],
+            correcta: 1,
+            explicacion: "¡Muy bien! Hervía con 'cricrac de estrellas y de grillo'."
+        },
+        {
+            pregunta: "¿Qué pasaba con una probadita del caldero de llaves y candados?",
+            opciones: ["Te hacías invisible", "Quedabas encerrado", "Podías volar", "Te convertías en sapo"],
+            correcta: 1,
+            explicacion: "¡Bien pensado! El poema dice: 'con una probadita, quedabas encerrado'."
+        },
+        {
+            pregunta: "¿De qué estaba lleno el cuarto caldero del poema?",
+            opciones: ["Agua y fuego", "Ranas y lagartos", "Aire de burbujas y mentiras de brujas", "Risas de colores"],
+            correcta: 2,
+            explicacion: "¡Correcto! Tenía 'aire de burbujas, de mentiras enormes que decían las brujas'."
+        },
+        {
+            pregunta: "¿Qué dice el narrador en la última estrofa sobre la comida de bruja?",
+            opciones: ["Que se la comió toda", "Que la vio, pero él no comió", "Que la compartió con amigos", "Que cocinó más sopa"],
+            correcta: 1,
+            explicacion: "¡Excelente! '...y es verdad, yo lo vi, de comida de bruja, pero yo no comí.'"
+        },
+        {
+            pregunta: "¿Qué cosas acompañaban a las piedras en el segundo caldero?",
+            opciones: ["Culebras y sapos", "Piedras y brillo", "Candados y llaves", "Humo y ceniza"],
+            correcta: 1,
+            explicacion: "¡Así es! 'Había un caldero lleno de piedras y de brillo...'"
+        },
+        {
+            pregunta: "¿Quién decía las mentiras enormes en el cuarto caldero?",
+            opciones: ["Los sapos", "Los grillos", "Las brujas", "Los fantasmas"],
+            correcta: 2,
+            explicacion: "¡Muy bien! Las mentiras enormes las decían las brujas."
+        },
+        {
+            pregunta: "¿Quién es la autora de este poema infantil?",
+            opciones: ["María Elena Walsh", "Cecilia Pisos", "Canela", "Conrado Nalé Roxlo"],
+            correcta: 1,
+            explicacion: "¡Correcto! El poema 'Había un caldero lleno...' fue escrito por Cecilia Pisos en 2004."
+        },
+        {
+            pregunta: "¿De qué color era la cuchara de la bruja?",
+            opciones: ["Dorada", "Plateada", "Negra", "Roja"],
+            correcta: 2,
+            explicacion: "¡Exacto! El verso dice: 'que una bruja cuidaba con su cuchara negra'."
+        },
+        {
+            pregunta: "¿Qué animal acompaña a las culebras en el primer caldero?",
+            opciones: ["Los sapos", "Los grillos", "Las mariposas", "Los ratones"],
+            correcta: 0,
+            explicacion: "¡Muy bien! 'Había un caldero lleno de sapos y culebras...'"
+        },
+        {
+            pregunta: "¿Con qué sonido hervían las estrellas y el grillo?",
+            opciones: ["Pum-pum", "Cri-crac", "Tic-tac", "Chas-chas"],
+            correcta: 1,
+            explicacion: "¡Así es! 'que hervía con cricrac de estrellas y de grillo'."
+        }
+    ];
+
+    function mezclarArray(arr) {
+        const copia = [...arr];
+        for (let i = copia.length - 1; i > 0; i--) {
+            const j = Math.floor(Math.random() * (i + 1));
+            [copia[i], copia[j]] = [copia[j], copia[i]];
+        }
+        return copia;
+    }
+
+    // =====================================================================
+    //  SISTEMA DE QUIZ MODAL CON PAUSA ESTRICTA HASTA CLICK EN "CONTINUAR"
+    // =====================================================================
+    let preguntasDisponibles = [];
+    let quizCallbackAlContinuar = null;
+    let quizRespondido = false;
+    let quizFueCorrecto = false;
+
+    function abrirQuizModal(icono, titulo, onContinuar) {
+        if (preguntasDisponibles.length === 0) {
+            preguntasDisponibles = mezclarArray(PREGUNTAS_CALDERO);
+        }
+        const p = preguntasDisponibles.pop();
+        quizCallbackAlContinuar = onContinuar;
+        quizRespondido = false;
+        quizFueCorrecto = false;
+
+        document.getElementById('quizIcono').textContent = icono || '🔮';
+        document.getElementById('quizTitulo').textContent = titulo || 'Pregunta del Poema';
+        document.getElementById('quizTexto').textContent = p.pregunta;
+
+        const opcDiv = document.getElementById('quizOpciones');
+        opcDiv.innerHTML = '';
+        const opcs = p.opciones.map((op, idx) => ({ texto: op, esCorrecta: idx === p.correcta }));
+        const opcsMezcladas = mezclarArray(opcs);
+        const letrasCaldero = ['A', 'B', 'C', 'D'];
+        opcsMezcladas.forEach((opObj, idx) => {
+            const btn = document.createElement('button');
+            btn.type = 'button';
+            btn.className = 'btn-opcion';
+            btn.dataset.correcta = opObj.esCorrecta ? 'true' : 'false';
+            btn.innerHTML = `<span style="font-weight:800; font-size:1.1rem; color:#ffd54f;">${letrasCaldero[idx]})</span> <span>${opObj.texto}</span>`;
+            btn.onclick = () => procesarRespuestaQuiz(btn, opObj.esCorrecta, p.explicacion, opcDiv);
+            opcDiv.appendChild(btn);
+        });
+
+        const feedbackBox = document.getElementById('quizFeedbackBox');
+        feedbackBox.style.display = 'none';
+        document.getElementById('quizFeedback').textContent = '';
+        document.getElementById('quizFeedback').className = 'quiz-feedback';
+
+        document.getElementById('quizOverlay').style.display = 'flex';
+    }
+
+    function procesarRespuestaQuiz(btn, esCorrecta, explicacion, opcDiv) {
+        if (quizRespondido) return;
+        quizRespondido = true;
+
+        const btns = opcDiv.querySelectorAll('.btn-opcion');
+        btns.forEach(b => b.disabled = true);
+
+        const fb = document.getElementById('quizFeedback');
+        const feedbackBox = document.getElementById('quizFeedbackBox');
+
+        if (esCorrecta) {
+            btn.classList.add('correcta');
+            fb.textContent = '🌟 ¡Excelente! ' + explicacion;
+            fb.className = 'quiz-feedback ok';
+            quizFueCorrecto = true;
+            if (window.GameJuice && window.GameJuice.playCorrect) window.GameJuice.playCorrect();
+        } else {
+            btn.classList.add('incorrecta');
+            btns.forEach(b => {
+                if (b.dataset.correcta === 'true') b.classList.add('correcta');
+            });
+            fb.textContent = '💡 ' + explicacion;
+            fb.className = 'quiz-feedback mal';
+            quizFueCorrecto = false;
+            if (window.GameJuice && window.GameJuice.playWrong) window.GameJuice.playWrong();
+        }
+
+        // Mostrar feedback y el botón CONTINUAR.
+        // ¡IMPORTANTE! El juego permanece congelado hasta que se presione Continuar.
+        feedbackBox.style.display = 'block';
+    }
+
+    // EL JUEGO SOLO SE REANUDA CUANDO EL ESTUDIANTE HACE CLIC EN "CONTINUAR"
+    document.getElementById('btnContinuarQuiz').addEventListener('click', () => {
+        document.getElementById('quizOverlay').style.display = 'none';
+        if (typeof quizCallbackAlContinuar === 'function') {
+            const cb = quizCallbackAlContinuar;
+            quizCallbackAlContinuar = null;
+            cb(quizFueCorrecto);
+        }
+    });
+
+    // =====================================================================
+    //  SPRITE BRUJA (JUEGO 1)
+    // =====================================================================
+    const imgBruja = new Image();
+    imgBruja.src = '/assets/img/poemas/caldero/bruja.jpg';
+
+    function dibujarBrujaEnCanvas(ctx, x, y, w, h, agachada, invulnerable) {
+        ctx.save();
+        if (invulnerable && Math.floor(Date.now() / 120) % 2 === 0) {
+            ctx.globalAlpha = 0.45;
+        }
+
+        if (imgBruja.complete && imgBruja.naturalWidth > 0) {
+            ctx.beginPath();
+            ctx.roundRect(x, y, w, h, 10);
+            ctx.clip();
+            ctx.drawImage(imgBruja, x, y, w, h);
+        } else {
+            ctx.font = `${Math.floor(h * 0.9)}px serif`;
+            ctx.textBaseline = 'top';
+            ctx.fillText(agachada ? '🧙‍♀️' : '🧙‍♀️', x, y);
+        }
+
+        if (invulnerable) {
+            ctx.restore();
+            ctx.save();
+            ctx.strokeStyle = '#00e5ff';
+            ctx.lineWidth = 3;
+            ctx.shadowColor = '#00e5ff';
+            ctx.shadowBlur = 12;
+            ctx.beginPath();
+            ctx.arc(x + w / 2, y + h / 2, Math.max(w, h) / 1.7, 0, Math.PI * 2);
+            ctx.stroke();
+        }
+        ctx.restore();
+    }
+
+    // =====================================================================
+    //  JUEGO 1: LA BRUJA Y LOS CALDEROS DE RANAS (Exploración)
+    // =====================================================================
+    const canvasR = document.getElementById('canvasRunner');
+    const ctxR = canvasR.getContext('2d');
+    let runnerActivo = false;
+    let animFrameRunner = null;
+
+    let brujaY, brujaVY, brujaAgachada;
+    let calderosItems = [];
+    let obstaculosExp = [];
+    let calderosComidos = 0;
+    let correctasExp = 0;
+    let vidasExp = 3;
+    let invulnerableTimerExp = 0;
+    let velRunner = 3.6;
+    let tickRunner = 0;
+
+    const BRUJA_X = 75;
+    const BRUJA_W = 50;
+    const BRUJA_H_NORMAL = 65;
+    const BRUJA_H_AGACHADA = 38;
+    const GRAVEDAD_EXP = 0.65;
+    const SALTO_EXP = -13.5;
+
+    function resizeCanvasRunner() {
+        const arena = document.getElementById('arenaRunner');
+        canvasR.width = arena.clientWidth || 740;
+        canvasR.height = arena.clientHeight || 350;
+    }
+
+    function initRunner() {
+        resizeCanvasRunner();
+        const H = canvasR.height;
+        const sueloY = H - 65;
+        brujaY = sueloY;
+        brujaVY = 0;
+        brujaAgachada = false;
+        calderosItems = [];
+        obstaculosExp = [];
+        calderosComidos = 0;
+        correctasExp = 0;
+        vidasExp = 3;
+        invulnerableTimerExp = 0;
+        velRunner = 3.6;
+        tickRunner = 0;
+        actualizarHudRunner();
+    }
+
+    function actualizarHudRunner() {
+        document.getElementById('hudCalderos').textContent = `${calderosComidos} / 5`;
+        document.getElementById('hudVidas').textContent = '❤️'.repeat(Math.max(0, vidasExp));
+        document.getElementById('hudPreguntasExp').textContent = `${correctasExp} / ${calderosComidos}`;
+        document.getElementById('hudPtsExp').textContent = `${correctasExp * 5} pts`;
+    }
+
+    function loopRunner() {
+        if (!runnerActivo) return;
+        animFrameRunner = requestAnimationFrame(loopRunner);
+
+        const W = canvasR.width;
+        const H = canvasR.height;
+        const sueloY = H - 65;
+        tickRunner++;
+
+        if (invulnerableTimerExp > 0) invulnerableTimerExp--;
+
+        const grad = ctxR.createLinearGradient(0, 0, 0, H);
+        grad.addColorStop(0, '#0a001a');
+        grad.addColorStop(0.5, '#1e0836');
+        grad.addColorStop(1, '#0d180a');
+        ctxR.fillStyle = grad;
+        ctxR.fillRect(0, 0, W, H);
+
+        ctxR.fillStyle = 'rgba(255,255,255,0.75)';
+        for (let i = 0; i < 28; i++) {
+            const sx = (i * 79 + tickRunner * 0.25) % W;
+            const sy = (i * 41) % (H * 0.6);
+            ctxR.fillRect(sx, sy, (i % 3 === 0) ? 3 : 2, (i % 3 === 0) ? 3 : 2);
+        }
+
+        ctxR.fillStyle = '#fff9c4';
+        ctxR.shadowColor = '#fff59d';
+        ctxR.shadowBlur = 18;
+        ctxR.beginPath();
+        ctxR.arc(W - 80, 55, 30, 0, Math.PI * 2);
+        ctxR.fill();
+        ctxR.shadowBlur = 0;
+        ctxR.fillStyle = '#1e0836';
+        ctxR.beginPath();
+        ctxR.arc(W - 68, 50, 24, 0, Math.PI * 2);
+        ctxR.fill();
+
+        for (let i = 0; i < 4; i++) {
+            const tx = (i * 200 - tickRunner * velRunner * 0.35 + W * 2) % (W + 60) - 30;
+            ctxR.fillStyle = '#261142';
+            ctxR.fillRect(tx, sueloY - 70, 14, 70);
+            ctxR.beginPath();
+            ctxR.arc(tx + 7, sueloY - 90, 32, 0, Math.PI * 2);
+            ctxR.fill();
+        }
+
+        ctxR.fillStyle = '#1b0042';
+        ctxR.fillRect(0, sueloY, W, H - sueloY);
+        ctxR.fillStyle = '#7b1fa2';
+        ctxR.fillRect(0, sueloY, W, 5);
+        ctxR.fillStyle = '#00e676';
+        for (let g = 0; g < W; g += 40) {
+            const gx = (g - tickRunner * velRunner + W * 2) % W;
+            ctxR.fillRect(gx, sueloY - 3, 12, 3);
+        }
+
+        brujaVY += GRAVEDAD_EXP;
+        brujaY += brujaVY;
+        if (brujaY >= sueloY) {
+            brujaY = sueloY;
+            brujaVY = 0;
+        }
+
+        const bH = brujaAgachada ? BRUJA_H_AGACHADA : BRUJA_H_NORMAL;
+        const bRealY = brujaY - bH;
+
+        dibujarBrujaEnCanvas(ctxR, BRUJA_X, bRealY, BRUJA_W, bH, brujaAgachada, invulnerableTimerExp > 0);
+
+        if (tickRunner % 85 === 0) {
+            const hayCaldero = calderosItems.some(c => c.x > W * 0.4);
+            if (!hayCaldero && calderosComidos < 5) {
+                calderosItems.push({
+                    x: W + 30,
+                    y: sueloY,
+                    w: 42,
+                    h: 42,
+                    comido: false
+                });
+            } else {
+                const aereo = Math.random() < 0.35;
+                obstaculosExp.push({
+                    x: W + 30,
+                    y: aereo ? sueloY - 72 : sueloY,
+                    w: 36,
+                    h: aereo ? 32 : 40,
+                    aereo: aereo,
+                    emoji: aereo ? '🦇' : '🐍'
+                });
+            }
+        }
+
+        for (let i = calderosItems.length - 1; i >= 0; i--) {
+            const c = calderosItems[i];
+            c.x -= velRunner;
+
+            ctxR.save();
+            ctxR.shadowColor = '#00e676';
+            ctxR.shadowBlur = 14;
+            ctxR.font = '36px serif';
+            ctxR.textBaseline = 'bottom';
+            ctxR.fillText('🍲', c.x, c.y);
+            ctxR.font = '22px serif';
+            ctxR.fillText('🐸', c.x + 8, c.y - 18);
+            ctxR.restore();
+
+            if (c.x < BRUJA_X + BRUJA_W && c.x + c.w > BRUJA_X && c.y - c.h < brujaY && c.y > bRealY) {
+                calderosItems.splice(i, 1);
+                calderosComidos++;
+                actualizarHudRunner();
+
+                if (window.GameJuice) window.GameJuice.playSplash && window.GameJuice.playSplash();
+
+                runnerActivo = false;
+                cancelAnimationFrame(animFrameRunner);
+
+                abrirQuizModal('🍲🐸', `¡Caldero de Ranas ${calderosComidos}/5 Atrapado!`, (esCorrecto) => {
+                    if (esCorrecto) {
+                        correctasExp++;
+                    }
+                    actualizarHudRunner();
+
+                    if (calderosComidos >= 5) {
+                        terminarJuegoExploracion();
+                        return;
+                    }
+
+                    obstaculosExp = obstaculosExp.filter(ob => ob.x < BRUJA_X || ob.x > BRUJA_X + 180);
+                    invulnerableTimerExp = 75;
+
+                    runnerActivo = true;
+                    loopRunner();
+                });
+                return;
+            }
+
+            if (c.x < -60) calderosItems.splice(i, 1);
+        }
+
+        for (let i = obstaculosExp.length - 1; i >= 0; i--) {
+            const ob = obstaculosExp[i];
+            ob.x -= velRunner;
+
+            ctxR.font = `${ob.h}px serif`;
+            ctxR.textBaseline = 'bottom';
+            ctxR.fillText(ob.emoji, ob.x, ob.y);
+
+            if (invulnerableTimerExp === 0 &&
+                ob.x < BRUJA_X + BRUJA_W - 8 &&
+                ob.x + ob.w - 8 > BRUJA_X &&
+                ob.y > bRealY + 6 &&
+                ob.y - ob.h < brujaY - 6) {
+                
+                obstaculosExp.splice(i, 1);
+                vidasExp--;
+                invulnerableTimerExp = 90;
+                actualizarHudRunner();
+
+                if (window.GameJuice) {
+                    window.GameJuice.shakeElement && window.GameJuice.shakeElement(document.getElementById('arenaRunner'));
+                    window.GameJuice.playWrong && window.GameJuice.playWrong();
+                }
+
+                if (vidasExp <= 0) {
+                    runnerActivo = false;
+                    cancelAnimationFrame(animFrameRunner);
+                    alert('¡Oh no! La brujita se quedó sin vidas. ¡Inténtalo de nuevo!');
+                    initRunner();
+                    runnerActivo = true;
+                    loopRunner();
+                    return;
+                }
+            }
+
+            if (ob.x < -60) obstaculosExp.splice(i, 1);
+        }
+
+        velRunner += 0.0006;
+    }
+
+    async function terminarJuegoExploracion() {
+        runnerActivo = false;
+        cancelAnimationFrame(animFrameRunner);
+        document.getElementById('finCalderosCount').textContent = '5 / 5';
+        document.getElementById('finCorrectasExp').textContent = `${correctasExp} / 5`;
+        document.getElementById('finPtsExp').textContent = '+25 pts';
+        document.getElementById('pantallaFinRunner').style.display = 'flex';
+
+        if (window.ReinoDB) await window.ReinoDB.registrarPuntos('caldero_exploracion', 25);
+        if (window.GameJuice) {
+            window.GameJuice.playFanfare && window.GameJuice.playFanfare();
+            window.GameJuice.celebrate && window.GameJuice.celebrate(70);
+        }
+    }
+
+    document.addEventListener('keydown', (e) => {
+        if (!runnerActivo) return;
+        const H = canvasR.height;
+        const sueloY = H - 65;
+        if (e.key === 'ArrowUp' || e.key === ' ') {
+            e.preventDefault();
+            if (brujaY >= sueloY - 5) brujaVY = SALTO_EXP;
+        }
+        if (e.key === 'ArrowDown') {
+            e.preventDefault();
+            brujaAgachada = true;
+        }
+    });
+    document.addEventListener('keyup', (e) => {
+        if (e.key === 'ArrowDown') brujaAgachada = false;
+    });
+
+    document.getElementById('btnSaltar').addEventListener('click', () => {
+        if (!runnerActivo) return;
+        const H = canvasR.height;
+        const sueloY = H - 65;
+        if (brujaY >= sueloY - 5) brujaVY = SALTO_EXP;
+    });
+    document.getElementById('btnAgachar').addEventListener('mousedown', () => { brujaAgachada = true; });
+    document.getElementById('btnAgachar').addEventListener('mouseup', () => { brujaAgachada = false; });
+    document.getElementById('btnAgachar').addEventListener('touchstart', (e) => { e.preventDefault(); brujaAgachada = true; });
+    document.getElementById('btnAgachar').addEventListener('touchend', () => { brujaAgachada = false; });
+
+    document.getElementById('btnIniciarRunner').addEventListener('click', () => {
+        document.getElementById('overlayInicioRunner').style.display = 'none';
+        initRunner();
+        runnerActivo = true;
+        loopRunner();
+    });
+
+    document.getElementById('btnIrEstructuracion').addEventListener('click', () => {
+        document.getElementById('pantallaFinRunner').style.display = 'none';
+        document.querySelectorAll('.tab-btn[data-etapa]').forEach(b => b.classList.remove('activo'));
+        document.querySelectorAll('.seccion-etapa').forEach(s => s.classList.remove('activo'));
+        document.querySelector('[data-etapa="estructuracion"]').classList.add('activo');
+        document.getElementById('etapa-estructuracion').classList.add('activo');
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    });
+
+    document.getElementById('btnReiniciarRunner').addEventListener('click', () => {
+        document.getElementById('pantallaFinRunner').style.display = 'none';
+        initRunner();
+        runnerActivo = true;
+        loopRunner();
+    });
+
+    // =====================================================================
+    //  ETAPA 2: ESTRUCTURACIÓN (Lectura y Emociones)
+    // =====================================================================
+    document.querySelectorAll('.btn-emocion').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.btn-emocion').forEach(b => b.classList.remove('activo'));
+            btn.classList.add('activo');
+            const caja = document.getElementById('cajaPoemaCaldero');
+            if (window.GameJuice) window.GameJuice.playMagic && window.GameJuice.playMagic();
+            if (btn.dataset.emocion === 'misterio') {
+                caja.style.background = '#311b92'; caja.style.color = '#e1bee7'; caja.style.borderLeftColor = '#7b1fa2';
+            } else if (btn.dataset.emocion === 'alegre') {
+                caja.style.background = '#fff9c4'; caja.style.color = '#e65100'; caja.style.borderLeftColor = '#fbc02d';
+            } else {
+                caja.style.background = '#e0f2f1'; caja.style.color = '#004d40'; caja.style.borderLeftColor = '#00897b';
+            }
+        });
+    });
+
+    window.responderPreguntaCaldero = async function(correct) {
+        const msg = document.getElementById('msgEstructura');
+        const btnIr = document.getElementById('btnIrTransferenciaCaldero');
+        if (correct) {
+            msg.textContent = '🌟 ¡Muy bien! Sapos y culebras cuidaba la bruja con su cuchara negra (+25 pts).';
+            msg.className = 'msg-feedback exito';
+            if (window.GameJuice) {
+                window.GameJuice.playCorrect && window.GameJuice.playCorrect();
+                window.GameJuice.floatingXP && window.GameJuice.floatingXP(25, msg);
+            }
+            if (window.ReinoDB) await window.ReinoDB.registrarPuntos('caldero_lectura_emociones', 25);
+            btnIr.style.display = 'inline-block';
+            btnIr.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            msg.textContent = '❌ ¡No era ese! Recuerda la primera estrofa: "de sapos y culebras que una bruja cuidaba con su cuchara negra."';
+            msg.className = 'msg-feedback error';
+            if (window.GameJuice) window.GameJuice.shakeElement && window.GameJuice.shakeElement(msg);
+        }
+    };
+
+    window.irATransferencia = function() {
+        document.querySelectorAll('.tab-btn[data-etapa]').forEach(b => b.classList.remove('activo'));
+        document.querySelectorAll('.seccion-etapa').forEach(s => s.classList.remove('activo'));
+        document.querySelector('[data-etapa="transferencia"]').classList.add('activo');
+        document.getElementById('etapa-transferencia').classList.add('activo');
+        resizeCanvas2();
+        window.scrollTo({ top: 0, behavior: 'smooth' });
+    };
+
+    // =====================================================================
+    //  JUEGO 2 (TRANSFERENCIA - RETO 1): CAT PARKOUR 3D DEL CALDERO
+    //  - 3 carriles con perspectiva (Subway Surfers / Cat Runner)
+    //  - Gato mágico visto desde atrás corriendo hacia el horizonte
+    //  - Salto (⬆️) sobre sapos y culebras, Slide (⬇️) bajo candados y murciélagos
+    //  - Monedas doradas 🪙 en los carriles
+    //  - Colisión = PAUSA TOTAL y pregunta de comprensión del poema.
+    //  - NO SE REANUDA HASTA QUE EL NIÑO LE DÉ A "CONTINUAR".
+    // =====================================================================
+    const canvasR2 = document.getElementById('canvasRunner2');
+    const ctxR2 = canvasR2.getContext('2d');
+    let runner2Activo = false;
+    let animFrame2 = null;
+
+    let catLane = 1;         // 0: Izquierda, 1: Centro, 2: Derecha
+    let catTargetLane = 1;
+    let catLaneX = 0;
+    let catJumpY = 0;
+    let catJumpVel = 0;
+    let catIsJumping = false;
+    let catSlideTimer = 0;
+    let catRunFrame = 0;
+
+    let monedasParkour = 0;
+    let distanciaParkour = 0;
+    let encuentrosParkour = 0;
+    let correctasParkour = 0;
+    let vidasParkour = 3;
+    let invulnerableTimerParkour = 0;
+    let velocidadParkour = 0.0075;
+    let trackOffsetParkour = 0;
+    let tickParkour = 0;
+
+    let monedas3D = [];
+    let obstaculos3D = [];
+
+    const OBSTACULOS_CAT = [
+        { type: 'sapo', emoji: '🐸', nombre: 'Sapo del caldero', alto: false },
+        { type: 'culebra', emoji: '🐍', nombre: 'Culebra sigilosa', alto: false },
+        { type: 'caldero', emoji: '🍲', nombre: 'Caldero con poción', alto: 'solido' },
+        { type: 'candado', emoji: '🔒', nombre: 'Candado encantado', alto: true },
+        { type: 'murcielago', emoji: '🦇', nombre: 'Murciélago nocturno', alto: true }
+    ];
+
+    function resizeCanvas2() {
+        const arena2 = document.getElementById('arenaRunner2');
+        const w = arena2 ? arena2.clientWidth : 740;
+        const h = arena2 ? arena2.clientHeight : 410;
+        canvasR2.width = (w && w > 50) ? w : 740;
+        canvasR2.height = (h && h > 50) ? h : 410;
+    }
+
+    function getPos3D(lane, z) {
+        const W = canvasR2.width || 740;
+        const H = canvasR2.height || 410;
+        const horizonY = 78;
+        const bottomY = H - 18;
+        const cx = W / 2;
+        const topW = 90;
+        const bottomW = W * 0.88;
+
+        const curveZ = Math.pow(Math.max(0, Math.min(1, z)), 1.55);
+        const y = horizonY + curveZ * (bottomY - horizonY);
+        const roadW = topW + curveZ * (bottomW - topW);
+        const laneOffsetRatio = (lane - 1) * 0.32;
+        const x = cx + roadW * laneOffsetRatio;
+        const scale = 0.22 + 0.78 * curveZ;
+
+        return { x, y, scale, roadW, cx };
+    }
+
+    function initRunner2() {
+        resizeCanvas2();
+        catLane = 1;
+        catTargetLane = 1;
+        catLaneX = (canvasR2.width || 740) / 2;
+        catJumpY = 0;
+        catJumpVel = 0;
+        catIsJumping = false;
+        catSlideTimer = 0;
+        catRunFrame = 0;
+
+        monedasParkour = 0;
+        distanciaParkour = 0;
+        encuentrosParkour = 0;
+        correctasParkour = 0;
+        vidasParkour = 3;
+        invulnerableTimerParkour = 0;
+        velocidadParkour = 0.0075;
+        trackOffsetParkour = 0;
+        tickParkour = 0;
+
+        // Pre-cargar monedas y obstáculos inmediatos para que la pista esté viva al arrancar
+        monedas3D = [
+            { lane: 1, z: 0.35, collected: false },
+            { lane: 1, z: 0.42, collected: false },
+            { lane: 1, z: 0.49, collected: false },
+            { lane: 0, z: 0.65, collected: false },
+            { lane: 0, z: 0.72, collected: false }
+        ];
+        obstaculos3D = [
+            { lane: 2, z: 0.45, type: 'sapo', emoji: '🐸', nombre: 'Sapo del caldero', alto: false, chocado: false },
+            { lane: 1, z: 0.68, type: 'candado', emoji: '🔒', nombre: 'Candado encantado', alto: true, chocado: false }
+        ];
+
+        actualizarHudParkour();
+    }
+
+    function actualizarHudParkour() {
+        document.getElementById('hud2Monedas').textContent = monedasParkour;
+        document.getElementById('hud2Distancia').textContent = `${Math.floor(distanciaParkour)} m`;
+        document.getElementById('hud2Vidas').textContent = '❤️'.repeat(Math.max(0, vidasParkour));
+        document.getElementById('hud2Encuentros').textContent = `${encuentrosParkour} / 5`;
+    }
+
+    function dibujarCatParkour(ctx, x, baseY, jumpY, isSliding, invulnerable) {
+        ctx.save();
+        const y = baseY + jumpY;
+
+        // Sombra en el suelo
+        ctx.fillStyle = 'rgba(0, 0, 0, 0.45)';
+        ctx.beginPath();
+        const shadowScale = Math.max(0.4, 1 - Math.abs(jumpY) / 120);
+        ctx.ellipse(x, baseY + 6, 26 * shadowScale, 9 * shadowScale, 0, 0, Math.PI * 2);
+        ctx.fill();
+
+        if (invulnerable && Math.floor(Date.now() / 110) % 2 === 0) {
+            ctx.globalAlpha = 0.4;
+        }
+
+        ctx.translate(x, y);
+
+        if (isSliding) {
+            // === GATO EN SLIDE / AGACHADO ===
+            ctx.fillStyle = '#ffd54f';
+            for (let i = 0; i < 4; i++) {
+                const spX = (Math.random() - 0.5) * 50;
+                const spY = (Math.random() - 0.5) * 8 + 4;
+                ctx.fillRect(spX, spY, 3, 3);
+            }
+
+            ctx.fillStyle = '#ff8f00';
+            ctx.beginPath();
+            ctx.ellipse(0, -6, 28, 12, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#00e5ff';
+            ctx.beginPath();
+            ctx.ellipse(0, -7, 18, 9, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#ff8f00';
+            ctx.beginPath();
+            ctx.arc(0, -18, 14, 0, Math.PI * 2);
+            ctx.fill();
+
+            ctx.fillStyle = '#e65100';
+            ctx.beginPath();
+            ctx.moveTo(-11, -26); ctx.lineTo(-16, -16); ctx.lineTo(-6, -20); ctx.fill();
+            ctx.moveTo(11, -26); ctx.lineTo(16, -16); ctx.lineTo(6, -20); ctx.fill();
+
+            ctx.fillStyle = '#4a148c';
+            ctx.beginPath();
+            ctx.moveTo(-10, -22); ctx.lineTo(10, -22); ctx.lineTo(0, -38); ctx.fill();
+            ctx.strokeStyle = '#ffd54f'; ctx.lineWidth = 2; ctx.beginPath();
+            ctx.moveTo(-11, -22); ctx.lineTo(11, -22); ctx.stroke();
+
+        } else {
+            // === GATO EN CARRERA / SALTO ===
+            const runCycle = Math.sin(catRunFrame * 0.4);
+            const legOffset = runCycle * 6;
+
+            // Cola de gato swishing
+            ctx.strokeStyle = '#ff8f00';
+            ctx.lineWidth = 5;
+            ctx.lineCap = 'round';
+            ctx.beginPath();
+            const tailSwing = Math.sin(catRunFrame * 0.3) * 12;
+            ctx.moveTo(0, -14);
+            ctx.quadraticCurveTo(tailSwing * 1.5, -28, tailSwing, -38);
+            ctx.stroke();
+
+            ctx.fillStyle = '#fff';
+            ctx.beginPath();
+            ctx.arc(tailSwing, -38, 3.5, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Patas
+            ctx.fillStyle = '#e65100';
+            ctx.beginPath();
+            ctx.ellipse(-14, -2 + legOffset, 6, 7, 0, 0, Math.PI * 2);
+            ctx.ellipse(14, -2 - legOffset, 6, 7, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Cuerpo
+            ctx.fillStyle = '#ff8f00';
+            ctx.beginPath();
+            ctx.ellipse(0, -22, 20, 20, 0, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Chaleco deportivo cyan (Cat Parkour)
+            ctx.fillStyle = '#00e5ff';
+            ctx.beginPath();
+            ctx.roundRect(-15, -34, 30, 22, 8);
+            ctx.fill();
+            ctx.fillStyle = '#ffd54f';
+            ctx.fillRect(-10, -26, 20, 4);
+
+            // Cabeza
+            ctx.fillStyle = '#ff8f00';
+            ctx.beginPath();
+            ctx.arc(0, -42, 17, 0, Math.PI * 2);
+            ctx.fill();
+
+            // Orejas
+            ctx.fillStyle = '#e65100';
+            ctx.beginPath();
+            ctx.moveTo(-12, -56); ctx.lineTo(-18, -42); ctx.lineTo(-5, -46); ctx.fill();
+            ctx.moveTo(12, -56); ctx.lineTo(18, -42); ctx.lineTo(5, -46); ctx.fill();
+            ctx.fillStyle = '#f48fb1';
+            ctx.beginPath();
+            ctx.moveTo(-11, -53); ctx.lineTo(-15, -44); ctx.lineTo(-6, -46); ctx.fill();
+            ctx.moveTo(11, -53); ctx.lineTo(15, -44); ctx.lineTo(6, -46); ctx.fill();
+
+            // Sombrerito de bruja
+            ctx.fillStyle = '#311b92';
+            ctx.beginPath();
+            ctx.moveTo(-14, -50); ctx.lineTo(14, -50); ctx.lineTo(0, -72); ctx.fill();
+            ctx.fillStyle = '#4a148c';
+            ctx.beginPath();
+            ctx.ellipse(0, -50, 18, 4, 0, 0, Math.PI * 2);
+            ctx.fill();
+            ctx.fillStyle = '#ffd54f';
+            ctx.fillRect(-8, -54, 16, 4);
+        }
+
+        if (invulnerable) {
+            ctx.strokeStyle = '#00e5ff';
+            ctx.lineWidth = 3.5;
+            ctx.shadowColor = '#00e5ff';
+            ctx.shadowBlur = 15;
+            ctx.beginPath();
+            ctx.arc(0, isSliding ? -12 : -32, isSliding ? 30 : 44, 0, Math.PI * 2);
+            ctx.stroke();
+            ctx.shadowBlur = 0;
+        }
+
+        ctx.restore();
+    }
+
+    function loopRunner2() {
+        if (!runner2Activo) return;
+        animFrame2 = requestAnimationFrame(loopRunner2);
+
+        const W = canvasR2.width;
+        const H = canvasR2.height;
+        const horizonY = 78;
+        tickParkour++;
+        catRunFrame++;
+
+        if (invulnerableTimerParkour > 0) invulnerableTimerParkour--;
+
+        distanciaParkour += 0.85;
+        velocidadParkour = Math.min(0.0125, 0.0075 + distanciaParkour * 0.00001);
+        trackOffsetParkour = (trackOffsetParkour + velocidadParkour * 1.6) % 1;
+
+        if (catIsJumping) {
+            catJumpY += catJumpVel;
+            catJumpVel += 1.35;
+            if (catJumpY >= 0) {
+                catJumpY = 0;
+                catJumpVel = 0;
+                catIsJumping = false;
+            }
+        }
+
+        if (catSlideTimer > 0) {
+            catSlideTimer--;
+        }
+
+        const targetPos = getPos3D(catTargetLane, 0.88);
+        catLaneX += (targetPos.x - catLaneX) * 0.22;
+        catLane = catTargetLane;
+
+        // Generar monedas
+        if (tickParkour % 65 === 0) {
+            const laneMonedas = Math.floor(Math.random() * 3);
+            for (let c = 0; c < 3; c++) {
+                monedas3D.push({
+                    lane: laneMonedas,
+                    z: 0.05 + c * 0.045,
+                    collected: false
+                });
+            }
+        }
+
+        // Generar obstáculos
+        if (tickParkour % 75 === 0) {
+            const laneObst = Math.floor(Math.random() * 3);
+            const tipo = OBSTACULOS_CAT[Math.floor(Math.random() * OBSTACULOS_CAT.length)];
+            obstaculos3D.push({
+                lane: laneObst,
+                z: 0.04,
+                type: tipo.type,
+                emoji: tipo.emoji,
+                nombre: tipo.nombre,
+                alto: tipo.alto,
+                chocado: false
+            });
+        }
+
+        // 1. Cielo
+        const skyGrad = ctxR2.createLinearGradient(0, 0, 0, horizonY);
+        skyGrad.addColorStop(0, '#09001f');
+        skyGrad.addColorStop(0.6, '#1a0033');
+        skyGrad.addColorStop(1, '#2c0c52');
+        ctxR2.fillStyle = skyGrad;
+        ctxR2.fillRect(0, 0, W, horizonY);
+
+        ctxR2.fillStyle = 'rgba(255, 255, 255, 0.8)';
+        for (let i = 0; i < 22; i++) {
+            const sx = (i * 83 + tickParkour * 0.2) % W;
+            const sy = (i * 37) % (horizonY - 10);
+            ctxR2.fillRect(sx, sy, 2, 2);
+        }
+
+        ctxR2.fillStyle = '#fff9c4';
+        ctxR2.shadowColor = '#fff59d';
+        ctxR2.shadowBlur = 14;
+        ctxR2.beginPath();
+        ctxR2.arc(W * 0.78, 38, 22, 0, Math.PI * 2);
+        ctxR2.fill();
+        ctxR2.shadowBlur = 0;
+        ctxR2.fillStyle = '#1a0033';
+        ctxR2.beginPath();
+        ctxR2.arc(W * 0.78 + 9, 34, 18, 0, Math.PI * 2);
+        ctxR2.fill();
+
+        // Terreno exterior
+        const groundGrad = ctxR2.createLinearGradient(0, horizonY, 0, H);
+        groundGrad.addColorStop(0, '#100024');
+        groundGrad.addColorStop(1, '#060010');
+        ctxR2.fillStyle = groundGrad;
+        ctxR2.fillRect(0, horizonY, W, H - horizonY);
+
+        // 2. Camino 3D trapezoidal
+        const posFar = getPos3D(1, 0.02);
+        const posNear = getPos3D(1, 1.0);
+
+        ctxR2.beginPath();
+        ctxR2.moveTo(posFar.cx - posFar.roadW / 2, posFar.y);
+        ctxR2.lineTo(posFar.cx + posFar.roadW / 2, posFar.y);
+        ctxR2.lineTo(posNear.cx + posNear.roadW / 2, posNear.y);
+        ctxR2.lineTo(posNear.cx - posNear.roadW / 2, posNear.y);
+        ctxR2.closePath();
+
+        const roadGrad = ctxR2.createLinearGradient(0, horizonY, 0, H);
+        roadGrad.addColorStop(0, '#2b1042');
+        roadGrad.addColorStop(0.5, '#3d165f');
+        roadGrad.addColorStop(1, '#230a38');
+        ctxR2.fillStyle = roadGrad;
+        ctxR2.fill();
+
+        ctxR2.strokeStyle = '#e040fb';
+        ctxR2.lineWidth = 4;
+        ctxR2.shadowColor = '#e040fb';
+        ctxR2.shadowBlur = 10;
+        ctxR2.stroke();
+        ctxR2.shadowBlur = 0;
+
+        // Líneas divisorias de los 3 carriles
+        const numDashes = 14;
+        for (let i = 0; i < numDashes; i++) {
+            const zSeg1 = ((i / numDashes) + (trackOffsetParkour / numDashes)) % 1;
+            const zSeg2 = Math.min(0.99, zSeg1 + 0.035);
+            if (zSeg1 < 0.04 || zSeg1 > 0.96) continue;
+
+            const p1 = getPos3D(1, zSeg1);
+            const p2 = getPos3D(1, zSeg2);
+
+            const xLeft1 = p1.cx - p1.roadW * 0.16;
+            const xLeft2 = p2.cx - p2.roadW * 0.16;
+            const xRight1 = p1.cx + p1.roadW * 0.16;
+            const xRight2 = p2.cx + p2.roadW * 0.16;
+
+            const alpha = 0.25 + 0.75 * zSeg1;
+            ctxR2.strokeStyle = `rgba(255, 213, 79, ${alpha})`;
+            ctxR2.lineWidth = 2 + 3 * zSeg1;
+
+            ctxR2.beginPath();
+            ctxR2.moveTo(xLeft1, p1.y);
+            ctxR2.lineTo(xLeft2, p2.y);
+            ctxR2.stroke();
+
+            ctxR2.beginPath();
+            ctxR2.moveTo(xRight1, p1.y);
+            ctxR2.lineTo(xRight2, p2.y);
+            ctxR2.stroke();
+        }
+
+        // 3. Actualizar Z de monedas y detectar recolección
+        for (let i = monedas3D.length - 1; i >= 0; i--) {
+            const m = monedas3D[i];
+            m.z += velocidadParkour;
+
+            if (!m.collected && m.z >= 0.82 && m.z <= 0.94) {
+                const p3d = getPos3D(m.lane, m.z);
+                if (Math.abs(catLaneX - p3d.x) < 38 && catJumpY > -55) {
+                    m.collected = true;
+                    monedasParkour++;
+                    actualizarHudParkour();
+                    if (window.GameJuice) window.GameJuice.playPop && window.GameJuice.playPop();
+                }
+            }
+            if (m.z > 1.05) monedas3D.splice(i, 1);
+        }
+
+        // 4. Actualizar Z de obstáculos y detectar colisión
+        for (let i = obstaculos3D.length - 1; i >= 0; i--) {
+            const ob = obstaculos3D[i];
+            ob.z += velocidadParkour;
+
+            if (!ob.chocado && invulnerableTimerParkour === 0 && ob.z >= 0.83 && ob.z <= 0.93) {
+                const p3d = getPos3D(ob.lane, ob.z);
+                const distH = Math.abs(catLaneX - p3d.x);
+
+                if (distH < 34) {
+                    let colisiona = true;
+
+                    if (ob.alto === false && catJumpY < -24) {
+                        colisiona = false;
+                    }
+                    if (ob.alto === true && catSlideTimer > 0) {
+                        colisiona = false;
+                    }
+
+                    if (colisiona) {
+                        ob.chocado = true;
+                        runner2Activo = false;
+                        cancelAnimationFrame(animFrame2);
+
+                        if (window.GameJuice) {
+                            window.GameJuice.shakeElement && window.GameJuice.shakeElement(document.getElementById('arenaRunner2'));
+                            window.GameJuice.playWrong && window.GameJuice.playWrong();
+                        }
+
+                        encuentrosParkour++;
+                        actualizarHudParkour();
+
+                        abrirQuizModal(ob.emoji, `🐾 ¡Choque con ${ob.nombre}! (Pregunta ${encuentrosParkour}/5)`, (esCorrecto) => {
+                            if (esCorrecto) {
+                                correctasParkour++;
+                            } else {
+                                vidasParkour--;
+                            }
+                            actualizarHudParkour();
+
+                            // EL JUEGO SOLO TERMINA CUANDO EL ESTUDIANTE RESPONDE LAS 5 PREGUNTAS
+                            if (encuentrosParkour >= 5) {
+                                terminarJuegoTransferencia();
+                                return;
+                            }
+
+                            if (vidasParkour <= 0) {
+                                vidasParkour = 3; // Rellenar vidas para que continúe hasta completar sus 5 preguntas
+                                actualizarHudParkour();
+                            }
+
+                            obstaculos3D = obstaculos3D.filter(o => o.z < 0.65);
+                            invulnerableTimerParkour = 120;
+
+                            runner2Activo = true;
+                            loopRunner2();
+                        });
+                        return;
+                    }
+                }
+            }
+
+            if (ob.z > 1.05) obstaculos3D.splice(i, 1);
+        }
+
+        // 5. Dibujar elementos en profundidad ordenada (Painter's Algorithm)
+        const elementosVisuales = [];
+
+        monedas3D.forEach(m => {
+            if (!m.collected) elementosVisuales.push({ tipo: 'moneda', z: m.z, lane: m.lane });
+        });
+
+        obstaculos3D.forEach(ob => {
+            elementosVisuales.push({ tipo: 'obstaculo', z: ob.z, lane: ob.lane, obj: ob });
+        });
+
+        elementosVisuales.push({ tipo: 'cat', z: 0.88 });
+
+        elementosVisuales.sort((a, b) => a.z - b.z);
+
+        elementosVisuales.forEach(item => {
+            if (item.tipo === 'moneda') {
+                const p = getPos3D(item.lane, item.z);
+                const r = Math.max(6, 14 * p.scale);
+
+                ctxR2.save();
+                ctxR2.fillStyle = '#ffd54f';
+                ctxR2.shadowColor = '#fff59d';
+                ctxR2.shadowBlur = 10 * p.scale;
+                ctxR2.beginPath();
+                ctxR2.arc(p.x, p.y - 12 * p.scale, r, 0, Math.PI * 2);
+                ctxR2.fill();
+                ctxR2.strokeStyle = '#ff8f00';
+                ctxR2.lineWidth = Math.max(1.5, 3 * p.scale);
+                ctxR2.stroke();
+
+                ctxR2.fillStyle = '#fff';
+                ctxR2.beginPath();
+                ctxR2.arc(p.x - r * 0.3, p.y - 12 * p.scale - r * 0.3, r * 0.3, 0, Math.PI * 2);
+                ctxR2.fill();
+                ctxR2.restore();
+
+            } else if (item.tipo === 'obstaculo') {
+                const ob = item.obj;
+                const p = getPos3D(item.lane, item.z);
+                const fontSize = Math.floor(Math.max(18, 44 * p.scale));
+
+                ctxR2.save();
+                ctxR2.font = `${fontSize}px serif`;
+                ctxR2.textAlign = 'center';
+
+                if (ob.alto === true) {
+                    ctxR2.textBaseline = 'middle';
+                    const yElevado = p.y - 48 * p.scale;
+
+                    ctxR2.strokeStyle = 'rgba(224, 64, 251, 0.4)';
+                    ctxR2.lineWidth = 2 * p.scale;
+                    ctxR2.beginPath();
+                    ctxR2.moveTo(p.x, 0); ctxR2.lineTo(p.x, yElevado);
+                    ctxR2.stroke();
+
+                    ctxR2.fillText(ob.emoji, p.x, yElevado);
+                } else {
+                    ctxR2.textBaseline = 'bottom';
+                    ctxR2.fillStyle = 'rgba(0,0,0,0.35)';
+                    ctxR2.beginPath();
+                    ctxR2.ellipse(p.x, p.y, 16 * p.scale, 5 * p.scale, 0, 0, Math.PI * 2);
+                    ctxR2.fill();
+
+                    ctxR2.fillText(ob.emoji, p.x, p.y);
+                }
+                ctxR2.restore();
+
+            } else if (item.tipo === 'cat') {
+                const basePos = getPos3D(1, 0.88);
+                dibujarCatParkour(ctxR2, catLaneX, basePos.y, catJumpY, catSlideTimer > 0, invulnerableTimerParkour > 0);
+            }
+        });
+    }
+
+    async function terminarJuegoTransferencia() {
+        runner2Activo = false;
+        cancelAnimationFrame(animFrame2);
+
+        document.getElementById('fin2Distancia').textContent = `${Math.floor(distanciaParkour)} m`;
+        document.getElementById('fin2Monedas').textContent = `${monedasParkour} 🪙`;
+        document.getElementById('fin2Correctas').textContent = `${correctasParkour} / 5`;
+        document.getElementById('pantallaFinRunner2').style.display = 'flex';
+
+        if (window.GameJuice) {
+            window.GameJuice.playFanfare && window.GameJuice.playFanfare();
+            window.GameJuice.celebrate && window.GameJuice.celebrate(75);
+        }
+    }
+
+    // ACCIONES DEL JUGADOR
+    function moverGatoIzquierda() {
+        if (!runner2Activo) return;
+        if (catTargetLane > 0) {
+            catTargetLane--;
+            if (window.GameJuice) window.GameJuice.playPop && window.GameJuice.playPop();
+        }
+    }
+
+    function moverGatoDerecha() {
+        if (!runner2Activo) return;
+        if (catTargetLane < 2) {
+            catTargetLane++;
+            if (window.GameJuice) window.GameJuice.playPop && window.GameJuice.playPop();
+        }
+    }
+
+    function saltarGato() {
+        if (!runner2Activo) return;
+        if (!catIsJumping && catSlideTimer <= 0) {
+            catIsJumping = true;
+            catJumpVel = -16.5;
+            if (window.GameJuice) window.GameJuice.playPop && window.GameJuice.playPop();
+        }
+    }
+
+    function deslizarGato() {
+        if (!runner2Activo) return;
+        if (!catIsJumping) {
+            catSlideTimer = 34;
+            if (window.GameJuice) window.GameJuice.playPop && window.GameJuice.playPop();
+        }
+    }
+
+    // TECLADO (FLECHAS Y WASD)
+    document.addEventListener('keydown', (e) => {
+        if (!runner2Activo) return;
+        if (e.key === 'ArrowLeft' || e.key === 'a' || e.key === 'A') {
+            e.preventDefault();
+            moverGatoIzquierda();
+        } else if (e.key === 'ArrowRight' || e.key === 'd' || e.key === 'D') {
+            e.preventDefault();
+            moverGatoDerecha();
+        } else if (e.key === 'ArrowUp' || e.key === 'w' || e.key === 'W' || e.key === ' ') {
+            e.preventDefault();
+            saltarGato();
+        } else if (e.key === 'ArrowDown' || e.key === 's' || e.key === 'S') {
+            e.preventDefault();
+            deslizarGato();
+        }
+    });
+
+    // BOTONES TÁCTILES CAT PARKOUR
+    document.getElementById('btnParkourIzq').addEventListener('click', moverGatoIzquierda);
+    document.getElementById('btnParkourDer').addEventListener('click', moverGatoDerecha);
+    document.getElementById('btnParkourSalto').addEventListener('click', saltarGato);
+    document.getElementById('btnParkourSlide').addEventListener('click', deslizarGato);
+
+    // SWIPE TÁCTIL EN CANVAS
+    let touchStartX = 0;
+    let touchStartY = 0;
+    canvasR2.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 0) {
+            touchStartX = e.touches[0].clientX;
+            touchStartY = e.touches[0].clientY;
+        }
+    }, { passive: true });
+
+    canvasR2.addEventListener('touchend', (e) => {
+        if (!runner2Activo) return;
+        if (e.changedTouches.length > 0) {
+            const deltaX = e.changedTouches[0].clientX - touchStartX;
+            const deltaY = e.changedTouches[0].clientY - touchStartY;
+            if (Math.abs(deltaX) > Math.abs(deltaY) && Math.abs(deltaX) > 25) {
+                if (deltaX < 0) moverGatoIzquierda();
+                else moverGatoDerecha();
+            } else if (Math.abs(deltaY) > 25) {
+                if (deltaY < 0) saltarGato();
+                else deslizarGato();
+            }
+        }
+    }, { passive: true });
+
+    document.getElementById('btnIniciarRunner2').addEventListener('click', () => {
+        document.getElementById('overlayInicioRunner2').style.display = 'none';
+        initRunner2();
+        runner2Activo = true;
+        loopRunner2();
+    });
+
+    document.getElementById('btnIrATallerCaldero').addEventListener('click', () => {
+        document.getElementById('pantallaFinRunner2').style.display = 'none';
+        const taller = document.getElementById('tallerCalderoSeccion');
+        if (taller) taller.scrollIntoView({ behavior: 'smooth' });
+    });
+
+    document.getElementById('btnReiniciarRunner2').addEventListener('click', () => {
+        document.getElementById('pantallaFinRunner2').style.display = 'none';
+        initRunner2();
+        runner2Activo = true;
+        loopRunner2();
+    });
+
+    // =====================================================================
+    //  RETO 2 (TRANSFERENCIA): TALLER POÉTICO - CREA TU PROPIO CALDERO
+    // =====================================================================
+    const ingredientesTallerSeleccionados = new Set();
+    const liquidoTaller = document.getElementById('liquidoTaller');
+    const burbujasTaller = document.getElementById('burbujasTaller');
+    const estadoPocimaTaller = document.getElementById('estadoPocimaTaller');
+    const textoIngsTaller = document.getElementById('textoIngsTaller');
+
+    document.querySelectorAll('#bandejaIngredientesTaller .ingrediente-card').forEach(card => {
+        card.addEventListener('click', () => {
+            const ing = card.dataset.ing;
+            const color = card.dataset.color;
+            const nombre = card.dataset.nombre;
+
+            if (ingredientesTallerSeleccionados.has(ing)) {
+                ingredientesTallerSeleccionados.delete(ing);
+                card.classList.remove('agregado');
+                if (window.GameJuice) window.GameJuice.playPop && window.GameJuice.playPop();
+            } else {
+                ingredientesTallerSeleccionados.add(ing);
+                card.classList.add('agregado');
+                if (window.GameJuice) {
+                    window.GameJuice.playSplash && window.GameJuice.playSplash();
+                    window.GameJuice.bounceElement && window.GameJuice.bounceElement(card);
+                }
+                liquidoTaller.style.background = color;
+                liquidoTaller.style.boxShadow = `0 0 30px ${color}`;
+
+                // Autocompletar campos vacíos con el ingrediente tocado si están vacíos
+                const inputs = ['ing1', 'ing2', 'ing3', 'ing4'];
+                for (let id of inputs) {
+                    const el = document.getElementById(id);
+                    if (el && !el.value.trim()) {
+                        el.value = nombre.toLowerCase();
+                        break;
+                    }
+                }
+            }
+
+            const total = ingredientesTallerSeleccionados.size;
+            textoIngsTaller.textContent = `Ingredientes mágicos añadidos: ${total} / 6`;
+
+            if (total === 0) {
+                estadoPocimaTaller.textContent = 'Caldero en reposo';
+                burbujasTaller.textContent = '✨🍲✨';
+            } else if (total < 3) {
+                estadoPocimaTaller.textContent = '🔮 Pócima suave burbujeando...';
+                burbujasTaller.textContent = '🫧🍲✨';
+            } else {
+                estadoPocimaTaller.textContent = '🌟 ¡Pócima poderosa en ebullición poética!';
+                burbujasTaller.textContent = '⚡🧙‍♀️✨';
+            }
+        });
+    });
+
+    document.getElementById('btnCrearCaldero').addEventListener('click', async () => {
+        const i1 = document.getElementById('ing1').value.trim();
+        const i2 = document.getElementById('ing2').value.trim();
+        const i3 = document.getElementById('ing3').value.trim();
+        const i4 = document.getElementById('ing4').value.trim();
+        const msg = document.getElementById('msgTransferencia');
+        const pergamino = document.getElementById('resultadoCalderoCreado');
+
+        if (i1 && i2 && i3 && i4) {
+            msg.textContent = '🎉 ¡Tu caldero mágico está hirviendo con auténtica poesía! (+35 pts).';
+            msg.className = 'msg-feedback exito';
+
+            pergamino.style.display = 'block';
+            pergamino.innerHTML = `
+                <div style="font-size:2.5rem; margin-bottom:8px;">📜🍲✨</div>
+                <h4 style="color:#4a148c; font-size:1.35rem; margin-bottom:10px;">¡Tu Poema Mágico Creado!</h4>
+                <p style="font-style:italic; font-size:1.15rem; color:#311b92; line-height:1.9;">
+                    "Había un caldero lleno<br>
+                    de <strong>${i1}</strong> y de <strong>${i2}</strong>,<br>
+                    que hervía con <strong>${i3}</strong><br>
+                    y también con <strong>${i4}</strong>."
+                </p>
+                <div style="margin-top:16px;">
+                    <button type="button" class="btn-avanzar-siguiente" onclick="document.getElementById('modalFinTotal').style.display='flex'">
+                        🏆 Ver Puntuación Total del Poema ➔
+                    </button>
+                </div>
+            `;
+
+            if (window.GameJuice) {
+                window.GameJuice.playFanfare && window.GameJuice.playFanfare();
+                window.GameJuice.celebrate && window.GameJuice.celebrate(90);
+            }
+
+            if (window.ReinoDB) {
+                await window.ReinoDB.registrarPuntos('caldero_crear_magia', 35, {
+                    formula: [i1, i2, i3, i4]
+                });
+            }
+
+            pergamino.scrollIntoView({ behavior: 'smooth' });
+        } else {
+            msg.textContent = '⚠️ ¡Escribe o selecciona todos los ingredientes para completar la estrofa mágica!';
+            msg.className = 'msg-feedback error';
+            if (window.GameJuice) window.GameJuice.shakeElement && window.GameJuice.shakeElement(msg);
+        }
+    });
+
+    // =====================================================================
+    //  GESTIÓN DE PESTAÑAS Y RESIZE
+    // =====================================================================
+    document.querySelectorAll('.tab-btn[data-etapa]').forEach(btn => {
+        btn.addEventListener('click', () => {
+            document.querySelectorAll('.tab-btn[data-etapa]').forEach(b => b.classList.remove('activo'));
+            document.querySelectorAll('.seccion-etapa').forEach(s => s.classList.remove('activo'));
+            btn.classList.add('activo');
+            document.getElementById('etapa-' + btn.dataset.etapa).classList.add('activo');
+
+            if (btn.dataset.etapa === 'transferencia') {
+                resizeCanvas2();
+            }
+            if (window.GameJuice) window.GameJuice.playPop && window.GameJuice.playPop();
+        });
+    });
+
+    window.addEventListener('resize', () => {
+        resizeCanvasRunner();
+        resizeCanvas2();
+    });
+    </script>
+</body>
+</html>

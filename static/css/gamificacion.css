@@ -1,0 +1,561 @@
+/* ==========================================================================
+   ESTILOS DE GAMIFICACIÓN, AUTENTICACIÓN Y SISTEMA DE BLOQUEO
+   ========================================================================== */
+
+/* Asegurar que el cuerpo de la página organice la barra arriba de todo */
+body {
+    flex-direction: column !important;
+}
+
+/* Barra superior de gamificación */
+.reino-topbar {
+    position: sticky;
+    top: 0;
+    left: 0;
+    width: 100% !important;
+    max-width: 100vw;
+    flex-shrink: 0;
+    background: rgba(255, 255, 255, 0.96);
+    backdrop-filter: blur(10px);
+    border-bottom: 2px solid #b2ebe0;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.08);
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 8px 24px;
+    z-index: 9999;
+    box-sizing: border-box;
+    font-family: var(--font-body, 'Lexend', sans-serif);
+}
+
+.reino-brand {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.reino-escudo {
+    width: 38px;
+    height: 38px;
+    border-radius: 50%;
+    background: #ffd700;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 20px;
+    box-shadow: 0 2px 6px rgba(0,0,0,0.15);
+}
+
+.reino-escuela-info h4 {
+    margin: 0;
+    font-size: 13px;
+    font-weight: 700;
+    color: #1a237e;
+    line-height: 1.2;
+}
+
+.reino-escuela-info span {
+    font-size: 11px;
+    color: #555;
+    font-style: italic;
+}
+
+.reino-stats {
+    display: flex;
+    align-items: center;
+    gap: 20px;
+}
+
+.reino-user-badge {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: #f3e5f5;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #ce93d8;
+    color: #4a148c;
+    font-weight: bold;
+    font-size: 14px;
+}
+
+.reino-puntos {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background: #fff8e1;
+    color: #f57f17;
+    padding: 6px 14px;
+    border-radius: 20px;
+    border: 1px solid #ffe082;
+    font-weight: 800;
+    font-size: 15px;
+    transition: transform 0.3s ease;
+}
+
+.reino-puntos.anim-puntos {
+    transform: scale(1.3);
+    color: #e65100;
+}
+
+.reino-progreso-box {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-end;
+    gap: 3px;
+    min-width: 140px;
+}
+
+.reino-progreso-txt {
+    font-size: 11px;
+    font-weight: 700;
+    color: #333;
+}
+
+.reino-barra-fondo {
+    width: 100%;
+    height: 10px;
+    background: #e0e0e0;
+    border-radius: 10px;
+    overflow: hidden;
+}
+
+.reino-barra-relleno {
+    height: 100%;
+    width: 0%;
+    background: linear-gradient(90deg, #00bcd4, #7c4dff);
+    border-radius: 10px;
+    transition: width 0.5s ease-in-out;
+}
+
+.reino-btn-auth {
+    background: #ffcdd2;
+    color: #b71c1c;
+    border: none;
+    padding: 6px 14px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 12px;
+    cursor: pointer;
+    transition: 0.2s ease;
+}
+
+.reino-btn-auth:hover {
+    background: #e57373;
+    color: white;
+}
+
+/* Modales de Autenticación y Bloqueo */
+.reino-modal-overlay {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.7);
+    backdrop-filter: blur(5px);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 100000;
+    padding: 20px;
+    box-sizing: border-box;
+    animation: fadeIn 0.3s ease;
+}
+
+.reino-modal-card {
+    background: white;
+    border-radius: 25px;
+    width: 100%;
+    max-width: 480px;
+    padding: 30px;
+    box-shadow: 0 20px 60px rgba(0, 0, 0, 0.4);
+    text-align: center;
+    position: relative;
+    font-family: var(--font-body, 'Lexend', sans-serif);
+}
+
+.reino-modal-header h2 {
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    color: #302b82;
+    margin: 10px 0 5px 0;
+    font-size: 1.6rem;
+}
+
+.reino-modal-header p {
+    color: #666;
+    font-size: 13px;
+    margin-bottom: 20px;
+}
+
+.reino-tabs {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+    border-bottom: 2px solid #eee;
+    padding-bottom: 10px;
+}
+
+.reino-tab-btn {
+    flex: 1;
+    background: none;
+    border: none;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 14px;
+    color: #777;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: 0.2s;
+}
+
+.reino-tab-btn.activo {
+    background: #e8eaf6;
+    color: #302b82;
+}
+
+.reino-form-group {
+    text-align: left;
+    margin-bottom: 15px;
+}
+
+.reino-form-group label {
+    display: block;
+    font-size: 12px;
+    font-weight: bold;
+    color: #333;
+    margin-bottom: 5px;
+}
+
+.reino-form-group input,
+.reino-form-group select {
+    width: 100%;
+    padding: 10px 14px;
+    border: 2px solid #e0e0e0;
+    border-radius: 10px;
+    font-size: 14px;
+    box-sizing: border-box;
+    outline: none;
+    transition: 0.2s;
+    font-family: inherit;
+}
+
+.reino-form-group input:focus,
+.reino-form-group select:focus {
+    border-color: #7c4dff;
+    box-shadow: 0 0 8px rgba(124, 77, 255, 0.2);
+}
+
+.reino-avatars-grid {
+    display: flex;
+    justify-content: center;
+    gap: 10px;
+    margin-top: 8px;
+}
+
+.reino-avatar-opt {
+    font-size: 26px;
+    padding: 6px;
+    border-radius: 12px;
+    cursor: pointer;
+    border: 2px solid transparent;
+    transition: 0.2s;
+}
+
+.reino-avatar-opt:hover {
+    transform: scale(1.2);
+}
+
+.reino-avatar-opt.seleccionado {
+    background: #ede7f6;
+    border-color: #7c4dff;
+    transform: scale(1.15);
+}
+
+.reino-btn-submit {
+    width: 100%;
+    background: var(--btn-primary-bg, #b2ebe0);
+    color: black;
+    border: none;
+    padding: 12px;
+    border-radius: 12px;
+    font-weight: bold;
+    font-size: 15px;
+    cursor: pointer;
+    margin-top: 15px;
+    transition: 0.2s;
+}
+
+.reino-btn-submit:hover {
+    background: var(--btn-primary-hover-bg, #00f0ff);
+    transform: translateY(-2px);
+}
+
+
+/* Efectos de Bloqueo en Tarjetas */
+.tarjeta-bloqueada {
+    position: relative;
+    filter: grayscale(0.7) opacity(0.65);
+    cursor: not-allowed !important;
+}
+
+.tarjeta-bloqueada:hover {
+    transform: none !important;
+}
+
+.tarjeta-candado-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #d32f2f;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+
+.tarjeta-completada-badge {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    background: #2e7d32;
+    color: white;
+    font-size: 12px;
+    font-weight: bold;
+    padding: 4px 10px;
+    border-radius: 15px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.3);
+    z-index: 10;
+}
+
+/* Notificación flotante de puntos ganados */
+.notif-puntos-flotante {
+    position: fixed;
+    top: 70px;
+    right: 30px;
+    background: linear-gradient(135deg, #ffd700, #ff9800);
+    color: #4a2700;
+    padding: 12px 20px;
+    border-radius: 20px;
+    font-weight: 900;
+    font-size: 18px;
+    box-shadow: 0 10px 25px rgba(255, 152, 0, 0.5);
+    z-index: 1000000;
+    animation: floatUp 2.5s ease-out forwards;
+    pointer-events: none;
+}
+
+@keyframes floatUp {
+    0% { opacity: 0; transform: translateY(20px) scale(0.8); }
+    15% { opacity: 1; transform: translateY(0) scale(1.1); }
+    25% { transform: translateY(0) scale(1); }
+    80% { opacity: 1; transform: translateY(-15px); }
+    100% { opacity: 0; transform: translateY(-40px); }
+}
+
+/* Contenedor responsive para videos de YouTube y multimedia */
+.video-container-yt {
+    position: relative;
+    width: 100%;
+    max-width: 650px;
+    padding-bottom: 56.25%; /* Relación de aspecto 16:9 */
+    height: 0;
+    overflow: hidden;
+    border-radius: 16px;
+    margin: 20px auto;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.25);
+    background: #000;
+}
+
+.video-container-yt iframe,
+.video-container-yt video {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    border: none;
+    border-radius: 16px;
+}
+
+/* Banner de felicitación y pase al siguiente poema */
+.banner-siguiente {
+    background: linear-gradient(135deg, #1b5e20, #43a047);
+    color: white;
+    padding: 24px;
+    border-radius: 18px;
+    margin-top: 25px;
+    display: none;
+    box-shadow: 0 12px 30px rgba(46, 125, 50, 0.35);
+    text-align: center;
+    border: 3px solid #a5d6a7;
+    animation: fadeIn 0.5s ease;
+}
+
+.banner-siguiente h3 {
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+    color: #fff9c4;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+}
+
+.banner-siguiente p {
+    font-size: 1.05rem;
+    margin-bottom: 15px;
+    color: #f1f8e9;
+}
+
+.btn-proximo-poema {
+    display: inline-block;
+    background: #ffd700;
+    color: #1b5e20;
+    text-decoration: none;
+    font-weight: 900;
+    font-size: 1.15rem;
+    padding: 14px 28px;
+    border-radius: 16px;
+    box-shadow: 0 6px 18px rgba(0, 0, 0, 0.25);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+.btn-proximo-poema:hover {
+    transform: scale(1.05) translateY(-2px);
+    box-shadow: 0 8px 22px rgba(0, 0, 0, 0.35);
+    background: #ffea00;
+}
+
+/* --- ANIMACIONES Y ESTILOS INTERACTIVOS "GAME JUICE" --- */
+/* Popup flotante de XP (+25 Pts) */
+.reino-xp-popup {
+    background: linear-gradient(135deg, #ffd700, #ff9800);
+    color: #4a2700;
+    font-weight: 900;
+    font-size: 1.25rem;
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 2px solid #fff;
+    box-shadow: 0 8px 20px rgba(255, 152, 0, 0.45);
+    pointer-events: none;
+    animation: floatXP 1.6s ease-out forwards;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    font-family: var(--font-body, 'Lexend', sans-serif);
+}
+
+@keyframes floatXP {
+    0% { opacity: 0; transform: translate(-50%, 10px) scale(0.6); }
+    15% { opacity: 1; transform: translate(-50%, -15px) scale(1.2); }
+    30% { transform: translate(-50%, -25px) scale(1); }
+    80% { opacity: 1; transform: translate(-50%, -60px) scale(1); }
+    100% { opacity: 0; transform: translate(-50%, -90px) scale(0.8); }
+}
+
+/* Sacudida para respuestas incorrectas */
+.reino-shake {
+    animation: shakeAnim 0.5s cubic-bezier(0.36, 0.07, 0.19, 0.97) both;
+}
+
+@keyframes shakeAnim {
+    10%, 90% { transform: translate3d(-3px, 0, 0); }
+    20%, 80% { transform: translate3d(4px, 0, 0); }
+    30%, 50%, 70% { transform: translate3d(-6px, 0, 0); }
+    40%, 60% { transform: translate3d(6px, 0, 0); }
+}
+
+/* Rebote festivo para aciertos */
+.reino-bounce {
+    animation: bounceAnim 0.6s cubic-bezier(0.175, 0.885, 0.32, 1.275) both;
+}
+
+@keyframes bounceAnim {
+    0% { transform: scale(1); }
+    30% { transform: scale(1.22); }
+    50% { transform: scale(0.92); }
+    70% { transform: scale(1.08); }
+    100% { transform: scale(1); }
+}
+
+/* Botones 3D táctiles (estilo Duolingo / Brawl Stars) */
+.btn-3d {
+    position: relative;
+    border: none;
+    border-radius: 16px;
+    padding: 12px 24px;
+    font-size: 1.05rem;
+    font-weight: 800;
+    cursor: pointer;
+    transition: all 0.15s ease;
+    user-select: none;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    text-decoration: none;
+}
+
+.btn-3d:active {
+    transform: translateY(4px);
+}
+
+.btn-3d-morado {
+    background: #8e24aa;
+    color: white;
+    box-shadow: 0 6px 0 #5c007a, 0 10px 15px rgba(0,0,0,0.2);
+}
+.btn-3d-morado:hover { background: #9c27b0; }
+.btn-3d-morado:active { box-shadow: 0 2px 0 #5c007a; }
+
+.btn-3d-verde {
+    background: #43a047;
+    color: white;
+    box-shadow: 0 6px 0 #1b5e20, 0 10px 15px rgba(0,0,0,0.2);
+}
+.btn-3d-verde:hover { background: #4caf50; }
+.btn-3d-verde:active { box-shadow: 0 2px 0 #1b5e20; }
+
+.btn-3d-azul {
+    background: #0288d1;
+    color: white;
+    box-shadow: 0 6px 0 #01579b, 0 10px 15px rgba(0,0,0,0.2);
+}
+.btn-3d-azul:hover { background: #03a9f4; }
+.btn-3d-azul:active { box-shadow: 0 2px 0 #01579b; }
+
+.btn-3d-amarillo {
+    background: #ffd600;
+    color: #3e2723;
+    box-shadow: 0 6px 0 #f57f17, 0 10px 15px rgba(0,0,0,0.2);
+}
+.btn-3d-amarillo:hover { background: #ffea00; }
+.btn-3d-amarillo:active { box-shadow: 0 2px 0 #f57f17; }
+
+.btn-3d-naranja {
+    background: #f4511e;
+    color: white;
+    box-shadow: 0 6px 0 #bf360c, 0 10px 15px rgba(0,0,0,0.2);
+}
+.btn-3d-naranja:hover { background: #ff5722; }
+.btn-3d-naranja:active { box-shadow: 0 2px 0 #bf360c; }
+
+/* Botón flotante de sonido en la barra */
+.reino-sound-btn {
+    background: #ede7f6;
+    border: 2px solid #b39ddb;
+    border-radius: 50%;
+    width: 36px;
+    height: 36px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    font-size: 16px;
+    transition: transform 0.2s;
+}
+.reino-sound-btn:hover {
+    transform: scale(1.15);
+    background: #d1c4e9;
+}
+
+
+

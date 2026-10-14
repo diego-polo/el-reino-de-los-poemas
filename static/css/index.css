@@ -1,0 +1,366 @@
+@import url('./variables.css');
+
+body {
+    min-height: 100vh;
+    font-family: var(--font-body, 'Lexend', sans-serif);
+    background-image:
+        var(--bg-dots-pattern, radial-gradient(rgba(0, 0, 0, 0.15) 1.5px, transparent 1.5px)),
+        var(--bg-reino, radial-gradient(circle at center, #d6f5ff, #d6fff0));
+    background-size: var(--bg-dots-size, 20px 20px), 100% 100%;
+}
+
+.encabezado {
+    position: relative;
+    width: 100%;
+    height: 80vh;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    text-align: center;
+    color: white;
+    background-size: cover;
+    background-position: center;
+    background-repeat: no-repeat;
+    transition: background-image 1s ease-in-out;
+    animation: rotarFondos 25s infinite;
+}
+
+.encabezado::before {
+    content: "";
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.4);
+    border-radius: 10px;
+    z-index: 1;
+}
+
+.contenido-header {
+    position: relative;
+    z-index: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+@keyframes rotarFondos {
+    0%, 32% { background-image: url('/assets/img/reino-de-los-poemas.jpeg'); }
+    35%, 45% { background-image: url('/assets/img/poemas/mona-jacinta.jpeg'); }
+    48%, 58% { background-image: url('/assets/img/poemas/de-todos-los-animales.jpeg'); }
+    61%, 71% { background-image: url('/assets/img/poemas/habia-un-caldero-lleno-de.jpeg'); }
+    74%, 84% { background-image: url('/assets/img/poemas/que-se-pondra-osito.jpeg'); }
+    87%, 97% { background-image: url('/assets/img/poemas/la-pobre-viejecita.jpeg'); }
+    100% { background-image: url('/assets/img/reino-de-los-poemas.jpeg'); }
+}
+
+.diagnostico {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    width: 100%;
+}
+
+.title-diagnostico,
+.title2 {
+    color: #040303;
+    display: flex;
+    text-align: center;
+    justify-content: center;
+    font-size: 2em;
+    margin-bottom: 20px;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    text-shadow: 2px 2px 8px rgba(34, 9, 157, 0.5);
+    animation: pulsoSombra 3s ease-in-out infinite alternate;
+}
+
+@keyframes pulsoSombra {
+    from { text-shadow: 2px 2px 8px #008000; }
+    to { text-shadow: 2px 2px 16px rgba(43, 1, 255, 0.85); }
+}
+
+.juego {
+    background-color: var(--color-diagnostico, #f272ac);
+    padding: 10px;
+    margin: 10px;
+    border-radius: 10px;
+}
+
+.evaluacion-entorno {
+    background-color: var(--color-diagnostico, #f272ac);
+    box-shadow: 1px 4px 20px #72f2b8;
+}
+
+.juego:hover,
+.tarjeta:hover,
+.evaluacion-entorno:hover {
+    transform: scale(1.05);
+    transition: 0.3s ease-in-out;
+}
+
+.img-diagnostico,
+.img-juego,
+.img-evaluacion {
+    width: 100%;
+    height: 200px;
+    object-fit: cover;
+    border-radius: 10px;
+}
+
+.text-diagnostico {
+    color: #06402B;
+    font-size: 1.2em;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    margin-bottom: 20px;
+}
+
+.MyBoton,
+.boton-poemas {
+    background-color: var(--btn-primary-bg, #B2EBE0);
+    color: #000000;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    border: none;
+    padding: 10px 20px;
+    border-radius: 10px;
+    cursor: pointer;
+    text-decoration: none;
+    font-weight: 600;
+    transition: 0.3s ease-in-out;
+}
+
+.boton-poemas {
+    margin: 10px;
+}
+
+.MyBoton:hover,
+.boton-poemas:hover {
+    background-color: var(--btn-primary-hover-bg, #00f0ff);
+    color: #000000;
+}
+
+.juegos-poemas {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    align-items: stretch;
+    justify-content: center;
+    gap: 24px;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 10px;
+}
+
+.tarjeta {
+    padding: 14px;
+    margin: 0;
+    border-radius: 16px;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+}
+
+.tarjeta.juego1 {
+    background-color: var(--color-poema-mona, #bc4ed8);
+    box-shadow: var(--shadow-poema-mona, 1px 4px 20px #ff0000);
+}
+
+.tarjeta.juego2 {
+    background-color: var(--color-poema-animales, #329542);
+    box-shadow: var(--shadow-poema-animales, 1px 4px 20px #953285);
+}
+
+.tarjeta.juego3 {
+    background-color: var(--color-poema-caldero, #DEBE42);
+    box-shadow: var(--shadow-poema-caldero, 1px 4px 20px #4262DE);
+}
+
+.tarjeta.juego4 {
+    background-color: var(--color-poema-osito, #006DB2);
+    box-shadow: var(--shadow-poema-osito, 1px 4px 20px #B24500);
+}
+
+.tarjeta.juego5 {
+    background-color: var(--color-poema-viejecita, #e87f18);
+    box-shadow: var(--shadow-poema-viejecita, 1px 4px 20px #1881E8);
+    display: flex;
+    flex-direction: column;
+}
+
+.subtitle-poema {
+    color: #000000;
+    font-size: 1.5em;
+    font-family: var(--font-heading, 'Poppins', sans-serif);
+    text-align: center;
+    font-weight: 600;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+    margin: 8px 0;
+}
+
+.text-poema1 {
+    color: var(--text-poema-mona, #fffb00);
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.text-poema2 {
+    color: var(--text-poema-animales, #ffeedb);
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.text-poema3 {
+    color: var(--text-poema-caldero, #2103e5);
+    font-weight: 800;
+    text-align: center;
+    text-shadow: 0px 0px 4px rgba(0, 0, 0, 0.5);
+}
+
+.text-poema4 {
+    color: var(--text-poema-osito, #ffe600);
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.4);
+}
+
+.text-poema5 {
+    color: var(--text-poema-viejecita, #00f0ff);
+    font-weight: 700;
+    text-align: center;
+    margin-top: -6px;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+.text-evaluacion {
+    color: var(--text-evaluacion, #800000);
+    font-weight: 900;
+    text-align: center;
+    text-shadow: 2px 2px 8px rgba(0, 0, 0, 0.5);
+}
+
+/* Tarjeta de Descargables e Imprimibles: AL FINAL Y CENTRADA */
+.tarjeta.juego-descargables {
+    position: relative;
+    grid-column: 1 / -1;
+    max-width: 540px;
+    width: 100%;
+    margin: 15px auto 0 auto;
+    background: linear-gradient(135deg, #6c5ce7 0%, #0984e3 50%, #00cec9 100%);
+    box-shadow: 0 10px 30px rgba(108, 92, 231, 0.5);
+    border: 3px solid #ffffff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+}
+
+.badge-descargables {
+    position: absolute;
+    top: -12px;
+    right: 15px;
+    background: #ff4757;
+    color: #ffffff;
+    font-size: 0.85rem;
+    font-weight: 800;
+    padding: 4px 14px;
+    border-radius: 20px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.3);
+    z-index: 5;
+    animation: flotarBadge 2s ease-in-out infinite alternate;
+}
+
+@keyframes flotarBadge {
+    from { transform: translateY(0); }
+    to { transform: translateY(-4px); }
+}
+
+.text-descargables {
+    color: #ffffff;
+    font-weight: 700;
+    text-align: center;
+    text-shadow: 1px 1px 4px rgba(0, 0, 0, 0.6);
+    font-size: 0.95rem;
+    margin: 8px 0;
+}
+
+/* ========================================================
+   RESPONSIVE DESIGN (PC, LAPTOP, TABLET Y CELULAR)
+   ======================================================== */
+@media (max-width: 1024px) {
+    .juegos-poemas {
+        max-width: 900px;
+        gap: 18px;
+    }
+    .encabezado {
+        height: 65vh;
+    }
+}
+
+@media (max-width: 768px) {
+    .encabezado {
+        height: 50vh;
+        min-height: 280px;
+    }
+    .title-diagnostico,
+    .title2 {
+        font-size: 1.55rem;
+        padding: 0 10px;
+    }
+    .juegos-poemas {
+        grid-template-columns: 1fr;
+        max-width: 480px;
+        gap: 20px;
+        padding: 0 15px;
+    }
+    .tarjeta.juego-descargables {
+        grid-column: 1;
+        max-width: 100%;
+        margin-top: 10px;
+    }
+    .juego,
+    .evaluacion-entorno {
+        width: calc(100% - 30px);
+        max-width: 480px;
+        margin: 10px auto;
+    }
+    .text-diagnostico {
+        font-size: 1.05rem;
+    }
+}
+
+@media (max-width: 480px) {
+    .encabezado {
+        height: 42vh;
+        min-height: 220px;
+        border-radius: 0;
+    }
+    .title-diagnostico,
+    .title2 {
+        font-size: 1.35rem;
+    }
+    .juego,
+    .evaluacion-entorno,
+    .tarjeta {
+        padding: 10px;
+        border-radius: 12px;
+    }
+    .img-diagnostico,
+    .img-juego,
+    .img-evaluacion {
+        height: 160px;
+    }
+    .subtitle-poema {
+        font-size: 1.3rem;
+    }
+    .boton-poemas,
+    .MyBoton {
+        padding: 8px 16px;
+        font-size: 0.92rem;
+    }
+}
+

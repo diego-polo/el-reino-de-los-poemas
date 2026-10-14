@@ -1,0 +1,877 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Poemas para Imprimir y Colorear - El Reino de los Poemas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <!-- Librería html2pdf para generación directa de archivos PDF -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/html2pdf.js/0.10.1/html2pdf.bundle.min.js" integrity="sha512-GsLlZN/3F2ErC5ifS5QtgpiJtWd43JWSuIgh7mbzZ8zBps+dvLusV+eNQATqgA/HdeKFVgA5v3S/cIrLF7QnIg==" crossorigin="anonymous" referrerpolicy="no-referrer"></script>
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: var(--font-body, 'Lexend', Arial, sans-serif);
+            background-image:
+                var(--bg-dots-pattern, radial-gradient(rgba(0, 0, 0, 0.12) 1.5px, transparent 1.5px)),
+                radial-gradient(circle at center, #fce4ec, #e0f2f1);
+            background-size: var(--bg-dots-size, 20px 20px), 100% 100%;
+            min-height: 100vh;
+            color: #2c3e50;
+            padding-bottom: 60px;
+        }
+
+        /* ENCABEZADO Y CONTROLES SUPERIORES (Se ocultan al imprimir) */
+        .encabezado-descargables {
+            text-align: center;
+            max-width: 960px;
+            margin: 20px auto 25px auto;
+            padding: 20px 15px;
+        }
+
+        .encabezado-descargables h1 {
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            color: #4a148c;
+            font-size: 2.3rem;
+            margin-bottom: 8px;
+            text-shadow: 0 2px 8px rgba(74, 20, 140, 0.15);
+        }
+
+        .encabezado-descargables p {
+            color: #444;
+            font-size: 1.05rem;
+            line-height: 1.6;
+            margin-bottom: 22px;
+        }
+
+        .barra-acciones-global {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            flex-wrap: wrap;
+            margin-bottom: 25px;
+        }
+
+        .btn-accion {
+            padding: 12px 24px;
+            border-radius: 30px;
+            font-weight: 800;
+            font-size: 0.95rem;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            border: none;
+            cursor: pointer;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.12);
+            transition: all 0.25s ease;
+        }
+
+        .btn-imprimir-todo {
+            background: linear-gradient(135deg, #7c4dff, #512da8);
+            color: white;
+        }
+
+        .btn-imprimir-todo:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(124, 77, 255, 0.4);
+        }
+
+        .btn-pdf-todo {
+            background: linear-gradient(135deg, #00b0ff, #00838f);
+            color: white;
+        }
+
+        .btn-pdf-todo:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 22px rgba(0, 176, 255, 0.4);
+        }
+
+        .btn-volver-reino {
+            background: white;
+            color: #4a148c;
+            border: 2px solid #ba68c8;
+        }
+
+        .btn-volver-reino:hover {
+            background: #f3e5f5;
+            transform: translateY(-2px);
+        }
+
+        /* FILTROS RÁPIDOS */
+        .filtros-poemas {
+            display: flex;
+            justify-content: center;
+            gap: 8px;
+            flex-wrap: wrap;
+            max-width: 980px;
+            margin: 0 auto 30px auto;
+            padding: 0 15px;
+        }
+
+        .filtro-pill {
+            background: white;
+            border: 2px solid #ce93d8;
+            color: #6a1b9a;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-size: 0.9rem;
+            font-weight: 700;
+            cursor: pointer;
+            transition: 0.2s ease;
+        }
+
+        .filtro-pill:hover,
+        .filtro-pill.activo {
+            background: #6a1b9a;
+            color: white;
+            border-color: #6a1b9a;
+            box-shadow: 0 4px 12px rgba(106, 27, 154, 0.3);
+            transform: translateY(-2px);
+        }
+
+        /* CONTENEDOR DE FICHAS */
+        .contenedor-fichas {
+            max-width: 900px;
+            margin: 0 auto;
+            padding: 0 15px;
+            display: flex;
+            flex-direction: column;
+            gap: 35px;
+        }
+
+        /* BLOQUE POR POEMA */
+        .bloque-poema-completo {
+            background: #ffffff;
+            border-radius: 22px;
+            border: 3px solid #ba68c8;
+            box-shadow: 0 12px 30px rgba(106, 27, 154, 0.12);
+            padding: 24px;
+            box-sizing: border-box;
+            transition: transform 0.2s;
+        }
+
+        /* CABECERA DEL BLOQUE */
+        .poema-header-bloque {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 15px;
+            padding-bottom: 16px;
+            margin-bottom: 18px;
+            border-bottom: 2px dashed #ce93d8;
+        }
+
+        .poema-header-info h2 {
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            color: #4a148c;
+            font-size: 1.45rem;
+            margin: 4px 0;
+        }
+
+        .poema-header-info p {
+            color: #666;
+            font-size: 0.92rem;
+        }
+
+        .badge-poema-id {
+            background: #7b1fa2;
+            color: white;
+            font-size: 0.78rem;
+            font-weight: 800;
+            padding: 4px 12px;
+            border-radius: 12px;
+            text-transform: uppercase;
+        }
+
+        .poema-header-btns {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .btn-poema-imprimir {
+            background: #7c4dff;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-poema-imprimir:hover {
+            background: #5e35b1;
+            transform: translateY(-2px);
+        }
+
+        .btn-poema-pdf {
+            background: #00acc1;
+            color: white;
+            border: none;
+            padding: 8px 18px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 0.88rem;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+
+        .btn-poema-pdf:hover {
+            background: #00838f;
+            transform: translateY(-2px);
+        }
+
+        /* ENCABEZADO ESCOLAR INSTITUCIONAL */
+        .hoja-header-escolar {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 12px;
+            border-bottom: 2px solid #222222;
+            padding-bottom: 10px;
+            margin-bottom: 16px;
+        }
+
+        .hoja-institucion h3 {
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            font-size: 1rem;
+            color: #1a237e;
+            font-weight: 800;
+            margin: 0;
+        }
+
+        .hoja-institucion span {
+            font-size: 0.8rem;
+            color: #444;
+            font-style: italic;
+        }
+
+        .hoja-campos-alumno {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            min-width: 250px;
+        }
+
+        .campo-linea {
+            font-size: 0.82rem;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+        }
+
+        .linea-puntos {
+            flex: 1;
+            border-bottom: 1.5px dotted #333333;
+            min-width: 140px;
+            height: 12px;
+        }
+
+        .linea-corta {
+            width: 70px;
+            border-bottom: 1.5px dotted #333333;
+            display: inline-block;
+            height: 12px;
+        }
+
+        /* CONTENEDOR DE LA LÁMINA / HOJA DIDÁCTICA */
+        .lamina-poema-container {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 18px;
+            width: 100%;
+        }
+
+        .lamina-imagen-wrapper {
+            width: 100%;
+            max-width: 740px;
+            background: #ffffff;
+            border: 2px solid #e0e0e0;
+            border-radius: 12px;
+            padding: 8px;
+            box-shadow: 0 4px 14px rgba(0,0,0,0.06);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+
+        .lamina-imagen-wrapper img {
+            width: 100%;
+            height: auto;
+            max-height: 820px;
+            object-fit: contain;
+            display: block;
+            border-radius: 6px;
+        }
+
+        /* PIE DE HOJA */
+        .hoja-pie-escolar {
+            border-top: 2px solid #222222;
+            padding-top: 10px;
+            margin-top: 16px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 10px;
+            width: 100%;
+        }
+
+        .pie-actividad-item {
+            font-size: 0.85rem;
+            color: #111111;
+            font-weight: 600;
+        }
+
+        .pie-firma-evaluacion {
+            font-size: 0.8rem;
+            color: #444444;
+            background: #f5f5f5;
+            padding: 5px 12px;
+            border-radius: 6px;
+            font-weight: 700;
+        }
+
+        /* ======================================================== */
+        /* REGLAS CRÍTICAS PARA IMPRESIÓN Y PDF (@media print)      */
+        /* ======================================================== */
+        @media print {
+            html, body {
+                background: #ffffff !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                color: #000000 !important;
+                width: 100% !important;
+            }
+
+            .no-print,
+            .reino-topbar,
+            .encabezado-descargables,
+            .barra-acciones-global,
+            .filtros-poemas,
+            .poema-header-bloque,
+            #reinoModalAuth {
+                display: none !important;
+            }
+
+            .contenedor-fichas {
+                max-width: 100% !important;
+                padding: 0 !important;
+                margin: 0 !important;
+                gap: 0 !important;
+            }
+
+            .bloque-poema-completo {
+                border: none !important;
+                border-radius: 0 !important;
+                box-shadow: none !important;
+                margin: 0 !important;
+                padding: 8mm 12mm !important;
+                width: 100% !important;
+                height: 100vh !important;
+                max-height: 100vh !important;
+                page-break-after: always !important;
+                break-after: page !important;
+                page-break-inside: avoid !important;
+                break-inside: avoid !important;
+                display: flex !important;
+                flex-direction: column !important;
+                justify-content: space-between !important;
+                box-sizing: border-box !important;
+            }
+
+            .lamina-imagen-wrapper {
+                border: none !important;
+                box-shadow: none !important;
+                padding: 0 !important;
+                max-height: 80vh !important;
+            }
+
+            .lamina-imagen-wrapper img {
+                max-height: 78vh !important;
+            }
+
+            * {
+                -webkit-print-color-adjust: exact !important;
+                print-color-adjust: exact !important;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- ENCABEZADO DE LA SECCIÓN (Visible en pantalla) -->
+    <header class="encabezado-descargables">
+        <h1>📚 Poemas Ilustrados para Colorear e Imprimir</h1>
+        <p>
+            Láminas de una sola página listas para imprimir o descargar en PDF. Cada poema incluye su texto completo con ilustraciones clásicas listas para colorear.
+        </p>
+
+        <!-- ACCIONES GENERALES -->
+        <div class="barra-acciones-global">
+            <button type="button" class="btn-accion btn-imprimir-todo" onclick="imprimirTodoCuadernillo()">
+                🖨️ Imprimir Todas las Láminas
+            </button>
+            <button type="button" class="btn-accion btn-pdf-todo" onclick="descargarTodoCuadernilloPDF()">
+                📥 Descargar Todo en PDF
+            </button>
+            <a href="/index.html" class="btn-accion btn-volver-reino">
+                🏰 Volver al Reino
+            </a>
+        </div>
+    </header>
+
+    <!-- FILTRO RÁPIDO PARA VISUALIZAR FICHAS -->
+    <nav class="filtros-poemas" aria-label="Filtro de poemas">
+        <button type="button" class="filtro-pill activo" onclick="filtrarPoema('todos', this)">🌟 Ver Todos</button>
+        <button type="button" class="filtro-pill" onclick="filtrarPoema('mariposa', this)">🦋 1. Mariposa</button>
+        <button type="button" class="filtro-pill" onclick="filtrarPoema('mona', this)">🐵 2. La Mona Jacinta (2 Láminas)</button>
+        <button type="button" class="filtro-pill" onclick="filtrarPoema('animales', this)">🐝 3. De todos los animales</button>
+        <button type="button" class="filtro-pill" onclick="filtrarPoema('caldero', this)">🧙‍♀️ 4. Había un caldero lleno...</button>
+        <button type="button" class="filtro-pill" onclick="filtrarPoema('osito', this)">🐻 5. ¿Qué se pondrá Osito?</button>
+        <button type="button" class="filtro-pill" onclick="filtrarPoema('viejecita', this)">👵 6. La pobre viejecita</button>
+    </nav>
+
+    <!-- CONTENEDOR PRINCIPAL: LÁMINAS EDUCATIVAS -->
+    <main class="contenedor-fichas" id="cuadernilloFichas">
+
+        <!-- ========================================== -->
+        <!-- LÁMINA 1: MARIPOSA (Canela)                -->
+        <!-- ========================================== -->
+        <article class="bloque-poema-completo" id="bloque-mariposa" data-poema="mariposa">
+            <div class="poema-header-bloque no-print">
+                <div class="poema-header-info">
+                    <span class="badge-poema-id">Lámina 1</span>
+                    <h2>🦋 Mariposa - Canela</h2>
+                    <p>Poema completo en 1 hoja para colorear e imprimir</p>
+                </div>
+                <div class="poema-header-btns">
+                    <button type="button" class="btn-poema-imprimir" onclick="imprimirPoemaIndividual('bloque-mariposa')">
+                        🖨️ Imprimir esta Lámina
+                    </button>
+                    <button type="button" class="btn-poema-pdf" onclick="descargarPoemaPDF('bloque-mariposa', 'Poema_Mariposa_Canela.pdf')">
+                        📥 Descargar PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- ENCABEZADO ESCOLAR -->
+            <header class="hoja-header-escolar">
+                <div class="hoja-institucion">
+                    <h3>🏰 I.E.T.C. CALDAS - SEDE EL CARMEN</h3>
+                    <span>Área: Lengua Castellana | Proyecto: El Reino de los Poemas</span>
+                </div>
+                <div class="hoja-campos-alumno">
+                    <div class="campo-linea"><strong>Estudiante:</strong> <span class="linea-puntos"></span></div>
+                    <div class="campo-linea"><strong>Grado:</strong> <span class="linea-corta"></span> <strong>Fecha:</strong> <span class="linea-corta"></span></div>
+                </div>
+            </header>
+
+            <!-- LÁMINA -->
+            <div class="lamina-poema-container">
+                <div class="lamina-imagen-wrapper">
+                    <img src="/assets/img/imprimibles/mariposa.jpg" alt="Poema Mariposa de Canela para Colorear">
+                </div>
+            </div>
+
+            <!-- PIE DE HOJA -->
+            <footer class="hoja-pie-escolar">
+                <div class="pie-actividad-item">🖍️ Actividad: Lee el poema en voz alta y colorea la ilustración según tu imaginación.</div>
+                <div class="pie-firma-evaluacion">⭐ Valoración docente: [ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</div>
+            </footer>
+        </article>
+
+        <!-- ========================================== -->
+        <!-- LÁMINA 2: LA MONA JACINTA - PARTE 1        -->
+        <!-- ========================================== -->
+        <article class="bloque-poema-completo" id="bloque-mona-1" data-poema="mona">
+            <div class="poema-header-bloque no-print">
+                <div class="poema-header-info">
+                    <span class="badge-poema-id">Lámina 2</span>
+                    <h2>🐵 La Mona Jacinta (Parte 1) - María Elena Walsh</h2>
+                    <p>Primera página del poema ilustrado para colorear</p>
+                </div>
+                <div class="poema-header-btns">
+                    <button type="button" class="btn-poema-imprimir" onclick="imprimirPoemaIndividual('bloque-mona-1')">
+                        🖨️ Imprimir esta Lámina
+                    </button>
+                    <button type="button" class="btn-poema-pdf" onclick="descargarPoemaPDF('bloque-mona-1', 'La_Mona_Jacinta_Parte_1.pdf')">
+                        📥 Descargar PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- ENCABEZADO ESCOLAR -->
+            <header class="hoja-header-escolar">
+                <div class="hoja-institucion">
+                    <h3>🏰 I.E.T.C. CALDAS - SEDE EL CARMEN</h3>
+                    <span>Área: Lengua Castellana | Proyecto: El Reino de los Poemas</span>
+                </div>
+                <div class="hoja-campos-alumno">
+                    <div class="campo-linea"><strong>Estudiante:</strong> <span class="linea-puntos"></span></div>
+                    <div class="campo-linea"><strong>Grado:</strong> <span class="linea-corta"></span> <strong>Fecha:</strong> <span class="linea-corta"></span></div>
+                </div>
+            </header>
+
+            <!-- LÁMINA -->
+            <div class="lamina-poema-container">
+                <div class="lamina-imagen-wrapper">
+                    <img src="/assets/img/imprimibles/mona-jacinta-1.jpg" alt="Poema La Mona Jacinta Parte 1 para Colorear">
+                </div>
+            </div>
+
+            <!-- PIE DE HOJA -->
+            <footer class="hoja-pie-escolar">
+                <div class="pie-actividad-item">🖍️ Actividad: Lee las rimas de Jacinta y colorea su corona y atuendos.</div>
+                <div class="pie-firma-evaluacion">⭐ Valoración docente: [ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</div>
+            </footer>
+        </article>
+
+        <!-- ========================================== -->
+        <!-- LÁMINA 3: LA MONA JACINTA - PARTE 2        -->
+        <!-- ========================================== -->
+        <article class="bloque-poema-completo" id="bloque-mona-2" data-poema="mona">
+            <div class="poema-header-bloque no-print">
+                <div class="poema-header-info">
+                    <span class="badge-poema-id">Lámina 3</span>
+                    <h2>🐵 La Mona Jacinta (Parte 2) - María Elena Walsh</h2>
+                    <p>Segunda página del poema ilustrado para colorear</p>
+                </div>
+                <div class="poema-header-btns">
+                    <button type="button" class="btn-poema-imprimir" onclick="imprimirPoemaIndividual('bloque-mona-2')">
+                        🖨️ Imprimir esta Lámina
+                    </button>
+                    <button type="button" class="btn-poema-pdf" onclick="descargarPoemaPDF('bloque-mona-2', 'La_Mona_Jacinta_Parte_2.pdf')">
+                        📥 Descargar PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- ENCABEZADO ESCOLAR -->
+            <header class="hoja-header-escolar">
+                <div class="hoja-institucion">
+                    <h3>🏰 I.E.T.C. CALDAS - SEDE EL CARMEN</h3>
+                    <span>Área: Lengua Castellana | Proyecto: El Reino de los Poemas</span>
+                </div>
+                <div class="hoja-campos-alumno">
+                    <div class="campo-linea"><strong>Estudiante:</strong> <span class="linea-puntos"></span></div>
+                    <div class="campo-linea"><strong>Grado:</strong> <span class="linea-corta"></span> <strong>Fecha:</strong> <span class="linea-corta"></span></div>
+                </div>
+            </header>
+
+            <!-- LÁMINA -->
+            <div class="lamina-poema-container">
+                <div class="lamina-imagen-wrapper">
+                    <img src="/assets/img/imprimibles/mona-jacinta-2.jpg" alt="Poema La Mona Jacinta Parte 2 para Colorear">
+                </div>
+            </div>
+
+            <!-- PIE DE HOJA -->
+            <footer class="hoja-pie-escolar">
+                <div class="pie-actividad-item">🖍️ Actividad: Lee cómo cocina la mona y colorea su castillo y familia.</div>
+                <div class="pie-firma-evaluacion">⭐ Valoración docente: [ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</div>
+            </footer>
+        </article>
+
+        <!-- ========================================== -->
+        <!-- LÁMINA 4: DE TODOS LOS ANIMALES            -->
+        <!-- ========================================== -->
+        <article class="bloque-poema-completo" id="bloque-animales" data-poema="animales">
+            <div class="poema-header-bloque no-print">
+                <div class="poema-header-info">
+                    <span class="badge-poema-id">Lámina 4</span>
+                    <h2>🐝 De todos los animales - Conrado Nalé Roxlo</h2>
+                    <p>Poema completo en 1 hoja para colorear e imprimir</p>
+                </div>
+                <div class="poema-header-btns">
+                    <button type="button" class="btn-poema-imprimir" onclick="imprimirPoemaIndividual('bloque-animales')">
+                        🖨️ Imprimir esta Lámina
+                    </button>
+                    <button type="button" class="btn-poema-pdf" onclick="descargarPoemaPDF('bloque-animales', 'De_Todos_Los_Animales.pdf')">
+                        📥 Descargar PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- ENCABEZADO ESCOLAR -->
+            <header class="hoja-header-escolar">
+                <div class="hoja-institucion">
+                    <h3>🏰 I.E.T.C. CALDAS - SEDE EL CARMEN</h3>
+                    <span>Área: Lengua Castellana | Proyecto: El Reino de los Poemas</span>
+                </div>
+                <div class="hoja-campos-alumno">
+                    <div class="campo-linea"><strong>Estudiante:</strong> <span class="linea-puntos"></span></div>
+                    <div class="campo-linea"><strong>Grado:</strong> <span class="linea-corta"></span> <strong>Fecha:</strong> <span class="linea-corta"></span></div>
+                </div>
+            </header>
+
+            <!-- LÁMINA -->
+            <div class="lamina-poema-container">
+                <div class="lamina-imagen-wrapper">
+                    <img src="/assets/img/imprimibles/de-todos-los-animales.jpg" alt="Poema De todos los animales de Conrado Nalé Roxlo para Colorear">
+                </div>
+            </div>
+
+            <!-- PIE DE HOJA -->
+            <footer class="hoja-pie-escolar">
+                <div class="pie-actividad-item">🖍️ Actividad: Lee la música del grillo y colorea el jardín de flores y animales.</div>
+                <div class="pie-firma-evaluacion">⭐ Valoración docente: [ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</div>
+            </footer>
+        </article>
+
+        <!-- ========================================== -->
+        <!-- LÁMINA 5: HABÍA UN CALDERO LLENO...        -->
+        <!-- ========================================== -->
+        <article class="bloque-poema-completo" id="bloque-caldero" data-poema="caldero">
+            <div class="poema-header-bloque no-print">
+                <div class="poema-header-info">
+                    <span class="badge-poema-id">Lámina 5</span>
+                    <h2>🧙‍♀️ Había un caldero lleno... - Cecilia Pisos</h2>
+                    <p>Poema completo en 1 hoja para colorear e imprimir</p>
+                </div>
+                <div class="poema-header-btns">
+                    <button type="button" class="btn-poema-imprimir" onclick="imprimirPoemaIndividual('bloque-caldero')">
+                        🖨️ Imprimir esta Lámina
+                    </button>
+                    <button type="button" class="btn-poema-pdf" onclick="descargarPoemaPDF('bloque-caldero', 'Habia_Un_Caldero_Lleno.pdf')">
+                        📥 Descargar PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- ENCABEZADO ESCOLAR -->
+            <header class="hoja-header-escolar">
+                <div class="hoja-institucion">
+                    <h3>🏰 I.E.T.C. CALDAS - SEDE EL CARMEN</h3>
+                    <span>Área: Lengua Castellana | Proyecto: El Reino de los Poemas</span>
+                </div>
+                <div class="hoja-campos-alumno">
+                    <div class="campo-linea"><strong>Estudiante:</strong> <span class="linea-puntos"></span></div>
+                    <div class="campo-linea"><strong>Grado:</strong> <span class="linea-corta"></span> <strong>Fecha:</strong> <span class="linea-corta"></span></div>
+                </div>
+            </header>
+
+            <!-- LÁMINA -->
+            <div class="lamina-poema-container">
+                <div class="lamina-imagen-wrapper">
+                    <img src="/assets/img/imprimibles/caldero.jpg" alt="Poema Había un caldero lleno de Cecilia Pisos para Colorear">
+                </div>
+            </div>
+
+            <!-- PIE DE HOJA -->
+            <footer class="hoja-pie-escolar">
+                <div class="pie-actividad-item">🖍️ Actividad: Lee la pócima mágica de la bruja y pinta cada uno de los ingredientes.</div>
+                <div class="pie-firma-evaluacion">⭐ Valoración docente: [ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</div>
+            </footer>
+        </article>
+
+        <!-- ========================================== -->
+        <!-- LÁMINA 6: ¿QUÉ SE PONDRÁ OSITO? (Else Minarik) -->
+        <!-- ========================================== -->
+        <article class="bloque-poema-completo" id="bloque-osito" data-poema="osito">
+            <div class="poema-header-bloque no-print">
+                <div class="poema-header-info">
+                    <span class="badge-poema-id">Lámina 6</span>
+                    <h2>🐻 ¿Qué se pondrá Osito? - Else Minarik</h2>
+                    <p>Poema ilustrado completo en 1 hoja para colorear e imprimir</p>
+                </div>
+                <div class="poema-header-btns">
+                    <button type="button" class="btn-poema-imprimir" onclick="imprimirPoemaIndividual('bloque-osito')">
+                        🖨️ Imprimir esta Lámina
+                    </button>
+                    <button type="button" class="btn-poema-pdf" onclick="descargarPoemaPDF('bloque-osito', 'Poema_Osito_Else_Minarik.pdf')">
+                        📥 Descargar PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- ENCABEZADO ESCOLAR -->
+            <header class="hoja-header-escolar">
+                <div class="hoja-institucion">
+                    <h3>🏰 I.E.T.C. CALDAS - SEDE EL CARMEN</h3>
+                    <span>Área: Lengua Castellana | Proyecto: El Reino de los Poemas</span>
+                </div>
+                <div class="hoja-campos-alumno">
+                    <div class="campo-linea"><strong>Estudiante:</strong> <span class="linea-puntos"></span></div>
+                    <div class="campo-linea"><strong>Grado:</strong> <span class="linea-corta"></span> <strong>Fecha:</strong> <span class="linea-corta"></span></div>
+                </div>
+            </header>
+
+            <!-- LÁMINA -->
+            <div class="lamina-poema-container">
+                <div class="lamina-imagen-wrapper">
+                    <img src="/assets/img/imprimibles/osito.jpg" alt="Poema ¿Qué se pondrá Osito? de Else Minarik para Colorear">
+                </div>
+            </div>
+
+            <!-- PIE DE HOJA -->
+            <footer class="hoja-pie-escolar">
+                <div class="pie-actividad-item">🖍️ Actividad: Lee los diálogos con Mamá Osa y colorea a Osito preparándose para la nieve.</div>
+                <div class="pie-firma-evaluacion">⭐ Valoración docente: [ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</div>
+            </footer>
+        </article>
+
+        <!-- ========================================== -->
+        <!-- LÁMINA 7: LA POBRE VIEJECITA (Rafael Pombo) -->
+        <!-- ========================================== -->
+        <article class="bloque-poema-completo" id="bloque-viejecita" data-poema="viejecita">
+            <div class="poema-header-bloque no-print">
+                <div class="poema-header-info">
+                    <span class="badge-poema-id">Lámina 7</span>
+                    <h2>👵 La pobre viejecita - Rafael Pombo</h2>
+                    <p>Poema clásico ilustrado en 1 hoja para colorear e imprimir</p>
+                </div>
+                <div class="poema-header-btns">
+                    <button type="button" class="btn-poema-imprimir" onclick="imprimirPoemaIndividual('bloque-viejecita')">
+                        🖨️ Imprimir esta Lámina
+                    </button>
+                    <button type="button" class="btn-poema-pdf" onclick="descargarPoemaPDF('bloque-viejecita', 'Poema_La_Pobre_Viejecita.pdf')">
+                        📥 Descargar PDF
+                    </button>
+                </div>
+            </div>
+
+            <!-- ENCABEZADO ESCOLAR -->
+            <header class="hoja-header-escolar">
+                <div class="hoja-institucion">
+                    <h3>🏰 I.E.T.C. CALDAS - SEDE EL CARMEN</h3>
+                    <span>Área: Lengua Castellana | Proyecto: El Reino de los Poemas</span>
+                </div>
+                <div class="hoja-campos-alumno">
+                    <div class="campo-linea"><strong>Estudiante:</strong> <span class="linea-puntos"></span></div>
+                    <div class="campo-linea"><strong>Grado:</strong> <span class="linea-corta"></span> <strong>Fecha:</strong> <span class="linea-corta"></span></div>
+                </div>
+            </header>
+
+            <!-- LÁMINA -->
+            <div class="lamina-poema-container">
+                <div class="lamina-imagen-wrapper">
+                    <img src="/assets/img/imprimibles/viejecita.jpg" alt="Poema La Pobre Viejecita de Rafael Pombo para Colorear">
+                </div>
+            </div>
+
+            <!-- PIE DE HOJA -->
+            <footer class="hoja-pie-escolar">
+                <div class="pie-actividad-item">🖍️ Actividad: Lee las estrofas del banquete de la viejecita y colorea su gran salón y su gato.</div>
+                <div class="pie-firma-evaluacion">⭐ Valoración docente: [ &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ]</div>
+            </footer>
+        </article>
+
+    </main>
+
+    <!-- SCRIPTS DE IMPRESIÓN, PDF Y FILTRADO -->
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+    <script>
+        // 1. Filtrar poemas por botón
+        function filtrarPoema(tipo, btn) {
+            document.querySelectorAll('.filtro-pill').forEach(b => b.classList.remove('activo'));
+            if (btn) btn.classList.add('activo');
+
+            const articulos = document.querySelectorAll('.bloque-poema-completo');
+            articulos.forEach(art => {
+                if (tipo === 'todos') {
+                    art.style.display = 'block';
+                } else if (art.dataset.poema === tipo) {
+                    art.style.display = 'block';
+                } else {
+                    art.style.display = 'none';
+                }
+            });
+        }
+
+        // 2. Imprimir todo el cuadernillo
+        function imprimirTodoCuadernillo() {
+            document.querySelectorAll('.bloque-poema-completo').forEach(b => b.style.display = 'block');
+            window.print();
+        }
+
+        // 3. Imprimir lámina individual
+        function imprimirPoemaIndividual(idBloque) {
+            const articulos = document.querySelectorAll('.bloque-poema-completo');
+            const estados = [];
+            articulos.forEach(art => {
+                estados.push({ el: art, display: art.style.display });
+                art.style.display = (art.id === idBloque) ? 'block' : 'none';
+            });
+
+            window.print();
+
+            setTimeout(() => {
+                estados.forEach(item => item.el.style.display = item.display);
+            }, 500);
+        }
+
+        // 4. Descargar lámina individual en PDF
+        function descargarPoemaPDF(idBloque, nombreArchivo) {
+            const bloque = document.getElementById(idBloque);
+            if (!bloque) return;
+
+            const clon = bloque.cloneNode(true);
+            const header = clon.querySelector('.poema-header-bloque');
+            if (header) header.remove();
+            clon.style.border = 'none';
+            clon.style.boxShadow = 'none';
+            clon.style.padding = '0';
+
+            const opciones = {
+                margin:       [8, 10, 8, 10],
+                filename:     nombreArchivo || 'Poema_Ilustrado.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'letter', orientation: 'portrait' }
+            };
+
+            if (window.html2pdf) {
+                window.html2pdf().set(opciones).from(clon).save();
+            } else {
+                imprimirPoemaIndividual(idBloque);
+            }
+        }
+
+        // 5. Descargar todo el cuadernillo en PDF
+        function descargarTodoCuadernilloPDF() {
+            const contenedor = document.getElementById('cuadernilloFichas');
+            if (!contenedor) return;
+
+            const clon = contenedor.cloneNode(true);
+            clon.querySelectorAll('.poema-header-bloque').forEach(h => h.remove());
+            clon.querySelectorAll('.bloque-poema-completo').forEach(b => {
+                b.style.display = 'block';
+                b.style.border = 'none';
+                b.style.boxShadow = 'none';
+                b.style.pageBreakAfter = 'always';
+                b.style.marginBottom = '25px';
+            });
+
+            const opciones = {
+                margin:       [8, 10, 8, 10],
+                filename:     'Cuadernillo_Poemas_Ilustrados_Colorear.pdf',
+                image:        { type: 'jpeg', quality: 0.98 },
+                html2canvas:  { scale: 2, useCORS: true },
+                jsPDF:        { unit: 'mm', format: 'letter', orientation: 'portrait' }
+            };
+
+            if (window.html2pdf) {
+                window.html2pdf().set(opciones).from(clon).save();
+            } else {
+                imprimirTodoCuadernillo();
+            }
+        }
+    </script>
+</body>
+</html>

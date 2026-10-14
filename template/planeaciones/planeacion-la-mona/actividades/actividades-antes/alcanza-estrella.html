@@ -1,0 +1,96 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Juego de Estrellas - El Reino de los Poemas</title>
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/actividades/mona-jacinta/antes/alcanza-estrella.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+</head>
+<body>
+    <main class="juego">
+        <h1>⭐ ¡Voltea las estrellas! ⭐</h1>
+        <p class="instruccion">Haz clic en cada estrella para descubrir las 6 preguntas poéticas y ganar +20 puntos.</p>
+
+        <section class="estrellas">
+            <!-- ESTRELLA 1 -->
+            <button class="estrella" aria-label="Estrella 1">
+                <div class="estrella-contenido">
+                    <div class="cara frente">⭐</div>
+                    <div class="cara atras">
+                        <span class="numero">1</span>
+                        <p>¿Qué es un poema?</p>
+                    </div>
+                </div>
+            </button>
+
+            <!-- ESTRELLA 2 -->
+            <button class="estrella" aria-label="Estrella 2">
+                <div class="estrella-contenido">
+                    <div class="cara frente">⭐</div>
+                    <div class="cara atras">
+                        <span class="numero">2</span>
+                        <p>¿Para qué sirven los poemas?</p>
+                    </div>
+                </div>
+            </button>
+
+            <!-- ESTRELLA 3 -->
+            <button class="estrella" aria-label="Estrella 3">
+                <div class="estrella-contenido">
+                    <div class="cara frente">⭐</div>
+                    <div class="cara atras">
+                        <span class="numero">3</span>
+                        <p>¿Qué es una rima?</p>
+                    </div>
+                </div>
+            </button>
+
+            <!-- ESTRELLA 4 -->
+            <button class="estrella" aria-label="Estrella 4">
+                <div class="estrella-contenido">
+                    <div class="cara frente">⭐</div>
+                    <div class="cara atras">
+                        <span class="numero">4</span>
+                        <p>¿Cómo está escrito un poema?</p>
+                    </div>
+                </div>
+            </button>
+
+            <!-- ESTRELLA 5 -->
+            <button class="estrella" aria-label="Estrella 5">
+                <div class="estrella-contenido">
+                    <div class="cara frente">⭐</div>
+                    <div class="cara atras">
+                        <span class="numero">5</span>
+                        <p>¿Qué es un verso?</p>
+                    </div>
+                </div>
+            </button>
+
+            <!-- ESTRELLA 6 -->
+            <button class="estrella" aria-label="Estrella 6">
+                <div class="estrella-contenido">
+                    <div class="cara frente">⭐</div>
+                    <div class="cara atras">
+                        <span class="numero">6</span>
+                        <p>¿Qué es una estrofa?</p>
+                    </div>
+                </div>
+            </button>
+        </section>
+
+        <div class="acciones">
+            <button id="reiniciar" class="reiniciar">🔄 Volver a empezar</button>
+            <a href="/template/planeaciones/planeacion-la-mona/actividades/actividades-antes/juego-rimas.html" class="next-game">Siguiente juego ➔</a>
+            <a href="/template/planeaciones/planeacion-la-mona/antes.html" class="back-btn">⬅ Volver a Exploración</a>
+        </div>
+    </main>
+
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+    <script src="/static/js/poemas/actividades/mona-jacinta/antes/alcanza-estrella/alcanza-estrella.js"></script>
+</body>
+</html>

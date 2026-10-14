@@ -1,0 +1,114 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/actividades/mona-jacinta/antes.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <title>Actividad - Exploración | La Mona Jacinta</title>
+</head>
+<body>
+    <header class="encabezado-antes">
+        <h1>🔍 Exploración Poética</h1>
+        <p>Aprende qué es un poema y descubre rimas divertidas antes de comenzar la historia</p>
+
+        <video controls class="mi-video">
+            <source src="/assets/video/planeacion/mona-jacinta/antes/que-es-poema.mp4" type="video/mp4">
+            Tu navegador no soporta el elemento de video.
+        </video> 
+    </header>
+
+    <!-- NAVEGACIÓN ENTRE LAS 3 ETAPAS CURRICULARES (DISEÑO PILL BOTONES MONA JACINTA) -->
+    <nav class="tabs-etapas">
+        <a href="/template/planeaciones/planeacion-la-mona/antes.html" class="tab-btn activo">1. Exploración (Alcanza una Estrella y Rimas)</a>
+        <a href="/template/planeaciones/planeacion-la-mona/durante.html" class="tab-btn">2. Estructuración (Descubre Rimas y Aplasta Monas)</a>
+        <a href="/template/planeaciones/planeacion-la-mona/despues.html" class="tab-btn">3. Transferencia (Colorea y Crea tu Rima)</a>
+    </nav>
+
+    <main class="juegos">
+        <div class="tarjetas-juego">
+            <!-- JUEGO 1: ALCANZA UNA ESTRELLA -->
+            <article class="card-juego" id="cardEstrellas">
+                <span class="card-badge desbloqueado" id="badgeEstrellas">⭐ Nivel 1</span>
+                <div class="img-juego-box">
+                    <img src="/assets/img/planeacion-poemas/actividades/mona-jacinta/antes/alcanza-estrella.jpeg" alt="Alcanza una estrella" class="img-actividad">
+                </div>
+                <h3 class="subtitle-juegos">Alcanza una estrella</h3>
+                <p class="desc-juego">Voltea las 6 estrellas brillantes para descubrir las preguntas sobre el poema (+20 pts).</p>
+                <a href="/template/planeaciones/planeacion-la-mona/actividades/actividades-antes/alcanza-estrella.html" class="boton" id="btnEstrellas">¡Jugar Ahora! 🚀</a>
+            </article>
+
+            <!-- JUEGO 2: JUEGO DE RIMAS (BLOQUEADO HASTA TERMINAR ESTRELLAS) -->
+            <article class="card-juego bloqueada" id="cardRimas">
+                <span class="card-badge bloqueado" id="badgeRimas">🔒 Bloqueado</span>
+                <div class="img-juego-box">
+                    <img src="/assets/img/planeacion-poemas/actividades/mona-jacinta/antes/rimas-juego.jpeg" alt="Juego de rimas" class="img-actividad">
+                </div>
+                <h3 class="subtitle-juegos">Juego de rimas</h3>
+                <p class="desc-juego">Escucha y encuentra la palabra que rima junto a la ranita en 10 rondas (+90 pts).</p>
+                <a href="/template/planeaciones/planeacion-la-mona/actividades/actividades-antes/juego-rimas.html" class="boton" id="btnRimas">🔒 Bloqueado</a>
+            </article>
+        </div>
+    </main>
+
+    <a href="/template/poemas/mona-jacinta.html" class="btn-regresar">⬅ Volver a La Mona Jacinta</a>
+
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            verificarBloqueoJuegosAntes();
+        });
+
+        function verificarBloqueoJuegosAntes() {
+            if (!window.ReinoDB) return;
+
+            const estrellasCompletado = window.ReinoDB.estaActividadCompletada('mona_alcanza_estrella');
+            const rimasCompletado = window.ReinoDB.estaActividadCompletada('mona_juego_rimas');
+
+            // 1. Estado de estrellas
+            const badgeEstrellas = document.getElementById('badgeEstrellas');
+            const btnEstrellas = document.getElementById('btnEstrellas');
+            if (estrellasCompletado) {
+                badgeEstrellas.className = 'card-badge completado';
+                badgeEstrellas.textContent = '✅ ¡Completado!';
+                btnEstrellas.textContent = 'Repasar 🔄';
+            }
+
+            // 2. Estado de rimas (SECUENCIA ESTRICTA: Requiere estrellas)
+            const cardRimas = document.getElementById('cardRimas');
+            const badgeRimas = document.getElementById('badgeRimas');
+            const btnRimas = document.getElementById('btnRimas');
+
+            if (estrellasCompletado) {
+                cardRimas.classList.remove('bloqueada');
+                btnRimas.onclick = null;
+                if (rimasCompletado) {
+                    badgeRimas.className = 'card-badge completado';
+                    badgeRimas.textContent = '✅ ¡Completado!';
+                    btnRimas.textContent = 'Repasar 🔄';
+                } else {
+                    badgeRimas.className = 'card-badge desbloqueado';
+                    badgeRimas.textContent = '🔓 ¡Desbloqueado!';
+                    btnRimas.textContent = '¡Jugar Ahora! 🎵';
+                }
+            } else {
+                cardRimas.classList.add('bloqueada');
+                badgeRimas.className = 'card-badge bloqueado';
+                badgeRimas.textContent = '🔒 Bloqueado';
+                btnRimas.textContent = '🔒 Bloqueado';
+                btnRimas.onclick = (e) => {
+                    e.preventDefault();
+                    if (window.GameJuice) window.GameJuice.shakeElement(cardRimas);
+                    alert('🔒 ¡Debes completar primero "Alcanza una estrella" volteando las 6 tarjetas para desbloquear el Juego de Rimas!');
+                };
+            }
+        }
+    </script>
+</body>
+</html>

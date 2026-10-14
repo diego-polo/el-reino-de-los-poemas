@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/index.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <title>El Reino de los Poemas</title>
+</head>
+<body>
+    <header class="encabezado">
+        <div class="contenido-header"></div>
+    </header>
+
+    <main>
+        <section class="diagnostico">
+            <h2 class="title-diagnostico">🗝️ El pasadizo secreto (Paso 1 Obligatorio)</h2>
+            <div class="juego">
+                <img src="/assets/img/poemas/clase-diagnostica.jpeg" alt="Clase diagnóstica" class="img-diagnostico">
+                <p class="text-diagnostico">
+                    ¡2 Niveles que superar! 📚 <strong>Nivel 1:</strong> Estructuración — Lee el poema y responde.
+                    🦋 <strong>Nivel 2:</strong> Transferencia — ¡Carrera de Mariposas con preguntas!
+                </p>
+                <a href="/template/diagnostico/poema.html" class="MyBoton">Ingresar al Pasadizo</a>
+            </div>
+        </section>
+
+        <h2 class="title2">¡Aterrizaje en el Reino de la imaginación Poética!</h2>
+
+        <section class="poemas">
+            <div class="juegos-poemas">
+                <article class="tarjeta juego1" id="cardMona">
+                    <img src="/assets/img/poemas/mona-jacinta.jpeg" alt="La Mona Jacinta" class="img-juego">
+                    <h3 class="subtitle-poema">La Mona Jacinta</h3>
+                    <p class="text-poema1"><strong>Autora:</strong> María Elena Walsh (1960)</p>
+                    <a href="/template/poemas/mona-jacinta.html" class="boton-poemas">Ingresar</a>
+                </article>
+
+                <article class="tarjeta juego2" id="cardAnimales">
+                    <img src="/assets/img/poemas/de-todos-los-animales.jpeg" alt="De todos los animales" class="img-juego">
+                    <h3 class="subtitle-poema">De todos los animales</h3>
+                    <p class="text-poema2"><strong>Autor:</strong> Conrado Nalé Roxlo (1923)</p>
+                    <a href="/template/poemas/animales.html" class="boton-poemas">Ingresar</a>
+                </article>
+
+                <article class="tarjeta juego3" id="cardCaldero">
+                    <img src="/assets/img/poemas/habia-un-caldero-lleno-de.jpeg" alt="Había un caldero lleno..." class="img-juego">
+                    <h3 class="subtitle-poema">Había un caldero lleno...</h3>
+                    <p class="text-poema3"><strong>Autora:</strong> Cecilia Pisos (2004)</p>
+                    <a href="/template/poemas/caldero.html" class="boton-poemas">Ingresar</a>
+                </article>
+
+                <article class="tarjeta juego4" id="cardOsito">
+                    <img src="/assets/img/poemas/que-se-pondra-osito.jpeg" alt="¿Qué se pondrá osito?" class="img-juego">
+                    <h3 class="subtitle-poema">¿Qué se pondrá osito?</h3>
+                    <p class="text-poema4"><strong>Autora:</strong> Else Holmelund Minarik (1957)</p>
+                    <a href="/template/poemas/que-se-pondra-osito.html" class="boton-poemas">Ingresar</a>
+                </article>
+
+                <article class="tarjeta juego5" id="cardViejecita">
+                    <img src="/assets/img/poemas/la-pobre-viejecita.jpeg" alt="La pobre viejecita" class="img-juego">
+                    <h3 class="subtitle-poema">La pobre viejecita</h3>
+                    <p class="text-poema5"><strong>Autor:</strong> Rafael Pombo (1867)</p>
+                    <a href="/template/poemas/viejecita.html" class="boton-poemas">Ingresar</a>
+                </article>
+
+                <article class="tarjeta evaluacion-entorno" id="cardEvaluacion">
+                    <img src="/assets/img/poemas/evaluacion-entorno.jpeg" alt="Evaluación de la clase" class="img-evaluacion">
+                    <h3 class="subtitle-poema">Evaluación de la clase</h3>
+                    <p class="text-evaluacion">¡Llegaste al final! Cuéntanos qué te pareció aprender y jugar con los poemas.</p>
+                    <a href="/template/poemas/evaluacion-entorno.html" class="boton-poemas">Ingresar</a>
+                </article>
+
+                <article class="tarjeta juego-descargables" id="cardDescargables">
+                    <span class="badge-descargables">🖨️ ¡Nuevo! PDF para Pintar</span>
+                    <img src="/assets/img/poemas/descargables-poemas.jpeg" alt="Poemas Descargables e Imprimibles para Colorear" class="img-juego">
+                    <h3 class="subtitle-poema" style="color: #ffffff;">Poemas para Pintar e Imprimir</h3>
+                    <p class="text-descargables"><strong>Fichas Didácticas:</strong> Láminas ilustradas de 1 página listas para colorear e imprimir en PDF.</p>
+                    <a href="/template/descargables/poemas-imprimir.html" class="boton-poemas" style="background: #ffeaa7; color: #2d3436; font-weight: 800;">Ver y Descargar 📥</a>
+                </article>
+            </div>
+        </section>
+    </main>
+
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+</body>
+</html>

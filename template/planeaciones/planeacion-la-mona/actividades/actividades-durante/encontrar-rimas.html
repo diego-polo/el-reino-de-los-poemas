@@ -1,0 +1,407 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Encontrar las Rimas - La Mona Jacinta</title>
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            font-family: var(--font-body, 'Lexend', Arial, sans-serif);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            padding: 20px;
+            background-image:
+                var(--bg-dots-pattern, radial-gradient(rgba(0, 0, 0, 0.15) 1.5px, transparent 1.5px)),
+                radial-gradient(circle at center, #ffd1dc, #d6fff0);
+            background-size: var(--bg-dots-size, 20px 20px), 100% 100%;
+        }
+        .juego-card {
+            background: white;
+            padding: 35px 25px;
+            border-radius: 28px;
+            max-width: 720px;
+            width: 100%;
+            box-shadow: 0 20px 45px rgba(188, 78, 216, 0.25);
+            text-align: center;
+            position: relative;
+            border: 3px solid #f8bbd0;
+        }
+        h1 {
+            color: #8e24aa;
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            margin-bottom: 8px;
+            font-size: 2.1rem;
+        }
+        .subtitulo {
+            color: #555;
+            margin-bottom: 20px;
+            font-size: 1.05rem;
+        }
+        .barra-racha {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            background: #f3e5f5;
+            padding: 10px 20px;
+            border-radius: 20px;
+            margin-bottom: 25px;
+            font-weight: 800;
+        }
+        .racha-badge {
+            color: #e65100;
+            background: #fff3e0;
+            padding: 5px 14px;
+            border-radius: 15px;
+            border: 1px solid #ffe082;
+            font-size: 0.95rem;
+        }
+        .tablero-parejas {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+        .columna-palabras {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .columna-titulo {
+            font-weight: 900;
+            color: #4a148c;
+            font-size: 1rem;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+            margin-bottom: 4px;
+        }
+        .ficha-rima {
+            background: white;
+            border: 3px solid #ba68c8;
+            border-radius: 18px;
+            padding: 14px 18px;
+            font-size: 1.15rem;
+            font-weight: 800;
+            color: #4a148c;
+            cursor: pointer;
+            box-shadow: 0 6px 0 #ab47bc, 0 8px 15px rgba(0,0,0,0.08);
+            transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            user-select: none;
+        }
+        .ficha-rima:hover:not(.emparejada) {
+            transform: translateY(-2px) scale(1.02);
+            background: #fdf4ff;
+        }
+        .ficha-rima:active:not(.emparejada) {
+            transform: translateY(4px);
+            box-shadow: 0 2px 0 #ab47bc;
+        }
+        .ficha-rima.seleccionada {
+            background: #fff9c4 !important;
+            border-color: #fbc02d !important;
+            box-shadow: 0 6px 0 #f57f17, 0 0 18px rgba(255, 193, 7, 0.6) !important;
+            transform: scale(1.05);
+        }
+        .ficha-rima.emparejada {
+            background: #e8f5e9 !important;
+            border-color: #4caf50 !important;
+            color: #1b5e20 !important;
+            box-shadow: 0 4px 0 #2e7d32 !important;
+            cursor: default;
+            transform: none !important;
+            opacity: 0.95;
+        }
+        .ficha-rima.error-anim {
+            background: #ffebee !important;
+            border-color: #f44336 !important;
+            color: #b71c1c !important;
+            box-shadow: 0 4px 0 #c62828 !important;
+        }
+        .columna-derecha .ficha-rima {
+            border-color: #00acc1;
+            box-shadow: 0 6px 0 #00838f, 0 8px 15px rgba(0,0,0,0.08);
+            color: #006064;
+        }
+        .columna-derecha .ficha-rima:active:not(.emparejada) {
+            box-shadow: 0 2px 0 #00838f;
+        }
+        .mensaje-didactico {
+            min-height: 40px;
+            font-size: 1.15rem;
+            font-weight: 800;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            margin: 15px 0;
+        }
+        .banner-completado {
+            background: linear-gradient(135deg, #2e7d32, #66bb6a);
+            color: white;
+            padding: 20px;
+            border-radius: 20px;
+            margin-top: 20px;
+            display: none;
+            box-shadow: 0 10px 25px rgba(46, 125, 50, 0.35);
+            animation: fadeIn 0.4s ease;
+        }
+        .banner-completado h3 {
+            font-size: 1.5rem;
+            color: #fff9c4;
+            margin-bottom: 6px;
+        }
+        .acciones {
+            display: flex;
+            justify-content: center;
+            gap: 15px;
+            margin-top: 20px;
+            flex-wrap: wrap;
+        }
+    </style>
+</head>
+<body>
+    <main class="juego-card">
+        <h1>✨ ¡Conecta las Rimas de la Mona!</h1>
+        <p class="subtitulo">Toca una palabra de la izquierda y luego toca su pareja rimada en la derecha (+25 pts)</p>
+
+        <div class="barra-racha">
+            <div>⭐ Parejas: <strong id="parejasCount">0</strong> / 4</div>
+            <div id="badgeRacha" class="racha-badge">🔥 Racha: 0</div>
+            <button id="btnReiniciarJuego" style="background: white; border: 1px solid #ba68c8; border-radius: 12px; padding: 4px 10px; font-weight: bold; cursor: pointer;">🔄 Reiniciar</button>
+        </div>
+
+        <section class="tablero-parejas">
+            <!-- COLUMNA IZQUIERDA (Palabras fijas del poema) -->
+            <div class="columna-palabras" id="colIzquierda">
+                <div class="columna-titulo">📖 Del Poema</div>
+                <button type="button" class="ficha-rima" data-id="jacinta">
+                    <span>🐵 Jacinta</span>
+                    <span class="icono-status">⚪</span>
+                </button>
+                <button type="button" class="ficha-rima" data-id="corona">
+                    <span>👑 Corona</span>
+                    <span class="icono-status">⚪</span>
+                </button>
+                <button type="button" class="ficha-rima" data-id="bandido">
+                    <span>🦜 Bandido</span>
+                    <span class="icono-status">⚪</span>
+                </button>
+                <button type="button" class="ficha-rima" data-id="castillo">
+                    <span>🏰 Castillo</span>
+                    <span class="icono-status">⚪</span>
+                </button>
+            </div>
+
+            <!-- COLUMNA DERECHA (Parejas desordenadas) -->
+            <div class="columna-palabras" id="colDerecha">
+                <div class="columna-titulo">🎵 Su Rima</div>
+                <button type="button" class="ficha-rima" data-pareja="corona">
+                    <span>🐒 Mona</span>
+                    <span class="icono-status">⚪</span>
+                </button>
+                <button type="button" class="ficha-rima" data-pareja="castillo">
+                    <span>🧱 Ladrillo</span>
+                    <span class="icono-status">⚪</span>
+                </button>
+                <button type="button" class="ficha-rima" data-pareja="jacinta">
+                    <span>🎀 Cinta</span>
+                    <span class="icono-status">⚪</span>
+                </button>
+                <button type="button" class="ficha-rima" data-pareja="bandido">
+                    <span>👗 Vestido</span>
+                    <span class="icono-status">⚪</span>
+                </button>
+            </div>
+        </section>
+
+        <p id="msgDidactico" class="mensaje-didactico">👉 Toca una palabra de la izquierda para comenzar...</p>
+
+        <!-- BANNER DE ÉXITO -->
+        <div id="bannerExito" class="banner-completado">
+            <h3>🎉 ¡GENIAL! ¡TODAS LAS RIMAS ENCONTRADAS!</h3>
+            <p>Completaste la actividad con éxito y sumaste +25 puntos a tu aventura.</p>
+            <div style="margin-top: 15px;">
+                <a href="/template/planeaciones/planeacion-la-mona/actividades/actividades-durante/quiz-mona.html" class="btn-3d btn-3d-amarillo" style="font-size: 1.15rem; padding: 14px 28px;">
+                    ➔ Pasar a Aplasta Monas 🔨🐵
+                </a>
+            </div>
+        </div>
+
+        <div class="acciones">
+            <a href="/template/planeaciones/planeacion-la-mona/durante.html" class="btn-3d btn-3d-morado" style="font-size: 0.95rem; padding: 10px 18px;">
+                ⬅ Volver a Estructuración
+            </a>
+        </div>
+    </main>
+
+    <script src="/static/js/game-juice.js"></script>
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            // VERIFICACIÓN SECUENCIAL ESTRICTA
+            if (window.ReinoDB && !window.ReinoDB.estaActividadCompletada('mona_juego_rimas')) {
+                const modal = document.createElement('div');
+                modal.className = 'reino-modal-overlay';
+                modal.style.zIndex = '999999';
+                modal.innerHTML = `
+                    <div class="reino-modal-card" style="text-align: center; max-width: 450px;">
+                        <div style="font-size: 60px; margin-bottom: 10px;">🎵🔒</div>
+                        <h2 style="color: #4a148c; margin-bottom: 12px;">¡Nivel 3 Bloqueado!</h2>
+                        <p style="color: #555; line-height: 1.5; margin-bottom: 25px;">
+                            Para jugar <strong>Encontrar las rimas</strong>, primero debes superar el <strong>Juego de rimas</strong> en la etapa de Exploración.
+                        </p>
+                        <div style="display: flex; flex-direction: column; gap: 10px;">
+                            <a href="/template/planeaciones/planeacion-la-mona/actividades/actividades-antes/juego-rimas.html" class="reino-btn-submit" style="text-decoration: none; text-align: center;">
+                                🎵 Ir al Juego de rimas
+                            </a>
+                            <a href="/template/planeaciones/planeacion-la-mona/durante.html" style="color: #7b1fa2; font-weight: bold; text-decoration: none; padding: 10px;">
+                                ⬅ Volver a Estructuración
+                            </a>
+                        </div>
+                    </div>
+                `;
+                document.body.appendChild(modal);
+                return;
+            }
+
+            let seleccionIzquierda = null;
+            let parejasCompletadas = 0;
+            let racha = 0;
+            const TOTAL = 4;
+
+            const fichasIzq = document.querySelectorAll('#colIzquierda .ficha-rima');
+            const fichasDer = document.querySelectorAll('#colDerecha .ficha-rima');
+            const msg = document.getElementById('msgDidactico');
+            const counter = document.getElementById('parejasCount');
+            const badgeRacha = document.getElementById('badgeRacha');
+            const banner = document.getElementById('bannerExito');
+
+            // Clic en columna izquierda
+            fichasIzq.forEach(ficha => {
+                ficha.addEventListener('click', () => {
+                    if (ficha.classList.contains('emparejada')) return;
+
+                    fichasIzq.forEach(f => f.classList.remove('seleccionada'));
+                    ficha.classList.add('seleccionada');
+                    seleccionIzquierda = ficha;
+
+                    if (window.GameJuice) window.GameJuice.playPop();
+                    msg.innerHTML = `🔍 Ahora busca con cuál rima <strong>"${ficha.innerText.trim()}"</strong>...`;
+                    msg.style.color = '#8e24aa';
+                });
+            });
+
+            // Clic en columna derecha
+            fichasDer.forEach(ficha => {
+                ficha.addEventListener('click', async () => {
+                    if (ficha.classList.contains('emparejada')) return;
+
+                    if (!seleccionIzquierda) {
+                        if (window.GameJuice) window.GameJuice.shakeElement(ficha);
+                        msg.textContent = '👆 ¡Primero toca una palabra de la izquierda!';
+                        msg.style.color = '#e65100';
+                        return;
+                    }
+
+                    const targetId = seleccionIzquierda.dataset.id;
+                    const parejaId = ficha.dataset.pareja;
+
+                    if (targetId === parejaId) {
+                        // ¡ACIERTO!
+                        seleccionIzquierda.classList.remove('seleccionada');
+                        seleccionIzquierda.classList.add('emparejada');
+                        ficha.classList.add('emparejada');
+
+                        seleccionIzquierda.querySelector('.icono-status').textContent = '✅';
+                        ficha.querySelector('.icono-status').textContent = '✅';
+
+                        racha++;
+                        parejasCompletadas++;
+                        counter.textContent = parejasCompletadas;
+                        badgeRacha.textContent = `🔥 Racha: ${racha}`;
+
+                        if (window.GameJuice) {
+                            window.GameJuice.bounceElement(ficha);
+                            window.GameJuice.floatingXP(10, ficha);
+                        }
+
+                        msg.innerHTML = `🌟 ¡Excelente rima! <strong>${seleccionIzquierda.innerText.trim()}</strong> y <strong>${ficha.innerText.trim()}</strong>!`;
+                        msg.style.color = '#2e7d32';
+
+                        seleccionIzquierda = null;
+
+                        if (parejasCompletadas === TOTAL) {
+                            if (window.GameJuice) {
+                                window.GameJuice.celebrate(80);
+                                window.GameJuice.playFanfare();
+                            }
+                            if (window.ReinoDB) {
+                                await window.ReinoDB.registrarPuntos('mona_encontrar_rimas', 25);
+                            }
+                            msg.textContent = '🎉 ¡Maravilloso! Has resuelto todas las rimas con éxito.';
+                            banner.style.display = 'block';
+                            banner.scrollIntoView({ behavior: 'smooth' });
+                        }
+                    } else {
+                        // ¡ERROR!
+                        racha = 0;
+                        badgeRacha.textContent = `🔥 Racha: 0`;
+
+                        if (window.GameJuice) {
+                            window.GameJuice.shakeElement(ficha);
+                            window.GameJuice.shakeElement(seleccionIzquierda);
+                        }
+
+                        ficha.classList.add('error-anim');
+                        seleccionIzquierda.classList.add('error-anim');
+
+                        msg.textContent = '❌ ¡Esas palabras no riman! Vuelve a escuchar su terminación.';
+                        msg.style.color = '#c62828';
+
+                        setTimeout(() => {
+                            ficha.classList.remove('error-anim');
+                            if (seleccionIzquierda) {
+                                seleccionIzquierda.classList.remove('error-anim');
+                                seleccionIzquierda.classList.remove('seleccionada');
+                                seleccionIzquierda = null;
+                            }
+                        }, 700);
+                    }
+                });
+            });
+
+            // Botón reiniciar
+            document.getElementById('btnReiniciarJuego').addEventListener('click', () => {
+                seleccionIzquierda = null;
+                parejasCompletadas = 0;
+                racha = 0;
+                counter.textContent = '0';
+                badgeRacha.textContent = '🔥 Racha: 0';
+                banner.style.display = 'none';
+                msg.textContent = '👉 Toca una palabra de la izquierda para comenzar...';
+                msg.style.color = '#4a148c';
+
+                document.querySelectorAll('.ficha-rima').forEach(f => {
+                    f.className = 'ficha-rima';
+                    f.querySelector('.icono-status').textContent = '⚪';
+                });
+                if (window.GameJuice) window.GameJuice.playPop();
+            });
+
+            // Si ya estaba completada
+            if (window.ReinoDB && window.ReinoDB.estaActividadCompletada('mona_encontrar_rimas')) {
+                banner.style.display = 'block';
+            }
+        });
+    </script>
+</body>
+</html>

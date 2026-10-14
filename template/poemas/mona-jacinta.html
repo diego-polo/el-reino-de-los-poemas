@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/poemas/mona-jacinta.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <title>La Mona Jacinta - El Reino de los Poemas</title>
+</head>
+<body>
+    <header class="encabezado">
+        <h1>🐵 La Mona Jacinta</h1>
+        <p>Lectura interactiva y aventuras poéticas de María Elena Walsh</p>
+        
+        <!-- VIDEO OFICIAL INDICADO -->
+        <div class="video-container-yt">
+            <iframe src="https://www.youtube.com/embed/7_cEb2aROpk" title="La Mona Jacinta - María Elena Walsh" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+        </div>
+    </header>
+
+    <!-- NAVEGACIÓN ENTRE LAS 3 ETAPAS CURRICULARES (DISEÑO PILL BOTONES MONA JACINTA) -->
+    <nav class="tabs-etapas">
+        <a href="/template/planeaciones/planeacion-la-mona/antes.html" class="tab-btn activo" id="tabNavAntes">1. Exploración (Alcanza una Estrella y Rimas)</a>
+        <a href="/template/planeaciones/planeacion-la-mona/durante.html" class="tab-btn" id="tabNavDurante">2. Estructuración (Descubre Rimas y Aplasta Monas)</a>
+        <a href="/template/planeaciones/planeacion-la-mona/despues.html" class="tab-btn" id="tabNavDespues">3. Transferencia (Colorea y Crea tu Rima)</a>
+    </nav>
+
+    <main class="actividades">
+        <!-- 1. EXPLORACIÓN -->
+        <article class="tarjeta-etapa" id="cardEtapaAntes">
+            <span class="badge-etapa desbloqueado" id="badgeAntes">⭐ Etapa 1</span>
+            <div class="img-tarjeta-box">
+                <img src="/assets/img/planeacion-poemas/actividades/mona-jacinta/antes.jpeg" alt="Exploración - Alcanza una estrella y Rimas" class="img-actividad">
+            </div>
+            <h2>1. Exploración</h2>
+            <p>Voltea las estrellas misteriosas y descubre las primeras rimas poéticas (+110 pts).</p>
+            <a href="/template/planeaciones/planeacion-la-mona/antes.html" class="myboton" id="btnAntes">¡Comenzar! 🚀</a>
+        </article>
+
+        <!-- 2. ESTRUCTURACIÓN -->
+        <article class="tarjeta-etapa" id="cardEtapaDurante">
+            <span class="badge-etapa bloqueado" id="badgeDurante">🔒 Bloqueado</span>
+            <div class="img-tarjeta-box">
+                <img src="/assets/img/planeacion-poemas/actividades/mona-jacinta/durante.jpeg" alt="Estructuración - Descubre rimas y Aplasta Monas" class="img-actividad">
+            </div>
+            <h2>2. Estructuración</h2>
+            <p>Conecta parejas de rimas sonoras y juega al emocionante Aplasta Monas (+60 pts).</p>
+            <a href="/template/planeaciones/planeacion-la-mona/durante.html" class="myboton" id="btnDurante">Ingresar ➔</a>
+        </article>
+
+        <!-- 3. TRANSFERENCIA -->
+        <article class="tarjeta-etapa" id="cardEtapaDespues">
+            <span class="badge-etapa bloqueado" id="badgeDespues">🔒 Bloqueado</span>
+            <div class="img-tarjeta-box">
+                <img src="/assets/img/planeacion-poemas/actividades/mona-jacinta/despues.jpeg" alt="Transferencia - Colorea y Crea tu rima" class="img-actividad">
+            </div>
+            <h2>3. Transferencia</h2>
+            <p>Colorea a Jacinta en el bosque mágico y crea tu propio verso con rima (+35 pts).</p>
+            <a href="/template/planeaciones/planeacion-la-mona/despues.html" class="myboton" id="btnDespues">Ingresar ➔</a>
+        </article>
+    </main>
+
+    <a href="/index.html" class="volver-reino">🏰 Volver al Reino</a>
+
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            verificarBloqueoEtapasMona();
+        });
+
+        function verificarBloqueoEtapasMona() {
+            if (!window.ReinoDB) return;
+
+            const antesCompletado = window.ReinoDB.estaActividadCompletada('mona_juego_rimas');
+            const duranteCompletado = window.ReinoDB.estaActividadCompletada('mona_quiz');
+            const despuesCompletado = window.ReinoDB.estaActividadCompletada('mona_transferencia');
+
+            // --- 1. ETAPA ANTES ---
+            const badgeAntes = document.getElementById('badgeAntes');
+            const btnAntes = document.getElementById('btnAntes');
+            if (antesCompletado) {
+                badgeAntes.className = 'badge-etapa completado';
+                badgeAntes.textContent = '✅ ¡Completado!';
+                btnAntes.textContent = 'Repasar 🔄';
+            }
+
+            // --- 2. ETAPA DURANTE ---
+            const cardDurante = document.getElementById('cardEtapaDurante');
+            const badgeDurante = document.getElementById('badgeDurante');
+            const btnDurante = document.getElementById('btnDurante');
+            const tabNavDurante = document.getElementById('tabNavDurante');
+
+            if (antesCompletado) {
+                // Desbloqueado
+                cardDurante.classList.remove('bloqueada');
+                if (tabNavDurante) {
+                    tabNavDurante.classList.remove('bloqueado');
+                    tabNavDurante.onclick = null;
+                }
+                if (duranteCompletado) {
+                    badgeDurante.className = 'badge-etapa completado';
+                    badgeDurante.textContent = '✅ ¡Completado!';
+                    btnDurante.textContent = 'Repasar 🔄';
+                } else {
+                    badgeDurante.className = 'badge-etapa desbloqueado';
+                    badgeDurante.textContent = '🔓 ¡Desbloqueado!';
+                    btnDurante.textContent = '¡Jugar Ahora! 🚀';
+                }
+                btnDurante.onclick = null;
+            } else {
+                // Bloqueado
+                cardDurante.classList.add('bloqueada');
+                badgeDurante.className = 'badge-etapa bloqueado';
+                badgeDurante.textContent = '🔒 Bloqueado';
+                btnDurante.textContent = '🔒 Bloqueado';
+                const fnBloqueoDurante = (e) => {
+                    e.preventDefault();
+                    if (window.GameJuice) window.GameJuice.shakeElement(cardDurante);
+                    alert('🔒 ¡Debes completar primero los juegos de la Etapa 1 (Exploración) para entrar a Estructuración!');
+                };
+                btnDurante.onclick = fnBloqueoDurante;
+                if (tabNavDurante) {
+                    tabNavDurante.classList.add('bloqueado');
+                    tabNavDurante.onclick = fnBloqueoDurante;
+                }
+            }
+
+            // --- 3. ETAPA DESPUES ---
+            const cardDespues = document.getElementById('cardEtapaDespues');
+            const badgeDespues = document.getElementById('badgeDespues');
+            const btnDespues = document.getElementById('btnDespues');
+            const tabNavDespues = document.getElementById('tabNavDespues');
+
+            if (duranteCompletado) {
+                // Desbloqueado
+                cardDespues.classList.remove('bloqueada');
+                if (tabNavDespues) {
+                    tabNavDespues.classList.remove('bloqueado');
+                    tabNavDespues.onclick = null;
+                }
+                if (despuesCompletado) {
+                    badgeDespues.className = 'badge-etapa completado';
+                    badgeDespues.textContent = '✅ ¡Completado!';
+                    btnDespues.textContent = 'Repasar 🔄';
+                } else {
+                    badgeDespues.className = 'badge-etapa desbloqueado';
+                    badgeDespues.textContent = '🔓 ¡Desbloqueado!';
+                    btnDespues.textContent = '¡Crear y Colorear! 🎨';
+                }
+                btnDespues.onclick = null;
+            } else {
+                // Bloqueado
+                cardDespues.classList.add('bloqueada');
+                badgeDespues.className = 'badge-etapa bloqueado';
+                badgeDespues.textContent = '🔒 Bloqueado';
+                btnDespues.textContent = '🔒 Bloqueado';
+                const fnBloqueoDespues = (e) => {
+                    e.preventDefault();
+                    if (window.GameJuice) window.GameJuice.shakeElement(cardDespues);
+                    alert('🔒 ¡Debes completar primero los juegos de la Etapa 2 (Estructuración: Aplasta Monas) para desbloquear Transferencia!');
+                };
+                btnDespues.onclick = fnBloqueoDespues;
+                if (tabNavDespues) {
+                    tabNavDespues.classList.add('bloqueado');
+                    tabNavDespues.onclick = fnBloqueoDespues;
+                }
+            }
+        }
+    </script>
+</body>
+</html>

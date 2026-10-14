@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>El Pasadizo Secreto - Diagnóstico | El Reino de los Poemas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@300;400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/diagnostico/poema.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <style>
+        /* ===== NIVELES DEL PASADIZO ===== */
+        .niveles-nav {
+            display: flex;
+            justify-content: center;
+            gap: 12px;
+            margin: 20px 0 25px 0;
+            flex-wrap: wrap;
+        }
+        .nivel-tab {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            padding: 10px 22px;
+            border-radius: 25px;
+            font-weight: 700;
+            font-size: 0.95rem;
+            cursor: pointer;
+            border: 3px solid transparent;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+        .nivel-tab.nivel-1 {
+            background: #e8eaf6;
+            color: #3949ab;
+            border-color: #9fa8da;
+        }
+        .nivel-tab.nivel-1.activo {
+            background: #3949ab;
+            color: white;
+            border-color: #1a237e;
+            box-shadow: 0 4px 15px rgba(57,73,171,0.4);
+        }
+        .nivel-tab.nivel-2 {
+            background: #fce4ec;
+            color: #c2185b;
+            border-color: #f48fb1;
+        }
+        .nivel-tab.nivel-2.activo {
+            background: #c2185b;
+            color: white;
+            border-color: #880e4f;
+            box-shadow: 0 4px 15px rgba(194,24,91,0.4);
+        }
+        .nivel-tab.bloqueado-tab {
+            opacity: 0.5;
+            cursor: not-allowed;
+        }
+        .nivel-tab .badge-nivel {
+            background: rgba(255,255,255,0.3);
+            border-radius: 50%;
+            width: 22px;
+            height: 22px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            font-weight: 900;
+        }
+        .seccion-nivel {
+            display: none;
+        }
+        .seccion-nivel.activo {
+            display: block;
+            animation: fadeIn 0.5s ease;
+        }
+
+        /* ===== NIVEL 1 - ESTRUCTURACIÓN ===== */
+        .seccion-mariposa {
+            background: #fff0f5;
+            border: 2px dashed #f06292;
+            border-radius: 18px;
+            padding: 20px;
+            margin: 25px 0;
+            text-align: left;
+        }
+        .seccion-mariposa h3 { color: #ad1457; margin-bottom: 10px; }
+        .poema-caja {
+            background: white;
+            padding: 15px;
+            border-radius: 12px;
+            font-style: italic;
+            color: #333;
+            line-height: 1.6;
+            margin-bottom: 15px;
+            border-left: 4px solid #f06292;
+        }
+        .semaforo-caja {
+            display: flex;
+            justify-content: space-around;
+            gap: 10px;
+            margin: 15px 0;
+        }
+        .semaforo-btn {
+            flex: 1;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #ddd;
+            background: white;
+            font-weight: bold;
+            font-size: 14px;
+            cursor: pointer;
+            transition: 0.2s;
+        }
+        .semaforo-btn:hover { transform: scale(1.05); }
+        .semaforo-btn.verde.activo { background: #c8e6c9; border-color: #4caf50; color: #1b5e20; }
+        .semaforo-btn.amarillo.activo { background: #fff9c4; border-color: #fbc02d; color: #f57f17; }
+        .semaforo-btn.rojo.activo { background: #ffcdd2; border-color: #e53935; color: #b71c1c; }
+        .desbloqueo-aviso {
+            background: #e8f5e9;
+            border: 2px solid #4caf50;
+            color: #2e7d32;
+            padding: 20px;
+            border-radius: 16px;
+            margin-top: 25px;
+            font-size: 16px;
+            display: none;
+            text-align: center;
+            box-shadow: 0 8px 25px rgba(46, 125, 50, 0.2);
+        }
+        .btn-siguiente-poema {
+            display: inline-block;
+            background: linear-gradient(135deg, #ffd700, #ff9800);
+            color: #2b1055;
+            text-decoration: none;
+            font-weight: 900;
+            font-size: 1.15rem;
+            padding: 14px 28px;
+            border-radius: 14px;
+            margin-top: 15px;
+            box-shadow: 0 6px 18px rgba(255, 152, 0, 0.35);
+            transition: transform 0.2s;
+        }
+        .btn-siguiente-poema:hover { transform: scale(1.05); }
+
+        /* ===== NIVEL 2 - CARRERA DE MARIPOSAS ===== */
+        #nivel2-carrera {
+            padding: 10px 0;
+        }
+        .nivel2-header {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+        .nivel2-header h2 {
+            color: #c2185b;
+            font-family: 'Poppins', sans-serif;
+            font-size: 1.7rem;
+            margin-bottom: 6px;
+        }
+        .nivel2-header p {
+            color: #666;
+            font-size: 1rem;
+        }
+
+        /* Canvas de la carrera */
+        #canvasCarrera {
+            width: 100%;
+            max-width: 640px;
+            height: 300px;
+            background: linear-gradient(180deg, #c8e6fa 0%, #dff6c8 60%, #b8e8a0 100%);
+            border-radius: 20px;
+            border: 3px solid #81c784;
+            display: block;
+            margin: 0 auto;
+            box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+            cursor: pointer;
+        }
+
+        .carrera-controles {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 14px;
+            margin-top: 14px;
+            flex-wrap: wrap;
+        }
+
+        #btnIniciarCarrera {
+            background: linear-gradient(135deg, #f06292, #c2185b);
+            color: white;
+            border: none;
+            padding: 12px 28px;
+            border-radius: 20px;
+            font-size: 1.1rem;
+            font-weight: 800;
+            cursor: pointer;
+            box-shadow: 0 5px 0 #880e4f, 0 8px 20px rgba(194,24,91,0.3);
+            transition: all 0.15s;
+        }
+        #btnIniciarCarrera:active { transform: translateY(4px); box-shadow: 0 2px 0 #880e4f; }
+        #btnIniciarCarrera:disabled { opacity: 0.5; cursor: not-allowed; }
+
+        .carrera-stat {
+            background: white;
+            border: 2px solid #f48fb1;
+            border-radius: 15px;
+            padding: 8px 16px;
+            font-weight: 700;
+            color: #c2185b;
+            font-size: 1rem;
+        }
+
+        .carrera-instruccion {
+            text-align: center;
+            font-size: 0.9rem;
+            color: #555;
+            margin-top: 8px;
+        }
+
+        /* === MODAL QUIZ === */
+        .quiz-modal-overlay {
+            position: fixed;
+            inset: 0;
+            background: rgba(0,0,0,0.75);
+            backdrop-filter: blur(6px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 200000;
+            padding: 20px;
+            box-sizing: border-box;
+            animation: fadeIn 0.3s ease;
+        }
+        .quiz-modal-card {
+            background: white;
+            border-radius: 25px;
+            max-width: 500px;
+            width: 100%;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.4);
+            text-align: center;
+            position: relative;
+            font-family: 'Lexend', sans-serif;
+            border: 4px solid #f48fb1;
+        }
+        .quiz-obstáculo-emoji {
+            font-size: 55px;
+            margin-bottom: 10px;
+            display: block;
+        }
+        .quiz-modal-card h3 {
+            font-family: 'Poppins', sans-serif;
+            color: #c2185b;
+            font-size: 1.35rem;
+            margin-bottom: 8px;
+        }
+        .quiz-modal-card .quiz-pregunta-texto {
+            color: #444;
+            font-size: 1.05rem;
+            margin-bottom: 18px;
+            line-height: 1.5;
+        }
+        .quiz-opciones {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+        .quiz-opcion-btn {
+            background: #fce4ec;
+            color: #880e4f;
+            border: 2px solid #f48fb1;
+            border-radius: 14px;
+            padding: 12px 16px;
+            font-size: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: 0.2s;
+            text-align: left;
+        }
+        .quiz-opcion-btn:hover { background: #f8bbd0; transform: scale(1.02); }
+        .quiz-opcion-btn.correcta { background: #c8e6c9; border-color: #4caf50; color: #1b5e20; }
+        .quiz-opcion-btn.incorrecta { background: #ffcdd2; border-color: #e53935; color: #b71c1c; }
+        .quiz-feedback-box {
+            background: #fff3e0;
+            border: 2px solid #ff9800;
+            border-radius: 14px;
+            padding: 14px;
+            margin-top: 12px;
+            display: none;
+            text-align: left;
+            font-size: 0.95rem;
+            color: #4e342e;
+            line-height: 1.5;
+        }
+        .quiz-feedback-box.visible { display: block; animation: fadeIn 0.3s ease; }
+        .quiz-feedback-box strong { color: #c2185b; }
+        .quiz-btn-continuar {
+            background: linear-gradient(135deg, #4caf50, #2e7d32);
+            color: white;
+            border: none;
+            border-radius: 15px;
+            padding: 13px 28px;
+            font-size: 1.05rem;
+            font-weight: 800;
+            cursor: pointer;
+            margin-top: 15px;
+            display: none;
+            box-shadow: 0 4px 0 #1b5e20;
+            transition: 0.15s;
+        }
+        .quiz-btn-continuar:active { transform: translateY(3px); box-shadow: 0 1px 0 #1b5e20; }
+        .quiz-btn-continuar.visible { display: inline-block; }
+
+        /* === AVISO NIVEL 2 COMPLETADO === */
+        .aviso-nivel2 {
+            background: linear-gradient(135deg, #4a148c, #c2185b);
+            color: white;
+            border-radius: 20px;
+            padding: 25px;
+            margin-top: 20px;
+            display: none;
+            text-align: center;
+            box-shadow: 0 12px 30px rgba(74,20,140,0.35);
+            animation: fadeIn 0.5s ease;
+        }
+        .aviso-nivel2 h3 { font-size: 1.6rem; margin-bottom: 8px; color: #ffd700; }
+        .aviso-nivel2 p { font-size: 1.05rem; margin-bottom: 15px; }
+
+        /* === BARRA DE PROGRESO NIVELES === */
+        .barra-progreso-niveles {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            gap: 6px;
+            margin: 15px 0;
+        }
+        .punto-nivel {
+            width: 14px;
+            height: 14px;
+            border-radius: 50%;
+            background: #e0e0e0;
+            transition: 0.3s;
+        }
+        .punto-nivel.completado {
+            background: #4caf50;
+            box-shadow: 0 0 8px rgba(76,175,80,0.6);
+        }
+        .punto-nivel.activo-p {
+            background: #f06292;
+            box-shadow: 0 0 10px rgba(240,98,146,0.7);
+            transform: scale(1.3);
+        }
+    </style>
+</head>
+<body>
+    <main class="pagina">
+        <h1>🗝️ El Pasadizo Secreto</h1>
+        <p class="instruccion">Supera los 2 niveles del pasadizo para desbloquear el Reino de los Poemas.</p>
+
+        <!-- BARRA DE PROGRESO DE NIVELES -->
+        <div class="barra-progreso-niveles">
+            <div class="punto-nivel activo-p" id="puntoNivel1" title="Nivel 1: Estructuración"></div>
+            <div style="width: 40px; height: 3px; background: #e0e0e0; border-radius: 3px;" id="lineaNiveles"></div>
+            <div class="punto-nivel" id="puntoNivel2" title="Nivel 2: Transferencia"></div>
+        </div>
+
+        <!-- PESTAÑAS DE NIVELES -->
+        <div class="niveles-nav">
+            <button class="nivel-tab nivel-1 activo" id="tabNivel1" onclick="mostrarNivel(1)">
+                <span class="badge-nivel">1</span>
+                📚 Estructuración
+            </button>
+            <button class="nivel-tab nivel-2 bloqueado-tab" id="tabNivel2" onclick="mostrarNivel(2)">
+                <span class="badge-nivel">2</span>
+                🦋 Transferencia – Carrera
+            </button>
+        </div>
+
+        <!-- ============================== -->
+        <!-- NIVEL 1: ESTRUCTURACIÓN       -->
+        <!-- ============================== -->
+        <div class="seccion-nivel activo" id="nivel1-estructuracion">
+
+            <!-- COFRE MÁGICO -->
+            <div class="cofre-container">
+                <div class="cofre" id="cofre" title="Haz clic para abrir el cofre">
+                    <div class="interior">
+                        <span>📜</span>
+                        <p>¡El Reino te espera!</p>
+                    </div>
+                    <div class="tapa">
+                        <div class="bordes-tapa"></div>
+                    </div>
+                    <div class="cuerpo">
+                        <div class="cerradura">
+                            <div class="llave"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <p id="mensaje" class="mensaje">🔐 Haz clic en el cofre para abrirlo</p>
+
+            <!-- ENCUESTA NIVEL 1 -->
+            <section id="encuesta" class="encuesta">
+                <h2>🦋 Nivel 1 – Estructuración: "Mariposa"</h2>
+                <p><strong>Autora:</strong> Canela (©2004, Sudamericana) &nbsp;|&nbsp; Lee el poema y responde las preguntas</p>
+
+                <!-- VIDEO -->
+                <div class="video-container-yt">
+                    <iframe src="/assets/video/planeacion/Episodio de Pódcast_ _Mariposa_ - Canela(360P).mp4" title="Poema Mariposa - Canela" allow="accelerometer;  clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen></iframe>
+                </div>
+
+                <!-- POEMA -->
+                <div class="seccion-mariposa">
+                    <h3>📜 El Poema – "Mariposa" de Canela</h3>
+                    <div class="poema-caja">
+                        Al amanecer<br>
+                        se esconde<br>
+                        en el centro de la rosa<br>
+                        la pequeña mariposa<br><br>
+
+                        sus alas<br>
+                        son pétalos que esperan<br>
+                        muy quietos<br><br>
+
+                        enamorada sueña<br>
+                        ser parte de la rosa<br><br>
+
+                        de pronto<br>
+                        al final del día<br>
+                        la rosa tiembla<br>
+                        pero no es la rosa<br>
+                        es la mariposa<br>
+                        que se cansa de estar presa<br><br>
+
+                        y recuerda<br>
+                        que si vuela<br>
+                        ya no será parte de la rosa<br>
+                        pero será otra vez<br>
+                        mariposa.
+                    </div>
+                    <p style="font-size: 0.85rem; color: #888; text-align: right; margin-top: 8px;">©Canela. ©2004, Sudamericana.</p>
+                </div>
+
+                <!-- PREGUNTAS NIVEL LITERAL -->
+                <div class="pregunta" data-pregunta="1">
+                    <h3>1. 🔍 Nivel Literal: ¿Dónde se esconde la pequeña mariposa al amanecer?</h3>
+                    <div class="opciones">
+                        <button type="button" data-val="rosa" data-correct="true">🌹 En el centro de la rosa</button>
+                        <button type="button" data-val="arbol">🌳 En la rama de un árbol</button>
+                        <button type="button" data-val="nube">☁️ Detrás de una nube</button>
+                    </div>
+                </div>
+
+                <!-- PREGUNTAS NIVEL INFERENCIAL -->
+                <div class="pregunta" data-pregunta="2">
+                    <h3>2. 💡 Nivel Inferencial: ¿Por qué la rosa tiembla al final del día?</h3>
+                    <div class="opciones">
+                        <button type="button" data-val="viento">💨 Porque sopla mucho viento</button>
+                        <button type="button" data-val="mariposa" data-correct="true">🦋 Porque la mariposa se mueve, se cansa de estar presa</button>
+                        <button type="button" data-val="lluvia">🌧️ Porque empieza a llover</button>
+                    </div>
+                </div>
+
+                <!-- PREGUNTAS NIVEL CRÍTICO -->
+                <div class="pregunta" data-pregunta="3">
+                    <h3>3. ⭐ Nivel Crítico: ¿Qué enseñanza te deja este poema?</h3>
+                    <div class="opciones">
+                        <button type="button" data-val="libertad" data-correct="true">🦋 Que ser libre es importante, aunque signifique dejar algo que amamos</button>
+                        <button type="button" data-val="quedarse">🌹 Que es mejor quedarse quieto siempre</button>
+                        <button type="button" data-val="flores">🌸 Que las flores son más bonitas que las mariposas</button>
+                    </div>
+                </div>
+
+                <!-- SEMÁFORO DE EMOCIONES -->
+                <div class="pregunta">
+                    <h3>🚦 El Semáforo de las Emociones: ¿Cómo te sentiste con esta lectura?</h3>
+                    <div class="semaforo-caja">
+                        <button type="button" class="semaforo-btn verde" data-emocion="verde">🟢 Me gustó mucho</button>
+                        <button type="button" class="semaforo-btn amarillo" data-emocion="amarillo">🟡 Me gustó un poco</button>
+                        <button type="button" class="semaforo-btn rojo" data-emocion="rojo">🔴 Necesito ayuda</button>
+                    </div>
+                </div>
+
+                <!-- MI VERSO FAVORITO -->
+                <div class="pregunta">
+                    <h3>✍️ Mi Verso Favorito:</h3>
+                    <textarea id="opinion" placeholder="Escribe aquí tu frase o verso favorito inspirado en la mariposa..."></textarea>
+                </div>
+
+                <button id="enviar" class="boton-enviar" type="button">✨ Completar Nivel 1 y pasar a la Carrera (+25 pts) 🗝️</button>
+                <p id="respuesta" class="respuesta"></p>
+
+                <div id="desbloqueoAviso1" class="desbloqueo-aviso" style="background:#e3f2fd; border-color:#1976d2; color:#0d47a1;">
+                    <h3>🎉 ¡NIVEL 1 SUPERADO!</h3>
+                    <p>Ganaste <strong>+25 puntos</strong>. ¡Ahora ingresa al <strong>Nivel 2: Carrera de Mariposas</strong>!</p>
+                    <button type="button" onclick="desbloquearYMostrarNivel2()" style="
+                        background: linear-gradient(135deg, #c2185b, #880e4f);
+                        color: white;
+                        border: none;
+                        padding: 13px 28px;
+                        border-radius: 14px;
+                        font-size: 1.1rem;
+                        font-weight: 900;
+                        cursor: pointer;
+                        margin-top: 12px;
+                        box-shadow: 0 5px 0 #4a0028;">
+                        🦋 ¡Ir a la Carrera de Mariposas!
+                    </button>
+                </div>
+            </section>
+        </div>
+
+        <!-- ============================== -->
+        <!-- NIVEL 2: TRANSFERENCIA        -->
+        <!-- ============================== -->
+        <div class="seccion-nivel" id="nivel2-carrera">
+            <div class="nivel2-header">
+                <h2>🦋 Nivel 2 – Carrera de Mariposas</h2>
+                <p>¡Ayuda a tu mariposa a llegar a la meta! Cuando aparezca un obstáculo, responde la pregunta para avanzar.</p>
+            </div>
+
+            <!-- STATS DE LA CARRERA -->
+            <div class="carrera-controles">
+                <div class="carrera-stat">⭐ Puntos carrera: <span id="ptsCarrera">0</span></div>
+                <div class="carrera-stat">🎯 Obstáculos: <span id="obsCarrera">0/5</span></div>
+                <div class="carrera-stat">❤️ Vidas: <span id="vidasCarrera">3</span></div>
+            </div>
+
+            <!-- CANVAS DEL JUEGO -->
+            <canvas id="canvasCarrera" width="640" height="300"></canvas>
+
+            <p class="carrera-instruccion">👆 Haz clic en el canvas o presiona <strong>Espacio</strong> para que la mariposa vuele hacia arriba</p>
+
+            <div class="carrera-controles" style="margin-top: 14px;">
+                <button id="btnIniciarCarrera" type="button">🚀 ¡Iniciar Carrera!</button>
+            </div>
+
+            <!-- AVISO AL COMPLETAR NIVEL 2 -->
+            <div class="aviso-nivel2" id="avisoPasadizo">
+                <h3>🏆 ¡PASADIZO SECRETO SUPERADO!</h3>
+                <p>¡Ganaste <strong id="ptsTotalesCarrera">0</strong> puntos en la carrera! Has desbloqueado el primer poema del Reino: <strong>La Mona Jacinta</strong> 🎊</p>
+                <div style="margin-top: 10px;">
+                    <a href="/template/poemas/mona-jacinta.html" class="btn-siguiente-poema">➔ Pasar a La Mona Jacinta 🚀</a>
+                </div>
+                <div style="margin-top: 12px;">
+                    <a href="/index.html" style="color: #ffd700; font-weight: bold; font-size: 13px;">🏰 Volver al Reino</a>
+                </div>
+            </div>
+        </div>
+
+        <div class="nav-links">
+            <a href="/index.html" class="btn-volver">🏰 Volver al Inicio</a>
+        </div>
+    </main>
+
+    <!-- MODAL QUIZ DE OBSTÁCULO -->
+    <div id="quizModal" class="quiz-modal-overlay" style="display:none;">
+        <div class="quiz-modal-card">
+            <span class="quiz-obstáculo-emoji" id="quizEmoji">🌩️</span>
+            <h3 id="quizTitulo">¡Obstáculo!</h3>
+            <p class="quiz-pregunta-texto" id="quizPregunta"></p>
+            <div class="quiz-opciones" id="quizOpciones"></div>
+            <div class="quiz-feedback-box" id="quizFeedback"></div>
+            <button type="button" class="quiz-btn-continuar" id="quizBtnContinuar">¡Continuar la carrera! 🦋</button>
+        </div>
+    </div>
+
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+    <script src="/static/js/diagnostico/poema.js"></script>
+    <script src="/static/js/diagnostico/carrera-mariposas.js"></script>
+</body>
+</html>

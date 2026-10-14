@@ -1,0 +1,75 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>¡A jugar con las rimas! - El Reino de los Poemas</title>
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/actividades/mona-jacinta/antes/juego-rimas.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+</head>
+<body>
+    <main class="game">
+        <!-- ENCABEZADO -->
+        <header class="header">
+            <div>
+                <h1>🎵 ¡A jugar con las rimas! 🎵</h1>
+                <p>Encuentra la palabra que rima y acumula puntos</p>
+            </div>
+            <div class="stats">
+                <div class="stat">⭐ <span id="score">0</span></div>
+                <div class="stat">❤️ <span id="lives">3</span></div>
+                <div class="stat">🎯 <span id="round">1</span>/10</div>
+            </div>
+        </header>
+
+        <!-- BARRA DE PROGRESO -->
+        <div class="progress-container">
+            <div id="progress" class="progress"></div>
+        </div>
+
+        <!-- MASCOTA -->
+        <section class="mascot-section">
+            <div id="mascot" class="mascot">🐸</div>
+            <div class="speech">
+                <p id="message">¡Hola! Busca la palabra que rima.</p>
+            </div>
+        </section>
+
+        <!-- PALABRA PRINCIPAL -->
+        <section class="question">
+            <p class="instruction">¿Cuál palabra rima con...?</p>
+            <div id="mainWord" class="main-word">GATO</div>
+        </section>
+
+        <!-- OPCIONES (Generadas por JS) -->
+        <section id="options" class="options"></section>
+
+        <!-- ACCIONES Y PISTAS -->
+        <div class="acciones-juego">
+            <button id="hintButton" class="hint-button">💡 Dame una pista</button>
+            <a href="/template/planeaciones/planeacion-la-mona/durante.html" class="next-poema">Pasa al siguiente nivel ➔</a>
+            <a href="/template/planeaciones/planeacion-la-mona/antes.html" class="back-btn">⬅ Volver a Exploración</a>
+        </div>
+
+        <!-- RESULTADO -->
+        <div id="feedback" class="feedback"></div>
+
+        <!-- PANTALLA FINAL -->
+        <section id="gameOver" class="game-over hidden">
+            <div class="trophy">🏆</div>
+            <h2>¡Juego terminado!</h2>
+            <p id="finalMessage"></p>
+            <div class="final-score">
+                Tu puntuación: <strong id="finalScore">0</strong>
+            </div>
+            <button id="restartButton" class="restart-button">🔄 Jugar otra vez</button>
+        </section>
+    </main>
+
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+    <script src="/static/js/poemas/actividades/mona-jacinta/antes/juego-rimas/juegos-rimas.js"></script>
+</body>
+</html>

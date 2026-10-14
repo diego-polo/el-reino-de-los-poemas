@@ -1,0 +1,392 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>La pobre viejecita - El Reino de los Poemas</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/poemas/viejecita.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <style>
+        * { box-sizing: border-box; margin: 0; padding: 0; }
+        body {
+            min-height: 100vh;
+            font-family: var(--font-body, 'Lexend', Arial, sans-serif);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 20px;
+            background-image:
+                var(--bg-dots-pattern, radial-gradient(rgba(0, 0, 0, 0.15) 1.5px, transparent 1.5px)),
+                radial-gradient(circle at center, #ffe0b2, #ffccbc);
+            background-size: var(--bg-dots-size, 20px 20px), 100% 100%;
+        }
+        .header-poema { text-align: center; max-width: 800px; margin-bottom: 20px; }
+        .header-poema h1 {
+            font-family: var(--font-heading, 'Poppins', sans-serif);
+            color: #d84315;
+            font-size: 2.3rem;
+            margin-bottom: 5px;
+        }
+        .img-banner {
+            width: 100%;
+            max-width: 600px;
+            height: 220px;
+            object-fit: cover;
+            border-radius: 15px;
+            box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+            margin-bottom: 20px;
+        }
+        .tabs-etapas { display: flex; gap: 10px; margin-bottom: 25px; flex-wrap: wrap; justify-content: center; }
+        .tab-btn {
+            background: white;
+            border: 2px solid #ff7043;
+            color: #d84315;
+            padding: 10px 22px;
+            border-radius: 20px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+        }
+        .tab-btn.activo { background: #d84315; color: white; box-shadow: 0 4px 12px rgba(216, 67, 21, 0.3); }
+        .seccion-etapa {
+            background: white;
+            border-radius: 20px;
+            padding: 30px 24px;
+            max-width: 820px;
+            width: 100%;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            display: none;
+        }
+        .seccion-etapa.activo { display: block; animation: fadeIn 0.4s ease; }
+        .caja-poema {
+            background: #fff3e0;
+            border-left: 5px solid #ff5722;
+            padding: 20px;
+            border-radius: 12px;
+            font-style: italic;
+            line-height: 1.8;
+            font-size: 1.15rem;
+            color: #bf360c;
+            text-align: center;
+            margin: 15px 0;
+        }
+        .debate-box {
+            background: #fbe9e7;
+            padding: 20px;
+            border-radius: 15px;
+            border: 2px dashed #ff8a65;
+            margin: 25px 0;
+        }
+        .debate-box textarea {
+            width: 100%;
+            padding: 12px;
+            border-radius: 8px;
+            border: 2px solid #ff7043;
+            min-height: 85px;
+            font-family: inherit;
+            margin-top: 8px;
+            font-size: 1rem;
+        }
+        .btn-accion-naranja {
+            background: #e64a19;
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 12px;
+            font-weight: bold;
+            font-size: 1rem;
+            cursor: pointer;
+            transition: 0.3s;
+            margin-top: 10px;
+        }
+        .btn-accion-naranja:hover { background: #bf360c; transform: translateY(-2px); }
+        .msg-feedback { font-weight: bold; margin-top: 12px; font-size: 1.1rem; min-height: 25px; text-align: center; }
+        .msg-feedback.exito { color: #2e7d32; }
+        .msg-feedback.error { color: #c62828; }
+        .banner-siguiente {
+            display: none;
+            background: linear-gradient(135deg, #e8f5e9, #c8e6c9);
+            border: 3px solid #4caf50;
+            border-radius: 16px;
+            padding: 22px;
+            text-align: center;
+            margin-top: 25px;
+        }
+        .btn-proximo-poema {
+            display: inline-block;
+            margin-top: 12px;
+            background: #2e7d32;
+            color: white;
+            text-decoration: none;
+            padding: 12px 24px;
+            border-radius: 14px;
+            font-weight: 800;
+            transition: 0.3s;
+        }
+        .btn-proximo-poema:hover { background: #1b5e20; transform: scale(1.03); }
+        @keyframes fadeIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: translateY(0); } }
+    </style>
+</head>
+<body>
+    <header class="header-poema">
+        <img src="/assets/img/poemas/la-pobre-viejecita.jpeg" alt="La pobre viejecita" class="img-banner">
+        <h1>👵 La pobre viejecita</h1>
+        <p><strong>Autor:</strong> Rafael Pombo (1867) | Grado Tercero</p>
+
+        <!-- VIDEO YOUTUBE INDICADO EN EL WORD -->
+        <div class="video-container-yt" style="margin-top: 15px;">
+            <iframe src="https://www.youtube.com/embed/ox5YBRncKKQ" title="¿Qué es el cuento? y La Pobre Viejecita - Rafael Pombo" allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture" allowfullscreen style="width: 100%; max-width: 600px; aspect-ratio: 16/9; border-radius: 14px; border: 3px solid #ff7043;"></iframe>
+        </div>
+    </header>
+
+    <nav class="tabs-etapas">
+        <button type="button" class="tab-btn activo" data-etapa="exploracion">1. Exploración (Rompecabezas)</button>
+        <button type="button" class="tab-btn" data-etapa="estructuracion">2. Estructuración (Quiz y Memory)</button>
+        <button type="button" class="tab-btn" data-etapa="transferencia">3. Transferencia (Súper Viejecita)</button>
+    </nav>
+
+    <!-- ETAPA 1: EXPLORACIÓN -->
+    <section id="etapa-exploracion" class="seccion-etapa activo">
+        <h2>🧩 1. Exploración: El Cuento y Rompecabezas</h2>
+        
+        <!-- VIDEO EDUCATIVO: EXPLICACIÓN DE LOS CUENTOS -->
+        <div class="seccion-video-cuento" style="margin: 15px auto 25px auto; text-align: center;">
+            <h3 style="color: #d84315; font-size: 1.25rem; margin-bottom: 6px;">🎬 Explicación del Cuento: Características y Elementos</h3>
+            <p style="color: #555; font-size: 0.95rem; margin-bottom: 12px;">Observa este video explicativo para repasar las partes y secretos de las historias antes de armar el puzle:</p>
+            <div style="width: 100%; max-width: 620px; aspect-ratio: 16/9; margin: 0 auto; border-radius: 16px; overflow: hidden; box-shadow: 0 8px 25px rgba(216, 67, 21, 0.2); border: 3px solid #ff7043;">
+                <video controls style="width: 100%; height: 100%; object-fit: cover;">
+                    <source src="/assets/video/videoplayback.mp4" type="video/mp4">
+                    Tu navegador no soporta el formato de video.
+                </video>
+            </div>
+        </div>
+
+        <!-- ROMPECABEZAS MEJORADO CON LA IMAGEN DE LA POBRE VIEJECITA (12 PIEZAS - 4x3) -->
+        <div class="puzzle-section">
+            <div class="puzzle-titulo-banner">
+                <h3>🧩 Rompecabezas: la pobre viejecita</h3>
+            </div>
+            
+            <p class="subtitulo-actividad">
+                Arma la ilustración oficial de <strong>"la pobre viejecita"</strong>. Puedes arrastrar cada pieza al tablero o tocar una pieza del banco y luego tocar la casilla donde encaja (+30 pts):
+            </p>
+
+            <div class="puzzle-barra-estado">
+                <div>
+                    <span>Piezas colocadas: </span>
+                    <strong id="puzzleContador" style="color: #d84315; font-size: 1.15rem;">0 / 12</strong>
+                </div>
+                <div class="puzzle-controles">
+                    <button type="button" id="btnPuzzleGuia" class="btn-puzzle-control">👁️ Ver Guía</button>
+                    <button type="button" id="btnPuzzleMezclar" class="btn-puzzle-control">🔀 Mezclar</button>
+                    <button type="button" id="btnPuzzlePista" class="btn-puzzle-control">💡 Pista</button>
+                </div>
+            </div>
+
+            <!-- Tablero con el diseño del rompecabezas -->
+            <div class="puzzle-board-container">
+                <canvas id="puzzleBoardCanvas" class="puzzle-board-canvas" width="640" height="480"></canvas>
+            </div>
+
+            <!-- Banco de piezas desordenadas -->
+            <div style="text-align: center; margin-bottom: 6px;">
+                <span style="font-weight: 800; color: #d84315; font-size: 0.95rem;">📦 Banco de piezas (Tócalas o arrástralas al tablero):</span>
+            </div>
+            <div id="puzzleTray" class="puzzle-tray"></div>
+
+            <p id="msgPuzzle" class="msg-feedback"></p>
+        </div>
+    </section>
+
+    <!-- ETAPA 2: ESTRUCTURACIÓN -->
+    <section id="etapa-estructuracion" class="seccion-etapa">
+        <h2>📖 2. Estructuración: Poema, Quiz Millonario y Memory</h2>
+        
+        <div class="caja-poema">
+            "Érase una viejecita,<br>
+            sin nadita que comer,<br>
+            sino carnes, frutas, dulces,<br>
+            tortas, huevos, pan y pez.<br><br>
+            Bebía caldo, chocolate,<br>
+            leche, vino, té y café,<br>
+            y la pobre no encontraba,<br>
+            ¡qué comer ni qué beber!"
+        </div>
+
+        <!-- 1. QUIZ MILLONARIO (5 PREGUNTAS COMPLETAS) -->
+        <div class="quiz-millonario-card">
+            <h3 style="color: #ffd54f; font-size: 1.4rem; margin-bottom: 12px; font-family: var(--font-heading, sans-serif);">
+                💰 Quiz Millonario de Rafael Pombo (+35 pts)
+            </h3>
+            <div id="quizMillonarioContainer">
+                <!-- Se renderizan dinámicamente las 5 preguntas con comodines 50:50 y pistas -->
+            </div>
+        </div>
+
+        <!-- 2. JUEGO DE MEMORY (ENCUENTRA LAS PAREJAS) BASADO EN LA POBRE VIEJECITA -->
+        <div class="memory-section">
+            <div class="memory-header">
+                <h3>🃏 Juego de Memory: Encuentra las Parejas de La Pobre Viejecita</h3>
+                <p class="subtitulo-actividad" style="margin-bottom: 8px;">
+                    Encuentra las 8 parejas de personajes y objetos mágicos del poema de Rafael Pombo (+30 pts):
+                </p>
+            </div>
+
+            <div class="memory-marcador">
+                <div><span>⭐ Parejas: </span><strong id="memoryParejas">0 / 8</strong></div>
+                <div><span>🎯 Intentos: </span><strong id="memoryIntentos">0</strong></div>
+                <div><span>⏱️ Tiempo: </span><strong id="memoryTiempo">00:00</strong></div>
+                <button type="button" id="btnReiniciarMemory" class="btn-puzzle-control" style="background: #ffffff;">🔄 Reiniciar</button>
+            </div>
+
+            <div id="memoryGrid" class="memory-grid">
+                <!-- Se generan dinámicamente las 16 cartas en cuadrícula 4x4 -->
+            </div>
+
+            <p id="msgMemory" class="msg-feedback"></p>
+        </div>
+    </section>
+
+    <!-- ETAPA 3: TRANSFERENCIA -->
+    <section id="etapa-transferencia" class="seccion-etapa">
+        <h2>🚀 3. Transferencia: Súper Viejecita y Creación de Cuentos</h2>
+
+        <!-- RECREACIÓN DE MARIO BROS 1 CON LA VIEJITA, MEDICINAS, CAFÉS, 5 NIVELES Y JEFE FINAL -->
+        <div class="mario-section">
+            <div class="mario-arcade-header">
+                <div class="hud-stat"><span>👵 VIEJITA</span></div>
+                <div class="hud-stat"><span>🗺️ NIVEL: </span><span id="marioNivel" style="color: #00e676;">1 / 5</span></div>
+                <div class="hud-stat"><span>⚡ PODER: </span><span id="marioPoderNombre" style="color: #ffca28;">Normal</span></div>
+                <div class="hud-stat"><span>PUNTOS: </span><span id="marioScore">000000</span></div>
+                <div class="hud-stat"><span>🪙 x </span><span id="marioCoins">00</span></div>
+                <div class="hud-stat"><span id="marioLives">❤️❤️❤️</span></div>
+                <button type="button" id="btnReiniciarMario" class="btn-puzzle-control" style="padding: 3px 10px; font-size: 0.8rem; background: #ffd54f; color: #212121; border-color: #ff9800;">🔄 Reiniciar</button>
+            </div>
+
+            <!-- Selector de 5 Niveles -->
+            <div class="mario-selector-niveles">
+                <span style="font-weight: 800; font-size: 0.88rem; color: #212121; margin-right: 6px;">Elegir Nivel:</span>
+                <button type="button" class="btn-nivel-tab activo" data-nivel="1">1. Jardín</button>
+                <button type="button" class="btn-nivel-tab" data-nivel="2">2. Despensa</button>
+                <button type="button" class="btn-nivel-tab" data-nivel="3">3. Gran Salón</button>
+                <button type="button" class="btn-nivel-tab" data-nivel="4">4. Tejado Noche</button>
+                <button type="button" class="btn-nivel-tab btn-nivel-jefe" data-nivel="5">5. 👤 Sombra Soledad (Jefe)</button>
+            </div>
+
+            <div class="mario-canvas-wrapper">
+                <canvas id="marioCanvas" width="760" height="380"></canvas>
+            </div>
+
+            <!-- Controles táctiles en pantalla -->
+            <div class="mario-touch-controls">
+                <div class="mario-touch-dpad">
+                    <button type="button" id="btnTouchLeft" class="btn-mario-touch" title="Mover Izquierda">◀</button>
+                    <button type="button" id="btnTouchRight" class="btn-mario-touch" title="Mover Derecha">▶</button>
+                </div>
+                <div style="display: flex; gap: 8px;">
+                    <button type="button" id="btnTouchAttack" class="btn-mario-touch btn-mario-ataque" title="Atacar / Lanzar Té">✨ ATACAR</button>
+                    <button type="button" id="btnTouchJump" class="btn-mario-touch btn-mario-salto" title="Saltar">▲ SALTAR</button>
+                </div>
+            </div>
+
+            <p class="mario-instrucciones-teclado">
+                🎮 <strong>Teclado:</strong> Usa <strong>← / →</strong> (o A / D) para correr, <strong>ESPACIO o ↑</strong> (o W) para saltar y tecla <strong>X o R</strong> para atacar/lanzar magia de té.
+                <br>
+                ☕ <strong>Poderes en cajas [?]:</strong> Café Expreso (Super velocidad), Té de Manzanilla (Ataque con X o R), Jarabe (Súper Viejita rompe bloques), Vitamina (Mega salto planeador) y Mentolín (Invencibilidad).
+                <br>
+                🐱 <strong>Enemigos:</strong> Salta sobre los gatitos traviesos y tortugas de lana para vencerlos. ¡En el Nivel 5 derrota a la <strong>Sombra de la Soledad</strong>!
+            </p>
+
+            <p id="msgMario" class="msg-feedback"></p>
+        </div>
+
+        <!-- ACTIVIDAD DE CREACIÓN DE CUENTO EN STORYJUMPER -->
+        <div class="storyjumper-card">
+            <h3 class="storyjumper-titulo">Crear un pequeño cuento</h3>
+            <p class="storyjumper-subtitulo">
+                ¡Ahora es tu turno de ser autor como Rafael Pombo! Ingresa a la plataforma digital de StoryJumper para redactar, ilustrar y dar vida a tu propia historia:
+            </p>
+            <a href="https://www.storyjumper.com/sjeditor/edit/189359021/brinezforeroluisafernanda" target="_blank" rel="noopener noreferrer" class="btn-storyjumper-link">
+                📖 Abrir StoryJumper: Crear Cuento ➔
+            </a>
+        </div>
+
+        <!-- DEBATE CRÍTICO -->
+        <div class="debate-box">
+            <h3>¿Crees que la viejecita era realmente pobre? ¿Por qué?</h3>
+            <p>Escribe tu opinión crítica argumentando según lo que leíste en el poema (+25 pts):</p>
+            <textarea id="respDebate" placeholder="Explica aquí: ¿Era pobre o tenía muchas cosas? ¿Qué le faltaba realmente?"></textarea>
+            <button type="button" id="btnDebate" class="btn-accion-naranja">💬 Enviar mi reflexión (+25 pts)</button>
+            <p id="msgDebate" class="msg-feedback"></p>
+        </div>
+
+        <!-- BANNER DE PASO A LA EVALUACIÓN FINAL -->
+        <div id="bannerSiguienteViejecita" class="banner-siguiente">
+            <h3>🎉 ¡LA POBRE VIEJECITA COMPLETADA!</h3>
+            <p>Has superado todos los poemas del Reino (+25 pts). ¡Es hora de reclamar tu Diploma Caldista!</p>
+            <a href="/template/poemas/evaluacion-entorno.html" class="btn-proximo-poema">
+                ➔ Ir a la Evaluación Final y Diploma Caldista 🎓🏆
+            </a>
+        </div>
+    </section>
+
+    <div style="margin-top: 30px;">
+        <a href="/index.html" class="tab-btn" style="text-decoration: none; background: #fff; color: #d84315;">🏰 Volver al Reino</a>
+    </div>
+
+    <!-- SCRIPTS DEL SISTEMA Y ACTIVIDADES -->
+    <script src="/static/js/game-juice.js"></script>
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+    <script src="/static/js/poemas/viejecita.js"></script>
+
+    <script>
+        // Navegación de pestañas (Exploración, Estructuración, Transferencia)
+        document.querySelectorAll('.tab-btn[data-etapa]').forEach(btn => {
+            btn.addEventListener('click', () => {
+                document.querySelectorAll('.tab-btn[data-etapa]').forEach(b => b.classList.remove('activo'));
+                document.querySelectorAll('.seccion-etapa').forEach(s => s.classList.remove('activo'));
+                btn.classList.add('activo');
+                const target = document.getElementById('etapa-' + btn.dataset.etapa);
+                if (target) target.classList.add('activo');
+            });
+        });
+
+        // Debate Crítico
+        document.getElementById('btnDebate')?.addEventListener('click', async () => {
+            const txt = document.getElementById('respDebate').value.trim();
+            const msg = document.getElementById('msgDebate');
+            const banner = document.getElementById('bannerSiguienteViejecita');
+            if (txt.length > 8) {
+                msg.textContent = '🏆 ¡Excelente análisis crítico! Has ganado +25 puntos.';
+                msg.className = 'msg-feedback exito';
+                if (window.GameJuice && typeof window.GameJuice.lanzarConfeti === 'function') {
+                    window.GameJuice.lanzarConfeti(50);
+                }
+                if (window.ReinoDB) {
+                    await window.ReinoDB.registrarPuntos('viejecita_debate', 25, { debate: txt });
+                }
+                if (banner) {
+                    banner.style.display = 'block';
+                    banner.scrollIntoView({ behavior: 'smooth' });
+                }
+            } else {
+                msg.textContent = '⚠️ Por favor escribe al menos una frase completa explicando tu punto de vista.';
+                msg.className = 'msg-feedback error';
+            }
+        });
+
+        // Verificar si ya estaba completado
+        if (window.ReinoDB && window.ReinoDB.estaPoemaCompletado('viejecita')) {
+            const banner = document.getElementById('bannerSiguienteViejecita');
+            if (banner) banner.style.display = 'block';
+        }
+    </script>
+</body>
+</html>

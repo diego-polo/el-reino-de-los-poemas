@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Lexend:wght@400;600;700;800&family=Poppins:wght@600;700;800;900&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="/static/css/variables.css">
+    <link rel="stylesheet" href="/static/css/gamificacion.css">
+    <link rel="stylesheet" href="/static/css/actividades/mona-jacinta/durante.css">
+    <link rel="stylesheet" href="/static/css/responsive.css">
+    <title>Estructuración - La Mona Jacinta | El Reino de los Poemas</title>
+</head>
+<body>
+    <header class="encabezado">
+        <h1>📖 Estructuración Poética</h1>
+        <p>Lee el poema completo de La Mona Jacinta y supera los retos interactivos</p>
+
+        <video controls class="mi-video">
+            <source src="/assets/video/planeacion/mona-jacinta/durante/mona-jacinta.mp4" type="video/mp4">
+            Tu navegador no soporta el elemento de video.
+        </video>
+    </header>
+
+    <!-- NAVEGACIÓN ENTRE LAS 3 ETAPAS CURRICULARES (DISEÑO PILL BOTONES MONA JACINTA) -->
+    <nav class="tabs-etapas">
+        <a href="/template/planeaciones/planeacion-la-mona/antes.html" class="tab-btn">1. Exploración (Alcanza una Estrella y Rimas)</a>
+        <a href="/template/planeaciones/planeacion-la-mona/durante.html" class="tab-btn activo">2. Estructuración (Descubre Rimas y Aplasta Monas)</a>
+        <a href="/template/planeaciones/planeacion-la-mona/despues.html" class="tab-btn">3. Transferencia (Colorea y Crea tu Rima)</a>
+    </nav>
+
+    <article class="text-poema">
+        <p class="estrofa">La mona Jacinta</p>
+        <p class="estrofa">se ha puesto una cinta.</p>
+        <p class="estrofa">Se peina, se peina,</p>
+        <p class="estrofa">y quiere ser reina.</p>
+
+        <p class="estrofa2">¡Ay, no te rías de sus monerías!</p>
+
+        <p class="estrofa">Mas la pobre mona</p>
+        <p class="estrofa">no tiene corona.</p>
+        <p class="estrofa">Tiene una galera</p>
+        <p class="estrofa">de hoja de higuera.</p>
+
+        <p class="estrofa2">¡Ay, no te rías de sus monerías!</p>
+
+        <p class="estrofa">Un loro bandido</p>
+        <p class="estrofa">le vende un vestido.</p>
+        <p class="estrofa">Un manto de plumas</p>
+        <p class="estrofa">y un collar de espuma.</p>
+
+        <p class="estrofa2">¡Ay, no te rías de sus monerías!</p>
+
+        <p class="estrofa">Al verse en la fuente</p>
+        <p class="estrofa">dice alegremente:</p>
+        <p class="estrofa">-¡Qué mona preciosa,</p>
+        <p class="estrofa">parece una rosa!</p>
+
+        <p class="estrofa2">¡Ay, no te rías de sus monerías!</p>
+
+        <p class="estrofa">Levanta un castillo</p>
+        <p class="estrofa">de un solo ladrillo,</p>
+        <p class="estrofa">rodeado de flores</p>
+        <p class="estrofa">y sapos cantores.</p>
+
+        <p class="estrofa2">¡Ay, no te rías de sus monerías!</p>
+
+        <p class="estrofa">La mona cocina</p>
+        <p class="estrofa">con leche y harina.</p>
+        <p class="estrofa">Prepara la sopa</p>
+        <p class="estrofa">y tiende la ropa.</p>
+
+        <p class="estrofa2">¡Ay, no te rías de sus monerías!</p>
+
+        <p class="estrofa">Su marido mono</p>
+        <p class="estrofa">se sienta en el trono.</p>
+        <p class="estrofa">Sus hijas monitas</p>
+        <p class="estrofa">en cuatro sillitas.</p>
+
+        <p class="estrofa2">¡Ay, no te rías de sus monerías!</p>
+    </article>
+
+    <div class="instrucciones">
+        <audio src="/assets/audio/mona-jacinta/durante/voz-instrucciones.mp3" controls class="instruccion"></audio>
+    </div>
+    
+    <main class="juegos">
+        <div class="tarjeta-juegos">
+            <!-- JUEGO 3: ENCONTRAR LAS RIMAS -->
+            <article class="card-juego" id="cardDescubreRimas">
+                <span class="card-badge desbloqueado" id="badgeDescubreRimas">⭐ Nivel 3</span>
+                <div class="img-juego-box">
+                    <img src="/assets/img/planeacion-poemas/actividades/mona-jacinta/durante/descubre-rimas.jpeg" alt="Descubre las rimas" class="img-game">
+                </div>
+                <h3 class="subtitle">Encontrar las rimas</h3>
+                <p class="desc-juego">Empareja las palabras del poema que tienen rimas sonoras idénticas (+25 pts).</p>
+                <a href="/template/planeaciones/planeacion-la-mona/actividades/actividades-durante/encontrar-rimas.html" class="boton" id="btnDescubreRimas">¡Jugar Ahora! 🚀</a>
+            </article>
+
+            <!-- JUEGO 4: APLASTA MONAS (BLOQUEADO HASTA TERMINAR ENCONTRAR RIMAS) -->
+            <article class="card-juego bloqueada" id="cardQuizMona">
+                <span class="card-badge bloqueado" id="badgeQuizMona">🔒 Bloqueado</span>
+                <div class="img-juego-box">
+                    <img src="/assets/img/planeacion-poemas/actividades/mona-jacinta/durante/quiz.jpeg" alt="Aplasta Monas Preguntón" class="img-game">
+                </div>
+                <h3 class="subtitle">Aplasta Monas</h3>
+                <p class="desc-juego">Atrapa a las monitas y responde las preguntas de comprensión poética (+35 pts).</p>
+                <a href="/template/planeaciones/planeacion-la-mona/actividades/actividades-durante/quiz-mona.html" class="boton" id="btnQuizMona">🔒 Bloqueado</a>
+            </article>
+        </div>
+    </main>
+
+    <a href="/template/poemas/mona-jacinta.html" class="btn-regresar">⬅ Volver a La Mona Jacinta</a>
+
+    <script src="/static/js/db.js"></script>
+    <script src="/static/js/auth-ui.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            verificarBloqueoJuegosDurante();
+        });
+
+        function verificarBloqueoJuegosDurante() {
+            if (!window.ReinoDB) return;
+
+            // Verificar si el estudiante terminó Exploración
+            const rimasExploracionCompletado = window.ReinoDB.estaActividadCompletada('mona_juego_rimas');
+            if (!rimasExploracionCompletado) {
+                alert('🔒 ¡Debes completar primero la etapa de Exploración antes de entrar a Estructuración!');
+                window.location.href = '/template/planeaciones/planeacion-la-mona/antes.html';
+                return;
+            }
+
+            const encontrarRimasCompletado = window.ReinoDB.estaActividadCompletada('mona_encontrar_rimas');
+            const quizCompletado = window.ReinoDB.estaActividadCompletada('mona_quiz');
+
+            // 1. Estado Encontrar Rimas
+            const badgeDescubre = document.getElementById('badgeDescubreRimas');
+            const btnDescubre = document.getElementById('btnDescubreRimas');
+            if (encontrarRimasCompletado) {
+                badgeDescubre.className = 'card-badge completado';
+                badgeDescubre.textContent = '✅ ¡Completado!';
+                btnDescubre.textContent = 'Repasar 🔄';
+            }
+
+            // 2. Estado Aplasta Monas (SECUENCIA ESTRICTA: Requiere encontrar rimas)
+            const cardQuiz = document.getElementById('cardQuizMona');
+            const badgeQuiz = document.getElementById('badgeQuizMona');
+            const btnQuiz = document.getElementById('btnQuizMona');
+
+            if (encontrarRimasCompletado) {
+                cardQuiz.classList.remove('bloqueada');
+                btnQuiz.onclick = null;
+                if (quizCompletado) {
+                    badgeQuiz.className = 'card-badge completado';
+                    badgeQuiz.textContent = '✅ ¡Completado!';
+                    btnQuiz.textContent = 'Repasar 🔄';
+                } else {
+                    badgeQuiz.className = 'card-badge desbloqueado';
+                    badgeQuiz.textContent = '🔓 ¡Desbloqueado!';
+                    btnQuiz.textContent = '¡Jugar Ahora! 🔨';
+                }
+            } else {
+                cardQuiz.classList.add('bloqueada');
+                badgeQuiz.className = 'card-badge bloqueado';
+                badgeQuiz.textContent = '🔒 Bloqueado';
+                btnQuiz.textContent = '🔒 Bloqueado';
+                btnQuiz.onclick = (e) => {
+                    e.preventDefault();
+                    if (window.GameJuice) window.GameJuice.shakeElement(cardQuiz);
+                    alert('🔒 ¡Debes completar primero "Encontrar las rimas" para desbloquear "Aplasta Monas"!');
+                };
+            }
+        }
+    </script>
+</body>
+</html>
